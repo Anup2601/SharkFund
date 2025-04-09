@@ -7,18 +7,31 @@ import TermsAndConditions from './pages/TermsAndConditions'
 import ForgotPassword from './pages/forgotPassword'
 import Landing from './pages/landing'
 import Home from './pages/home'
+import HomeLayout from './pages/home'
 
 function App() {
+   // Mock user data — in a real app, you'd fetch this from context or auth
+   const currentUser = {
+    name: 'Alex Johnson',
+    email: 'alex.johnson@example.com',
+    profileImage: '/api/placeholder/32/32',
+  };
   return (
     <>
     <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Landing/>}/>
-        <Route path="/home" element={<Home/>}/>
         <Route path="/register" element={<Registration/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
+        {/* Wrap your home page with HomeLayout and pass user data */}
+        <Route
+          path="/home"
+          element={
+            <HomeLayout currentUser={currentUser}/>
+          }
+        />
       </Routes>
     </>
     
