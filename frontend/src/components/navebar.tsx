@@ -1,5 +1,7 @@
 // components/Navbar.tsx
 import React, { useState, useRef, useEffect } from 'react';
+import Avatar from "../assets/avatar.png";
+import toast from 'react-hot-toast';
 
 interface NavbarProps {
   currentUser: {
@@ -56,35 +58,29 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
                 <span className="mr-3 font-medium text-gray-300">{currentUser.name}</span>
                 <img
                   className="h-8 w-8 rounded-full object-cover border-2 border-teal-400"
-                  src="/api/placeholder/32/32"
+                  src={Avatar}
                   alt="Profile"
                 />
               </button>
               
               {isDropdownOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50">
                   <div className="py-1 rounded-md bg-gray-700 shadow-xs">
                     <a
-                      href="#profile"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600"
-                    >
-                      Your Profile
-                    </a>
-                    <a
-                      href="#reset-password"
+                      href="/forgotpassword"
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600"
                     >
                       Reset Password
                     </a>
-                    <a
-                      href="#support"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600"
-                    >
-                      Support
-                    </a>
                     <div className="border-t border-gray-600"></div>
                     <a
-                      href="#logout"
+                      href="/"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        toast.success('Logged out successfully!');
+                        window.location.href = '/';
+                      }}
                       className="block px-4 py-2 text-sm text-teal-300 hover:bg-gray-600"
                     >
                       Logout

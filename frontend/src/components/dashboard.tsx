@@ -1,8 +1,11 @@
-// components/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
+import FundHistory from './fundhistory';
+import toast from 'react-hot-toast';
 
 const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [showAddFundHistory, setShowAddFundHistory] = useState(false);
+  const [fundAmount, setFundAmount] = useState('');
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -12,27 +15,91 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Sample dashboard metrics
+  // Mocked User Profile Data
+  const userProfile = {
+    name: "Anup Mishra",
+    totalIncome: "$3,450",
+    walletBalance: "$1,200",
+    totalWithdrawal: "$2,250",
+    country: "India",
+    joinDate: "2023-05-15",
+    activeDate: "2025-04-10",
+    referralLink: "https://yourapp.com/referral/abcd1234"
+  };
+
+  // Metrics Data (Dashboard)
   const metrics = [
-    { title: 'Total Instances', value: '24', change: '+2', icon: 'server' },
-    { title: 'Storage Used', value: '1.8TB', change: '+0.3TB', icon: 'database' },
-    { title: 'Monthly Cost', value: '$2,145', change: '-$125', icon: 'cash' },
-    { title: 'Active Users', value: '348', change: '+42', icon: 'users' }
+    { title: 'Total Team', value: '125', change: '+15', icon: 'users' },
+    { title: 'Active Team', value: '78', change: '+8', icon: 'users' },
+    { title: 'Total Referrals', value: '94', change: '+10', icon: 'user-plus' },
+    { title: 'Active Referrals', value: '60', change: '+6', icon: 'user-check' },
   ];
+
+  // Mock fund history data
+  type FundItem = {
+    id: string;
+    amount: string;
+    status: 'completed' | 'pending' | 'failed';
+    date: string;
+    method: 'Credit Card' | 'PayPal' | 'Bank Transfer' | 'Crypto';
+  };
+  
+    const fundHistory: FundItem[] = [
+    { id: "1", amount: "$200", status: "completed", date: "2025-04-09", method: "Credit Card" as const },
+    { id: "2", amount: "$150", status: "completed", date: "2025-04-01", method: "PayPal" as const},
+    { id: "3", amount: "$300", status: "pending", date: "2025-03-28", method: "Bank Transfer" as const},
+    { id: "4", amount: "$100", status: "completed", date: "2025-03-15", method: "Crypto" as const},
+    { id: "5", amount: "$250", status: "failed", date: "2025-03-10", method: "Credit Card" as const},
+  ];
+
+  const handleAddFund = () => {
+    // Here you would integrate with payment gateway
+    toast(` 🚧 Adding $${fundAmount} to your wallet. Payment gateway will be integrated in the future.`);
+    setFundAmount('');
+  };
+
+  const renderIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'users':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        );
+      case 'user-plus':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        );
+      case 'user-check':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+    }
+  };
   
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-900 min-h-screen">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Dashboard</h1>
         <p className="text-gray-400 mt-1">Welcome to your cloud management portal</p>
       </div>
-      
+
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {metrics.map((metric, index) => (
           <div 
             key={index}
-            className="bg-gray-700 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
+            className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
             style={{
               opacity: animationProgress === 100 ? 1 : 0,
               transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
@@ -41,7 +108,7 @@ const Dashboard: React.FC = () => {
           >
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0 rounded-md p-3 bg-gray-800">
+                <div className="flex-shrink-0 rounded-md p-3 bg-gray-900">
                   {renderIcon(metric.icon)}
                 </div>
                 <div className="ml-5 w-0 flex-1">
@@ -55,7 +122,7 @@ const Dashboard: React.FC = () => {
                           {metric.value}
                         </div>
                         <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                          metric.change.startsWith('+') ? 'text-green-400' : 'text-red-400'
+                          metric.change.startsWith('+') ? 'text-teal-400' : 'text-red-400'
                         }`}>
                           {metric.change}
                         </div>
@@ -68,146 +135,127 @@ const Dashboard: React.FC = () => {
           </div>
         ))}
       </div>
-      
-      {/* Recent Activity Section */}
-      <div className="mt-8">
-        <h2 className="text-lg font-medium text-white mb-4">Recent Activity</h2>
-        <div className="bg-gray-700 shadow overflow-hidden rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="space-y-4">
-              {[
-                { user: 'Sarah Chen', action: 'deployed a new instance', time: '2 hours ago', severity: 'normal' },
-                { user: 'Alex Johnson', action: 'updated firewall rules', time: '5 hours ago', severity: 'warning' },
-                { user: 'Maria Garcia', action: 'created a new database', time: '1 day ago', severity: 'normal' },
-                { user: 'John Smith', action: 'deleted storage bucket', time: '2 days ago', severity: 'critical' }
-              ].map((activity, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-center"
-                  style={{
-                    opacity: animationProgress === 100 ? 1 : 0,
-                    transform: `translateX(${animationProgress === 100 ? '0' : '-20px'})`,
-                    transition: `all 0.5s ease-out ${0.4 + index * 0.1}s`
-                  }}
-                >
-                  <div className={`flex-shrink-0 h-3 w-3 rounded-full ${
-                    activity.severity === 'critical' ? 'bg-red-400' : 
-                    activity.severity === 'warning' ? 'bg-yellow-400' : 'bg-teal-400'
-                  }`}></div>
-                  <div className="ml-3 flex-1">
-                    <p className="text-sm text-white">
-                      <span className="font-medium">{activity.user}</span>
-                      <span className="text-gray-300"> {activity.action}</span>
-                    </p>
-                    <p className="text-xs text-gray-400">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
+
+      {/* User Card - Redesigned */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        {/* User Profile */}
+        <div className="lg:col-span-2 bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold tracking-wide text-teal-400">
+              User Profile
+            </h2>
+            <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
+              Active
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Resources Section */}
-      <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <div 
-          className="bg-gray-700 rounded-lg shadow"
-          style={{
-            opacity: animationProgress === 100 ? 1 : 0,
-            transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
-            transition: `all 0.5s ease-out 0.8s`
-          }}
-        >
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg font-medium text-white mb-4">Resource Utilization</h3>
-            
-            {['CPU Usage', 'Memory', 'Network', 'Disk I/O'].map((resource, index) => (
-              <div key={index} className="mt-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium text-gray-300">{resource}</div>
-                  <div className="text-sm text-teal-300">
-                    {Math.floor(Math.random() * 30) + 40}%
-                  </div>
-                </div>
-                <div className="mt-2 w-full bg-gray-600 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-teal-600 to-teal-400 h-2 rounded-full" 
-                    style={{ width: `${Math.floor(Math.random() * 30) + 40}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Name</div>
+              <div className="text-white font-medium mt-1">{userProfile.name}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Total Income</div>
+              <div className="text-white font-medium mt-1">{userProfile.totalIncome}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Wallet Balance</div>
+              <div className="text-white font-medium mt-1">{userProfile.walletBalance}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Total Withdrawal</div>
+              <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Country</div>
+              <div className="text-white font-medium mt-1">{userProfile.country}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg">
+              <div className="text-gray-400 text-sm">Join Date</div>
+              <div className="text-white font-medium mt-1">{userProfile.joinDate}</div>
+            </div>
+            <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
+              <div className="text-gray-400 text-sm">Active Date</div>
+              <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
+            </div>
+          </div>
+          
+          <div className="mt-6">
+            <div className="text-sm text-gray-400 mb-2">Referral Link</div>
+            <div className="flex flex-wrap gap-3">
+              <input
+                type="text"
+                readOnly
+                value={userProfile.referralLink}
+                className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
+              />
+              <button
+                onClick={() =>{ 
+                  navigator.clipboard.writeText(userProfile.referralLink);
+                  toast.success('Link copied!');
+                }}
+                className="bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-all duration-300 text-sm"
+              >
+                Copy Link
+              </button>
+            </div>
           </div>
         </div>
         
-        <div 
-          className="bg-gray-700 rounded-lg shadow"
-          style={{
-            opacity: animationProgress === 100 ? 1 : 0,
-            transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
-            transition: `all 0.5s ease-out 1s`
-          }}
-        >
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg font-medium text-white mb-4">Active Services</h3>
-            
-            <div className="space-y-3">
-              {[
-                { name: 'Web Server', status: 'Healthy', instances: 4 },
-                { name: 'Database Cluster', status: 'Warning', instances: 2 },
-                { name: 'Storage Service', status: 'Healthy', instances: 1 },
-                { name: 'Load Balancer', status: 'Healthy', instances: 2 },
-                { name: 'Authentication Service', status: 'Critical', instances: 3 }
-              ].map((service, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className={`h-2.5 w-2.5 rounded-full mr-2 ${
-                      service.status === 'Healthy' ? 'bg-green-400' : 
-                      service.status === 'Warning' ? 'bg-yellow-400' : 'bg-red-400'
-                    }`}></div>
-                    <span className="text-sm text-gray-300">{service.name}</span>
-                  </div>
-                  <div className="text-xs text-gray-400">{service.instances} instances</div>
+        {/* Add Fund Card */}
+        <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
+          <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
+            Add Funds
+          </h2>
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">
+                Enter Amount
+              </label>
+              <div className="flex">
+                <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
+                  <span className="text-gray-400">$</span>
                 </div>
-              ))}
+                <input
+                  type="number"
+                  value={fundAmount}
+                  onChange={(e) => setFundAmount(e.target.value)}
+                  className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  placeholder="0.00"
+                />
+              </div>
             </div>
+            
+            <button
+              onClick={handleAddFund}
+              disabled={!fundAmount}
+              className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
+                fundAmount
+                  ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              Add Funds
+            </button>
+            
+            <button
+              onClick={() => {
+                const nextState = !showAddFundHistory;
+                setShowAddFundHistory(!showAddFundHistory);
+                toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
+              }}
+              className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
+            >
+              {showAddFundHistory ? 'Hide' : 'View'} Fund History
+            </button>
           </div>
         </div>
       </div>
+      {showAddFundHistory && <FundHistory fundHistory={fundHistory} type='add' />}
+      
     </div>
   );
-};
-
-// Helper function to render different icons
-const renderIcon = (icon: string) => {
-  switch (icon) {
-    case 'server':
-      return (
-        <svg className="h-6 w-6 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-        </svg>
-      );
-    case 'database':
-      return (
-        <svg className="h-6 w-6 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-        </svg>
-      );
-    case 'cash':
-      return (
-        <svg className="h-6 w-6 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      );
-    case 'users':
-      return (
-        <svg className="h-6 w-6 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      );
-    default:
-      return null;
-  }
 };
 
 export default Dashboard;

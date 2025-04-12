@@ -52,7 +52,7 @@ export default function Login() {
     if(formData.password.length < 6) return toast.error("Password must be at least 6 characters");
 
     toast.success('Login successfully!');
-    setTimeout(() => navigate('/home'), 1500);
+    setTimeout(() => navigate('/home'), 1000);
   };
 
   // Handle cursor movement for button animation
@@ -195,6 +195,7 @@ export default function Login() {
             <div className="mt-6 grid grid-cols-3 gap-3">
               <button
                 type="button"
+                onClick={() => toast('🚧 Google Sign-in coming soon!')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm bg-gray-700 hover:bg-gray-600 transition-colors"
               >
                 <span className="sr-only">Sign in with Google</span>
@@ -205,6 +206,7 @@ export default function Login() {
               
               <button
                 type="button"
+                onClick={() => toast('🚧 GitHub Sign-in coming soon!')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm bg-gray-700 hover:bg-gray-600 transition-colors"
               >
                 <span className="sr-only">Sign in with GitHub</span>
@@ -215,6 +217,7 @@ export default function Login() {
               
               <button
                 type="button"
+                onClick={() => toast('🚧 Microsoft Sign-in coming soon!')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm bg-gray-700 hover:bg-gray-600 transition-colors"
               >
                 <span className="sr-only">Sign in with Microsoft</span>

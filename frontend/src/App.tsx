@@ -6,8 +6,8 @@ import { Toaster } from 'react-hot-toast'
 import TermsAndConditions from './pages/TermsAndConditions'
 import ForgotPassword from './pages/forgotPassword'
 import Landing from './pages/landing'
-import Home from './pages/home'
 import HomeLayout from './pages/home'
+import Profile from './components/profile'
 
 function App() {
    // Mock user data — in a real app, you'd fetch this from context or auth
@@ -25,6 +25,7 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
+        <Route path="/profile" element={<Profile/>}/>
         {/* Wrap your home page with HomeLayout and pass user data */}
         <Route
           path="/home"
