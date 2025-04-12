@@ -20,7 +20,7 @@ function App() {
     <>
     <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<Landing/>}/>
+        <Route path="/home" element={<Landing/>}/>
         <Route path="/register" element={<Registration/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
@@ -28,7 +28,7 @@ function App() {
         <Route path="/profile" element={<Profile/>}/>
         {/* Wrap your home page with HomeLayout and pass user data */}
         <Route
-          path="/home"
+          path="/"
           element={
             <HomeLayout currentUser={currentUser}/>
           }
