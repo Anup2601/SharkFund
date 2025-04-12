@@ -1,0 +1,44 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.section {
+  padding: 4rem 2rem;
+  width: 100vw;
+}
+
+.section-content {
+  width: 100vw;
+  margin: auto;
+}
+
+.dark {
+  background-color: #111;
+  color: white;
+}
+
+.light {
+  background-color: #f9f9f9;
+  color: #111;
+}
+
+/* Light Background */
+.light-bg {
+  background-color: #f9f9f9;
+  color: #111;
+  width: 100vw;
+}
+
+/* Dark Background */
+.dark-bg {
+  background-color: #111;
+  color: #f9f9f9;
+  width: 100vw;
+}
+
