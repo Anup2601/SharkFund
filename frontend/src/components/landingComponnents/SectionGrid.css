@@ -1,0 +1,49 @@
+  .section-grid {
+    padding: 80px 20px;
+    
+  }
+
+  .section-grid .container {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 50px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+
+  .grid-item {
+    text-align: center;
+    justify-self: center;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 3px solid oklch(67.7% 0.152 181.912);
+    border-radius: 20px;
+  }
+
+
+  .grid-item .icon{  
+    margin-bottom: 20px !important; 
+    color: oklch(67.7% 0.152 181.912);
+    justify-self: center;
+  }
+  .grid-item .icon img {  width: 80px; }
+
+  .grid-item h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .grid-item p {
+    font-size: 16px;
+    line-height: 1.5;
+  }

@@ -106,7 +106,7 @@ export default function ForgotPassword() {
               <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Mail className='size-5 text-base-content/40 '/>
+                  <Mail className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -125,7 +125,7 @@ export default function ForgotPassword() {
               <label className="block text-teal-300 mb-2" htmlFor="newpassword"> New Password </label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-base-content/40 '/>
+                  <Lock className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -143,9 +143,9 @@ export default function ForgotPassword() {
                   onClick={()=> setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-base-content/40 '/>
+                    <EyeOff className='size-5 text-white '/>
                   ) : (
-                    <Eye className='size-5 text-base-content/40 '/>
+                    <Eye className='size-5 text-white '/>
                   )}
                 </button>
               </div>
@@ -155,7 +155,7 @@ export default function ForgotPassword() {
               <label className="block text-teal-300 mb-2" htmlFor="confirmpassword"> Confirm Password </label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-base-content/40 '/>
+                  <Lock className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -173,9 +173,9 @@ export default function ForgotPassword() {
                   onClick={()=> setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-base-content/40 '/>
+                    <EyeOff className='size-5 text-white '/>
                   ) : (
-                    <Eye className='size-5 text-base-content/40 '/>
+                    <Eye className='size-5 text-white '/>
                   )}
                 </button>
               </div>

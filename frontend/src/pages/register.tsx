@@ -115,7 +115,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="name">Name</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <User className='size-5 text-base-content/40 '/>
+                  <User className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -134,7 +134,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Mail className='size-5 text-base-content/40 '/>
+                  <Mail className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -153,7 +153,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="mobile">Mobile Number</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Phone className='size-5 text-base-content/40 '/>
+                  <Phone className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -171,7 +171,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="Referral">Referral ID</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Share2Icon className='size-5 text-base-content/40 '/>
+                  <Share2Icon className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -190,7 +190,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="password">Password </label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-base-content/40 '/>
+                  <Lock className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -208,9 +208,9 @@ export default function Registration() {
                   onClick={()=> setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-base-content/40 '/>
+                    <EyeOff className='size-5 text-white '/>
                   ) : (
-                    <Eye className='size-5 text-base-content/40 '/>
+                    <Eye className='size-5 text-white '/>
                   )}
                 </button>
               </div>
@@ -220,7 +220,7 @@ export default function Registration() {
               <label className="block text-teal-300 mb-2" htmlFor="confirmPassword">Confirm Password </label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-base-content/40 '/>
+                  <Lock className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -238,9 +238,9 @@ export default function Registration() {
                   onClick={()=> setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-base-content/40 '/>
+                    <EyeOff className='size-5 text-white '/>
                   ) : (
-                    <Eye className='size-5 text-base-content/40 '/>
+                    <Eye className='size-5 text-white '/>
                   )}
                 </button>
               </div>
