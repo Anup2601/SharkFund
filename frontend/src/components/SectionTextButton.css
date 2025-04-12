@@ -1,0 +1,45 @@
+.section-text-button {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.section-text-button .container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.section-text-button h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.section-text-button p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.section-text-button button {
+  padding: 12px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: oklch(67.7% 0.152 181.912);
+  color: #fff;
+  border-radius: 4px;
+}
+.section-text-button button:hover {
+  background-color: oklch(77.7% 0.152 181.912);
+}
+
+
+
+.dark-bg {
+  background-color: #111;
+  color: #fff;
+}
+
+.light-bg {
+  background-color: #f5f5f5;
+  color: #111;
+}

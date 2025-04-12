@@ -8,6 +8,7 @@ import ForgotPassword from './pages/forgotPassword'
 import Landing from './pages/landing'
 import HomeLayout from './pages/home'
 import Profile from './components/profile'
+import React from "react";
 
 function App() {
    // Mock user data — in a real app, you'd fetch this from context or auth
