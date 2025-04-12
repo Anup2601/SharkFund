@@ -1,7 +1,7 @@
-// components/Navbar.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import Avatar from "../assets/avatar.png";
 import toast from 'react-hot-toast';
+import { Menu } from 'lucide-react';
 
 interface NavbarProps {
   currentUser: {
@@ -9,9 +9,10 @@ interface NavbarProps {
     email: string;
     profileImage: string;
   };
+  toggleSidebar?: () => void; 
 }
 
-const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentUser, toggleSidebar }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -33,6 +34,15 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
     <nav className="bg-gray-800 border-b border-gray-700">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          {/* Menu Toggle Button - Only visible on mobile */}
+          <button
+            onClick={toggleSidebar}
+            className="md:hidden p-2 mr-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none"
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={24} />
+          </button>
+          
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
@@ -55,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
                 className="flex items-center max-w-xs rounded-full text-sm focus:outline-none focus:shadow-outline"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <span className="mr-3 font-medium text-gray-300">{currentUser.name}</span>
+                <span className="mr-3 font-medium text-gray-300 hidden sm:inline-block">{currentUser.name}</span>
                 <img
                   className="h-8 w-8 rounded-full object-cover border-2 border-teal-400"
                   src={Avatar}
