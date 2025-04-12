@@ -20,13 +20,13 @@ const Footer = () => {
             <li><a href="#section2">Company</a></li>
             <li><a href="#section6">Features</a></li>
             <li><a href="#section8">Vision</a></li>
-            <li><a href="#section10">Contact Us</a></li>
+            <li><a href="#section10">Contact</a></li>
           </ul>
         </div>
 
         {/* Social Links */}
         <div className="footer-right">
-          <h3>Follow Us</h3>
+          <h3>Follow</h3>
           <div className="social-icons">
             <a href="#"><FaFacebook /></a>
             <a href="#"><FaTwitter /></a>

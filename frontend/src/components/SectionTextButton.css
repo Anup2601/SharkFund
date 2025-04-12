@@ -24,10 +24,15 @@
   font-size: 16px;
   cursor: pointer;
   border: none;
-  background-color: #ff6600;
-  color: white;
+  background-color: oklch(67.7% 0.152 181.912);
+  color: #fff;
   border-radius: 4px;
 }
+.section-text-button button:hover {
+  background-color: oklch(77.7% 0.152 181.912);
+}
+
+
 
 .dark-bg {
   background-color: #111;

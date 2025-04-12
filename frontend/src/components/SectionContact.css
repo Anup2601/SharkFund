@@ -27,6 +27,8 @@
 }
 
 .contact-form h2 {
+  font-size: 30px;
+  font-weight: 600;
   margin-bottom: 20px;
 }
 
@@ -48,18 +50,20 @@ input::placeholder, textarea::placeholder {
 
 .contact-form button {
   padding: 12px 30px;
-  background-color: #ff6600;
+  background-color: oklch(67.7% 0.152 181.912);
   color: white;
   border: none;
   cursor: pointer;
 }
 
 .contact-info h3 {
+  font-size: 20px;
+  font-weight: 600;
   margin-bottom: 20px;
 }
 
 .contact-info p {
-  font-size: 16px;
+  font-size: 20px;
   margin-bottom: 15px;
   display: flex;
   align-items: center;
@@ -67,8 +71,8 @@ input::placeholder, textarea::placeholder {
 
 .contact-info .icon {
   margin-right: 10px;
-  color: #ff6600;
-  font-size: 20px;
+  color: oklch(67.7% 0.152 181.912);
+  font-size: 25px;
 }
 
 .dark-bg {

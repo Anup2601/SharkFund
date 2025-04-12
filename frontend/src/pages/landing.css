@@ -19,7 +19,7 @@ body {
 }
 
 .dark {
-  background-color: #111;
+  background-color: oklch(21% 0.034 264.665);
   color: white;
 }
 
@@ -37,7 +37,7 @@ body {
 
 /* Dark Background */
 .dark-bg {
-  background-color: #111;
+  background-color: oklch(21% 0.034 264.665);
   color: #f9f9f9;
   width: 100vw;
 }
