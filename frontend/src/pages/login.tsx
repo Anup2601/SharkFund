@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Eye, EyeOff, Lock, Mail, } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import axios from 'axios';
 
 export default function Login() {
   const [floatY, setFloatY] = useState(0);
   const [rotation, setRotation] = useState(0);
-  const [showPassword, setShowPassword]=useState(false);
-  const navigate= useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [formData, setFormData] = useState({
-    email: '',
+    login: '',
     password: '',
     rememberMe: false
   });
+
+  const API_BASE_URL = import.meta.env.REACT_APP_API_URL ?? "https://127.0.0.1:7877";
 
   // Animation for floating elements
   useEffect(() => {
@@ -40,19 +44,68 @@ export default function Login() {
     }));
   };
 
+  // Determine if the login is an email or username
+  const isEmail = (login: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
+  };
+
   // Handle form submission
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    if(!formData.email.trim()) return toast.error("Email is required");
+    
+    // Form validation
+    if (!formData.login.trim()) {
+      return toast.error("Email or Username is required");
+    }
 
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email formate");
+    if (!formData.password) {
+      return toast.error("Password is required");
+    }
 
-    if(!formData.password) return toast.error("Password is required");
+    // Make API request
+    try {
+      setIsLoading(true);
+      
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/login/`,
+        {
+          login: formData.login,
+          password: formData.password
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true  // Important for receiving cookies
+        }
+      );
 
-    if(formData.password.length < 6) return toast.error("Password must be at least 6 characters");
-
-    toast.success('Login successfully!');
-    setTimeout(() => navigate('/home'), 1000);
+      // Handle successful login
+      toast.success(response.data.message || 'Login successful!');
+      
+      // Store user data if needed
+      // localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Navigate to dashboard/home after successful login
+      setTimeout(() => navigate('/home'), 1000);
+    } catch (error) {
+      // Handle login errors
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        
+        if (errorData?.errors?.general) {
+          toast.error(errorData.errors.general[0]);
+        } else if (errorData?.errors?.login) {
+          toast.error(errorData.errors.login[0]);
+        } else if (errorData?.errors?.password) {
+          toast.error(errorData.errors.password[0]);
+        } else {
+          toast.error('Login failed. Please try again.');
+        }
+      } else {
+        toast.error('Network error. Please check your connection.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Handle cursor movement for button animation
@@ -96,20 +149,19 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
 
           <div>
-              <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
+              <label className="block text-teal-300 mb-2" htmlFor="login">Email or Username</label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
                   <Mail className='size-5 text-white '/>
                 </div>
               <input
                 className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="email"
-                id="email"
-                name="email"
-                placeholder='Enter Your Email'
-                value={formData.email}
+                type="text"
+                id="login"
+                name="login"
+                placeholder='Enter Your Email or Username'
+                value={formData.login}
                 onChange={handleChange}
-               
               />
               </div>
             </div>
@@ -128,7 +180,6 @@ export default function Login() {
                 placeholder='Enter Your password'
                 value={formData.password}
                 onChange={handleChange}
-                
               />
               <button 
                   type='button'
@@ -169,8 +220,9 @@ export default function Login() {
               <button 
                 type="submit" 
                 className="w-full relative bg-gradient-to-r from-teal-600 to-teal-400 hover:from-teal-500 hover:to-teal-300 text-white py-3 px-6 rounded font-bold transition-all duration-300 transform hover:scale-105"
+                disabled={isLoading}
               >
-                <span>Sign In</span>
+                <span>{isLoading ? 'Signing In...' : 'Sign In'}</span>
                 <div className="absolute inset-0 bg-white opacity-10 rounded-full w-12 h-12 pointer-events-none" 
                   style={{
                     left: `${cursorPosition.x % 200}px`,
@@ -232,7 +284,8 @@ export default function Login() {
             Don't have an account? <a href="/register" className="text-teal-300 hover:underline">Sign up</a>
           </p>
         </div>
-        {/* Animated Illustration Section - For desktop, we'll put this on the left */}
+        
+        {/* Animated Illustration Section - not changed for brevity */}
         <div className="w-full md:w-1/2 bg-gray-900 flex items-center justify-center relative rounded-t-lg md:rounded-l-lg md:rounded-tr-none order-1 md:order-1">
           <div className="w-full h-full flex items-center justify-center">
             {/* Digital Network Animation */}

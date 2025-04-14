@@ -94,164 +94,330 @@ const Dashboard: React.FC = () => {
         <p className="text-gray-400 mt-1">Welcome to your cloud management portal</p>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        {metrics.map((metric, index) => (
-          <div 
-            key={index}
-            className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
-            style={{
-              opacity: animationProgress === 100 ? 1 : 0,
-              transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
-              transition: `all 0.5s ease-out ${index * 0.1}s`
-            }}
-          >
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 rounded-md p-3 bg-gray-900">
-                  {renderIcon(metric.icon)}
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-400 truncate">
-                      {metric.title}
-                    </dt>
-                    <dd>
-                      <div className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-white">
-                          {metric.value}
-                        </div>
-                        <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                          metric.change.startsWith('+') ? 'text-teal-400' : 'text-red-400'
-                        }`}>
-                          {metric.change}
-                        </div>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
+      {/* Mobile-specific order: User Profile first, Metrics second */}
+      <div className="block md:hidden">
+        {/* User Card - For Mobile */}
+        <div className="grid grid-cols-1 gap-6 mb-10">
+          {/* User Profile */}
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold tracking-wide text-teal-400">
+                User Profile
+              </h2>
+              <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
+                Active
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Name</div>
+                <div className="text-white font-medium mt-1">{userProfile.name}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalIncome}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Wallet Balance</div>
+                <div className="text-white font-medium mt-1">{userProfile.walletBalance}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Withdrawal</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Country</div>
+                <div className="text-white font-medium mt-1">{userProfile.country}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Join Date</div>
+                <div className="text-white font-medium mt-1">{userProfile.joinDate}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
+                <div className="text-gray-400 text-sm">Active Date</div>
+                <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
+              </div>
+            </div>
+            
+            <div className="mt-6">
+              <div className="text-sm text-gray-400 mb-2">Referral Link</div>
+              <div className="flex flex-wrap gap-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={userProfile.referralLink}
+                  className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
+                />
+                <button
+                  onClick={() =>{ 
+                    navigator.clipboard.writeText(userProfile.referralLink);
+                    toast.success('Link copied!');
+                  }}
+                  className="bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-all duration-300 text-sm"
+                >
+                  Copy Link
+                </button>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* User Card - Redesigned */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-        {/* User Profile */}
-        <div className="lg:col-span-2 bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold tracking-wide text-teal-400">
-              User Profile
+          
+          {/* Add Fund Card */}
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
+            <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
+              Add Funds
             </h2>
-            <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
-              Active
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Name</div>
-              <div className="text-white font-medium mt-1">{userProfile.name}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Total Income</div>
-              <div className="text-white font-medium mt-1">{userProfile.totalIncome}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Wallet Balance</div>
-              <div className="text-white font-medium mt-1">{userProfile.walletBalance}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Total Withdrawal</div>
-              <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Country</div>
-              <div className="text-white font-medium mt-1">{userProfile.country}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg">
-              <div className="text-gray-400 text-sm">Join Date</div>
-              <div className="text-white font-medium mt-1">{userProfile.joinDate}</div>
-            </div>
-            <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
-              <div className="text-gray-400 text-sm">Active Date</div>
-              <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
-            </div>
-          </div>
-          
-          <div className="mt-6">
-            <div className="text-sm text-gray-400 mb-2">Referral Link</div>
-            <div className="flex flex-wrap gap-3">
-              <input
-                type="text"
-                readOnly
-                value={userProfile.referralLink}
-                className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
-              />
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">
+                  Enter Amount
+                </label>
+                <div className="flex">
+                  <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
+                    <span className="text-gray-400">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    value={fundAmount}
+                    onChange={(e) => setFundAmount(e.target.value)}
+                    className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              
               <button
-                onClick={() =>{ 
-                  navigator.clipboard.writeText(userProfile.referralLink);
-                  toast.success('Link copied!');
-                }}
-                className="bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-all duration-300 text-sm"
+                onClick={handleAddFund}
+                disabled={!fundAmount}
+                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
+                  fundAmount
+                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
               >
-                Copy Link
+                Add Funds
+              </button>
+              
+              <button
+                onClick={() => {
+                  const nextState = !showAddFundHistory;
+                  setShowAddFundHistory(!showAddFundHistory);
+                  toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
+                }}
+                className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
+              >
+                {showAddFundHistory ? 'Hide' : 'View'} Fund History
               </button>
             </div>
           </div>
         </div>
-        
-        {/* Add Fund Card */}
-        <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
-          <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
-            Add Funds
-          </h2>
-          
-          <div className="space-y-6">
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">
-                Enter Amount
-              </label>
-              <div className="flex">
-                <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
-                  <span className="text-gray-400">$</span>
+
+        {/* Metrics Cards for mobile (after user profile) */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
+          {metrics.map((metric, index) => (
+            <div 
+              key={index}
+              className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
+              style={{
+                opacity: animationProgress === 100 ? 1 : 0,
+                transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
+                transition: `all 0.5s ease-out ${index * 0.1}s`
+              }}
+            >
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 rounded-md p-3 bg-gray-900">
+                    {renderIcon(metric.icon)}
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-400 truncate">
+                        {metric.title}
+                      </dt>
+                      <dd>
+                        <div className="flex items-baseline">
+                          <div className="text-2xl font-semibold text-white">
+                            {metric.value}
+                          </div>
+                          <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+                            metric.change.startsWith('+') ? 'text-teal-400' : 'text-red-400'
+                          }`}>
+                            {metric.change}
+                          </div>
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
-                <input
-                  type="number"
-                  value={fundAmount}
-                  onChange={(e) => setFundAmount(e.target.value)}
-                  className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  placeholder="0.00"
-                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop layout (original order): Metrics first, User Profile second */}
+      <div className="hidden md:block">
+        {/* Metrics Cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          {metrics.map((metric, index) => (
+            <div 
+              key={index}
+              className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
+              style={{
+                opacity: animationProgress === 100 ? 1 : 0,
+                transform: `translateY(${animationProgress === 100 ? '0' : '20px'})`,
+                transition: `all 0.5s ease-out ${index * 0.1}s`
+              }}
+            >
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 rounded-md p-3 bg-gray-900">
+                    {renderIcon(metric.icon)}
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-400 truncate">
+                        {metric.title}
+                      </dt>
+                      <dd>
+                        <div className="flex items-baseline">
+                          <div className="text-2xl font-semibold text-white">
+                            {metric.value}
+                          </div>
+                          <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+                            metric.change.startsWith('+') ? 'text-teal-400' : 'text-red-400'
+                          }`}>
+                            {metric.change}
+                          </div>
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* User Card - Redesigned */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          {/* User Profile */}
+          <div className="lg:col-span-2 bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold tracking-wide text-teal-400">
+                User Profile
+              </h2>
+              <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
+                Active
               </div>
             </div>
             
-            <button
-              onClick={handleAddFund}
-              disabled={!fundAmount}
-              className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                fundAmount
-                  ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
-                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Add Funds
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Name</div>
+                <div className="text-white font-medium mt-1">{userProfile.name}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalIncome}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Wallet Balance</div>
+                <div className="text-white font-medium mt-1">{userProfile.walletBalance}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Withdrawal</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Country</div>
+                <div className="text-white font-medium mt-1">{userProfile.country}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Join Date</div>
+                <div className="text-white font-medium mt-1">{userProfile.joinDate}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
+                <div className="text-gray-400 text-sm">Active Date</div>
+                <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
+              </div>
+            </div>
             
-            <button
-              onClick={() => {
-                const nextState = !showAddFundHistory;
-                setShowAddFundHistory(!showAddFundHistory);
-                toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
-              }}
-              className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
-            >
-              {showAddFundHistory ? 'Hide' : 'View'} Fund History
-            </button>
+            <div className="mt-6">
+              <div className="text-sm text-gray-400 mb-2">Referral Link</div>
+              <div className="flex flex-wrap gap-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={userProfile.referralLink}
+                  className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
+                />
+                <button
+                  onClick={() =>{ 
+                    navigator.clipboard.writeText(userProfile.referralLink);
+                    toast.success('Link copied!');
+                  }}
+                  className="bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-all duration-300 text-sm"
+                >
+                  Copy Link
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Add Fund Card */}
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
+            <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
+              Add Funds
+            </h2>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">
+                  Enter Amount
+                </label>
+                <div className="flex">
+                  <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
+                    <span className="text-gray-400">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    value={fundAmount}
+                    onChange={(e) => setFundAmount(e.target.value)}
+                    className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              
+              <button
+                onClick={handleAddFund}
+                disabled={!fundAmount}
+                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
+                  fundAmount
+                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Add Funds
+              </button>
+              
+              <button
+                onClick={() => {
+                  const nextState = !showAddFundHistory;
+                  setShowAddFundHistory(!showAddFundHistory);
+                  toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
+                }}
+                className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
+              >
+                {showAddFundHistory ? 'Hide' : 'View'} Fund History
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
       {showAddFundHistory && <FundHistory fundHistory={fundHistory} type='add' />}
       
     </div>

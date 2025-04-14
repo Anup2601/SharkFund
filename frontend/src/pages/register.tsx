@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail, Phone, Share2Icon, User } from 'lucide-react';
-
+import axios from 'axios';
 
 export default function Registration() {
   const [floatY, setFloatY] = useState(0);
   const [rotation, setRotation] = useState(0);
   const [showPassword, setShowPassword]=useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -16,7 +18,8 @@ export default function Registration() {
     password: '',
     confirmPassword: '',
     Referral: '',
-    mobile:" ",
+    mobile: '',
+    address: '',
     acceptedTerms: false,
   });
 
@@ -43,34 +46,81 @@ export default function Registration() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    
+    // Clear error for this field when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      });
+    }
   };
 
-  // Handle form submission
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  // Handle form submission with API integration
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     
+    // Frontend validation
     if(!formData.name.trim()) return toast.error("Name is required");
-
     if(!formData.email.trim()) return toast.error("Email is required");
-
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email formate");
-
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
     if(!formData.password) return toast.error("Password is required");
+    if(formData.password.length < 8) return toast.error("Password must be at least 8 characters");
+    if(formData.password !== formData.confirmPassword) return toast.error("Passwords do not match");
+    if(!formData.acceptedTerms) return toast.error("Please accept the Terms and Conditions");
 
-    if(formData.password.length < 6) return toast.error("Password must be at least 6 characters");
-  
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
+    setIsLoading(true);
+    setFieldErrors({});
+    
+    try {
+      // Prepare the data for the API format
+      const apiData = {
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirmPassword,
+        address: formData.address || formData.name, // Using name as address if not provided
+        mobile_number: formData.mobile || ''
+      };
+      
+      // Make the API request
+      const response = await axios.post(
+        'http://127.0.0.1:7877/api/v1/register/',
+        apiData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      
+      toast.success('Registration successful! Redirecting to login...');
+      
+      // Store user data in localStorage if needed
+      localStorage.setItem('userData', JSON.stringify({
+        username: response.data.user.username,
+        email: response.data.user.email
+      }));
+      
+      // Redirect after a delay
+      setTimeout(() => navigate('/login'), 1500);
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      
+      // Handle API error responses
+      if (axios.isAxiosError(error) && error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        setFieldErrors(errors);
+        
+        // Show the first error as a toast
+        const firstErrorField = Object.keys(errors)[0];
+        const firstError = errors[firstErrorField][0];
+        toast.error(firstError);
+      } else {
+        toast.error('Registration failed. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
     }
-  
-    if (!formData.acceptedTerms) {
-      toast.error("Please accept the Terms and Conditions.");
-      return;
-    }
-  
-    toast.success('Registration submitted successfully!');
-    setTimeout(() => navigate('/login'), 1500);
   };
 
   // Handle cursor movement for button animation
@@ -111,161 +161,190 @@ export default function Registration() {
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+            <div>
               <label className="block text-teal-300 mb-2" htmlFor="name">Name</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <User className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <User className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="text"
-                id="name"
-                name="name"
-                placeholder='Enter Your name'
-                value={formData.name}
-                onChange={handleChange}
-                
-              />
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.name ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder='Enter your name'
+                  value={formData.name}
+                  onChange={handleChange}
+                />
               </div>
+              {fieldErrors.name && <p className="text-red-500 text-sm mt-1">{fieldErrors.name[0]}</p>}
             </div>
             
             <div>
               <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Mail className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Mail className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="email"
-                id="email"
-                name="email"
-                placeholder='Enter Your Email'
-                value={formData.email}
-                onChange={handleChange}
-               
-              />
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.email ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder='Enter your email'
+                  value={formData.email}
+                  onChange={handleChange}
+                />
               </div>
+              {fieldErrors.email && <p className="text-red-500 text-sm mt-1">{fieldErrors.email[0]}</p>}
             </div>
             
             <div>
               <label className="block text-teal-300 mb-2" htmlFor="mobile">Mobile Number</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Phone className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Phone className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="number"
-                id="mobile"
-                name="mobile"
-                placeholder='Enter Your Mobile Number'
-                value={formData.mobile}
-                onChange={handleChange}
-              />
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.mobile_number ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type="text"
+                  id="mobile"
+                  name="mobile"
+                  placeholder='Enter your mobile number'
+                  value={formData.mobile}
+                  onChange={handleChange}
+                />
               </div>
+              {fieldErrors.mobile_number && <p className="text-red-500 text-sm mt-1">{fieldErrors.mobile_number[0]}</p>}
             </div>
 
             <div>
-              <label className="block text-teal-300 mb-2" htmlFor="Referral">Referral ID</label>
+              <label className="block text-teal-300 mb-2" htmlFor="address">Address</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Share2Icon className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <User className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="Referral"
-                id="Referral"
-                name="Referral"
-                placeholder='Enter Your Referral ID'
-                value={formData.Referral}
-                onChange={handleChange}
-                
-              />
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.address ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder='Enter your address'
+                  value={formData.address}
+                  onChange={handleChange}
+                />
+              </div>
+              {fieldErrors.address && <p className="text-red-500 text-sm mt-1">{fieldErrors.address[0]}</p>}
+            </div>
+
+            <div>
+              <label className="block text-teal-300 mb-2" htmlFor="Referral">Referral ID (Optional)</label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Share2Icon className='size-5 text-white'/>
+                </div>
+                <input
+                  className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                  type="text"
+                  id="Referral"
+                  name="Referral"
+                  placeholder='Enter your Referral ID (optional)'
+                  value={formData.Referral}
+                  onChange={handleChange}
+                />
               </div>
             </div>
             
             <div>
-              <label className="block text-teal-300 mb-2" htmlFor="password">Password </label>
+              <label className="block text-teal-300 mb-2" htmlFor="password">Password</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Lock className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type={showPassword?"text":"password"}
-                id="password"
-                name="password"
-                placeholder='Enter Your password'
-                value={formData.password}
-                onChange={handleChange}
-                
-              />
-              <button 
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.password ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder='Enter your password (min 8 characters)'
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <button 
                   type='button'
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center '
-                  onClick={()=> setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center'
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-white '/>
+                    <EyeOff className='size-5 text-white'/>
                   ) : (
-                    <Eye className='size-5 text-white '/>
+                    <Eye className='size-5 text-white'/>
                   )}
                 </button>
               </div>
+              {fieldErrors.password && <p className="text-red-500 text-sm mt-1">{fieldErrors.password[0]}</p>}
             </div>
             
             <div>
-              <label className="block text-teal-300 mb-2" htmlFor="confirmPassword">Confirm Password </label>
+              <label className="block text-teal-300 mb-2" htmlFor="confirmPassword">Confirm Password</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Lock className='size-5 text-white'/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type={showPassword?"text":"password"}
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder='Enter Your confirmPassword'
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                
-              />
-              <button 
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.confirm_password ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type={showPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder='Confirm your password'
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+                <button 
                   type='button'
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center '
-                  onClick={()=> setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center'
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className='size-5 text-white '/>
+                    <EyeOff className='size-5 text-white'/>
                   ) : (
-                    <Eye className='size-5 text-white '/>
+                    <Eye className='size-5 text-white'/>
                   )}
                 </button>
               </div>
+              {fieldErrors.confirm_password && <p className="text-red-500 text-sm mt-1">{fieldErrors.confirm_password[0]}</p>}
             </div>
 
             <div className="flex items-center space-x-2">
-                <input
-                    type="checkbox"
-                    id="acceptedTerms"
-                    name="acceptedTerms"
-                    checked={formData.acceptedTerms}
-                    onChange={handleChange}
-                    className="form-checkbox h-5 w-5 text-teal-500"
-                />
-                <label htmlFor="acceptedTerms" className="text-gray-300 text-sm">
-                    I accept the <a href="/terms" className="text-teal-400 underline hover:text-teal-300">Terms and Conditions</a>
-                </label>
+              <input
+                type="checkbox"
+                id="acceptedTerms"
+                name="acceptedTerms"
+                checked={formData.acceptedTerms}
+                onChange={handleChange}
+                className="form-checkbox h-5 w-5 text-teal-500"
+              />
+              <label htmlFor="acceptedTerms" className="text-gray-300 text-sm">
+                I accept the <a href="/terms" className="text-teal-400 underline hover:text-teal-300">Terms and Conditions</a>
+              </label>
             </div>
             
-            <div className="relative overflow-hidden pt-4 ">
+            {/* Display general errors if any */}
+            {fieldErrors.general && (
+              <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 p-3 rounded">
+                {fieldErrors.general.map((error, index) => (
+                  <p key={index}>{error}</p>
+                ))}
+              </div>
+            )}
+            
+            <div className="relative overflow-hidden pt-4">
               <button 
                 type="submit" 
-                className="w-full relative bg-gradient-to-r from-teal-600 to-teal-400 hover:from-teal-500 hover:to-teal-300 text-white py-3 px-6 rounded font-bold transition-all duration-300 transform hover:scale-105"
+                disabled={isLoading}
+                className={`w-full relative bg-gradient-to-r from-teal-600 to-teal-400 hover:from-teal-500 hover:to-teal-300 text-white py-3 px-6 rounded font-bold transition-all duration-300 transform ${isLoading ? 'opacity-70' : 'hover:scale-105'}`}
               >
-                <span>Create Account</span>
+                <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
                 <div className="absolute inset-0 bg-white opacity-10 rounded-full w-12 h-12 pointer-events-none" 
                   style={{
                     left: `${cursorPosition.x % 200}px`,
@@ -278,7 +357,7 @@ export default function Registration() {
           </form>
           
           <p className="mt-6 text-center text-gray-400">
-            Already have an account? <a href="/login" className="text-teal-300 hover:underline">Sign in</a>
+            Already have an account? <Link to="/login" className="text-teal-300 hover:underline">Sign in</Link>
           </p>
         </div>
         

@@ -10,11 +10,33 @@ export default function ForgotPassword() {
   const [showPassword, setShowPassword]=useState(false);
   const navigate= useNavigate();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     newpassword: '',
     confirmpassword: ""
   });
+
+  // Simulated OTP send
+  const handleSendOtp = () => {
+    if (!formData.email.trim()) return toast.error("Email is required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
+
+    setIsOtpSent(true);
+    toast.success("OTP sent to your email!");
+  };
+
+  // Simulated OTP verify
+  const handleVerifyOtp = () => {
+    if (otp === "123456") { 
+      setIsOtpVerified(true);
+      toast.success("OTP verified!");
+    } else {
+      toast.error("Invalid OTP");
+    }
+  };
 
   // Animation for floating elements
   useEffect(() => {
@@ -44,9 +66,6 @@ export default function ForgotPassword() {
   // Handle form submission
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    if(!formData.email.trim()) return toast.error("Email is required");
-
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email formate");
 
     if(!formData.newpassword) return toast.error("Password is required");
 
@@ -102,26 +121,63 @@ export default function ForgotPassword() {
           
           <form onSubmit={handleSubmit} className="space-y-6">
 
-          <div>
+            {/* Email Input */}
+            <div>
               <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
               <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
                   <Mail className='size-5 text-white '/>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type="email"
-                id="email"
-                name="email"
-                placeholder='Enter Your Email'
-                value={formData.email}
-                onChange={handleChange}
-               
-              />
+                <input
+                  className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder='Enter Your Email'
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={isOtpSent}
+                />
               </div>
             </div>
             
-            <div>
+            {/* Send OTP Button */}
+            {!isOtpSent && (
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                className="mt-4 bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+              >
+                Send OTP
+              </button>
+            )}
+
+            {/* OTP Input */}
+            {isOtpSent && !isOtpVerified && (
+              <div className="mt-4">
+                <label className="block text-teal-300 mb-2" htmlFor="otp">Enter OTP</label>
+                <input
+                  type="text"
+                  id="otp"
+                  name="otp"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full bg-gray-700 rounded p-3 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                  placeholder="Enter the OTP"
+                />
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="mt-3 bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+                >
+                  Verify OTP
+                </button>
+              </div>
+            )}
+
+            {isOtpVerified &&(
+              <>
+                <div>
               <label className="block text-teal-300 mb-2" htmlFor="newpassword"> New Password </label>
               <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
@@ -180,43 +236,26 @@ export default function ForgotPassword() {
                 </button>
               </div>
             </div>
+              </>
+            )}
             
-            {/* <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="rememberMe"
-                  name="rememberMe"
-                  type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-teal-500 focus:ring-teal-400 border-gray-500 rounded"
-                />
-                <label htmlFor="rememberMe" className="ml-2 block text-gray-300">
-                  Remember me
-                </label>
+            {isOtpVerified && (
+              <div className="relative overflow-hidden pt-4">
+                <button 
+                  type="submit" 
+                  className="w-full relative bg-gradient-to-r from-teal-600 to-teal-400 hover:from-teal-500 hover:to-teal-300 text-white py-3 px-6 rounded font-bold transition-all duration-300 transform hover:scale-105"
+                >
+                  <span>Save Change</span>
+                  <div className="absolute inset-0 bg-white opacity-10 rounded-full w-12 h-12 pointer-events-none" 
+                    style={{
+                      left: `${cursorPosition.x % 200}px`,
+                      top: `${cursorPosition.y % 50}px`,
+                      transition: 'all 0.2s ease'
+                    }}
+                  ></div>
+                </button>
               </div>
-              <div className="text-sm">
-                <a href="/forgotpassword" className="text-teal-300 hover:underline">
-                  Forgot your password?
-                </a>
-              </div>
-            </div> */}
-            
-            <div className="relative overflow-hidden pt-4">
-              <button 
-                type="submit" 
-                className="w-full relative bg-gradient-to-r from-teal-600 to-teal-400 hover:from-teal-500 hover:to-teal-300 text-white py-3 px-6 rounded font-bold transition-all duration-300 transform hover:scale-105"
-              >
-                <span>Save Change</span>
-                <div className="absolute inset-0 bg-white opacity-10 rounded-full w-12 h-12 pointer-events-none" 
-                  style={{
-                    left: `${cursorPosition.x % 200}px`,
-                    top: `${cursorPosition.y % 50}px`,
-                    transition: 'all 0.2s ease'
-                  }}
-                ></div>
-              </button>
-            </div>
+            )}
           </form>
         </div>
         {/* Animated Illustration Section - For desktop, we'll put this on the left */}

@@ -1,3 +1,4 @@
+// DEVELOPED BY ANUP MISHRA. CONTANT ME:-https://www.linkedin.com/in/anup-kumar-263154254/  EMAIL:-anupm0873@gmail.com
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Registration from '../pages/register'
