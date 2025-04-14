@@ -84,7 +84,7 @@ export default function Registration() {
       
       // Make the API request
       const response = await axios.post(
-        'http://127.0.0.1:7877/api/v1/register/',
+        'https://sharkfund.priyeshpandey.in/api/v1/register/',
         apiData,
         {
           headers: { 'Content-Type': 'application/json' },

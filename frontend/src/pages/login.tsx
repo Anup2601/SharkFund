@@ -17,7 +17,7 @@ export default function Login() {
     rememberMe: false
   });
 
-  const API_BASE_URL = import.meta.env.REACT_APP_API_URL ?? "https://127.0.0.1:7877";
+  const API_BASE_URL = "https://sharkfund.priyeshpandey.in";
 
   // Animation for floating elements
   useEffect(() => {
