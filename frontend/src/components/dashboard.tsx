@@ -6,6 +6,24 @@ const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
+  const [userProfile, setUserProfile] = useState({
+    name: "",
+    totalIncome: "$0",
+    walletBalance: "$0",
+    totalWithdrawal: "$0",
+    country: "",
+    joinDate: "",
+    activeDate: "",
+    referralLink: ""
+  });
+  const [metrics, setMetrics] = useState([
+    { title: 'Total Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Active Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Total Referrals', value: '0', change: '+0', icon: 'user-plus' },
+    { title: 'Active Referrals', value: '0', change: '+0', icon: 'user-check' },
+  ]);
+  const [fundHistory, setFundHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -15,46 +33,126 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Mocked User Profile Data
-  const userProfile = {
-    name: "Anup Mishra",
-    totalIncome: "$3,450",
-    walletBalance: "$1,200",
-    totalWithdrawal: "$2,250",
-    country: "India",
-    joinDate: "2023-05-15",
-    activeDate: "2025-04-10",
-    referralLink: "https://yourapp.com/referral/abcd1234"
-  };
-
-  // Metrics Data (Dashboard)
-  const metrics = [
-    { title: 'Total Team', value: '125', change: '+15', icon: 'users' },
-    { title: 'Active Team', value: '78', change: '+8', icon: 'users' },
-    { title: 'Total Referrals', value: '94', change: '+10', icon: 'user-plus' },
-    { title: 'Active Referrals', value: '60', change: '+6', icon: 'user-check' },
-  ];
-
-  // Mock fund history data
-  type FundItem = {
-    id: string;
-    amount: string;
-    status: 'completed' | 'pending' | 'failed';
-    date: string;
-    method: 'Credit Card' | 'PayPal' | 'Bank Transfer' | 'Crypto';
+  // Fetch API data
+  useEffect(() => {
+    const fetchApiData = async () => {
+      setLoading(true);
+      
+      // Retrieve the access token from localStorage
+      const accessToken = localStorage.getItem('accessToken');
+      
+      // Check if the access token exists
+      if (!accessToken) {
+        console.error('No access token found in localStorage.');
+        toast.error('Authentication error. Please login again.');
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        // Make a GET request to the API, passing the token in the Authorization header
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`, // Attach token for authorization
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        // Check if the request was successful
+        if (response.ok) {
+          const data = await response.json(); // Parse the response as JSON
+          
+          // Update the component state with the data from the API
+          updateDashboardWithApiData(data);
+        } else {
+          console.error('Failed to fetch API details. Status:', response.status);
+          toast.error('Failed to load profile data. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast.error('Connection error. Please check your internet connection.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchApiData();
+  }, []);
+  
+  // Function to update component state with API data
+  const updateDashboardWithApiData =(data:any)=>{
+    // Update user profile with API data
+    // Assuming the API returns data in a similar structure
+    // Adjust according to the actual API response structure
+    if (data) {
+      setUserProfile({
+        name: data.username || "User",
+        totalIncome: formatCurrency(data.total_income) || "$0",
+        walletBalance: formatCurrency(data.wallet_balance) || "$0",
+        totalWithdrawal: formatCurrency(data.total_withdrawal) || "$0",
+        country: data.country || "India", 
+        joinDate: data.join_date ? data.join_date.split("T")[0] : "",
+        activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
+        referralLink: data.referralLink || `https://sharkfund.in/referral/${data.username}` 
+      });
+    }
+    
+    // Update metrics with API data
+    if (data.metrics) {
+      setMetrics([
+        { 
+          title: 'Total Team', 
+          value: data.metrics.totalTeam || '0', 
+          change: formatChange(data.metrics.totalTeamChange) || '+0', 
+          icon: 'users' 
+        },
+        { 
+          title: 'Active Team', 
+          value: data.metrics.activeTeam || '0', 
+          change: formatChange(data.metrics.activeTeamChange) || '+0', 
+          icon: 'users' 
+        },
+        { 
+          title: 'Total Referrals', 
+          value: data.metrics.totalReferrals || '0', 
+          change: formatChange(data.metrics.totalReferralsChange) || '+0', 
+          icon: 'user-plus' 
+        },
+        { 
+          title: 'Active Referrals', 
+          value: data.metrics.activeReferrals || '0', 
+          change: formatChange(data.metrics.activeReferralsChange) || '+0', 
+          icon: 'user-check' 
+        },
+      ]);
+    }
+    
+    // Update fund history if available
+    if (data.fundHistory) {
+      setFundHistory(data.fundHistory);
+    }
   };
   
-    const fundHistory: FundItem[] = [
-    { id: "1", amount: "$200", status: "completed", date: "2025-04-09", method: "Credit Card" as const },
-    { id: "2", amount: "$150", status: "completed", date: "2025-04-01", method: "PayPal" as const},
-    { id: "3", amount: "$300", status: "pending", date: "2025-03-28", method: "Bank Transfer" as const},
-    { id: "4", amount: "$100", status: "completed", date: "2025-03-15", method: "Crypto" as const},
-    { id: "5", amount: "$250", status: "failed", date: "2025-03-10", method: "Credit Card" as const},
-  ];
+  // Helper functions for formatting data
+  const formatCurrency = (value: number) => {
+    if (!value && value !== 0) return "$0";
+    return typeof value === 'number' ? `$${value.toLocaleString()}` : value;
+  };
+  
+  const formatDate = (dateString: any) => {
+    if (!dateString) return "";
+    return dateString;
+  };
+  
+  const formatChange = (value: number) => {
+    if (!value && value !== 0) return "+0";
+    return value > 0 ? `+${value}` : `${value}`;
+  };
 
   const handleAddFund = () => {
-    // Here you would integrate with payment gateway
-    toast(` 🚧 Adding $${fundAmount} to your wallet. Payment gateway will be integrated in the future.`);
+    // Here you would integrate with payment gateway and then update the API
+    toast(`🚧 Adding $${fundAmount} to your wallet. Payment gateway will be integrated in the future.`);
     setFundAmount('');
   };
 
@@ -86,6 +184,17 @@ const Dashboard: React.FC = () => {
         );
     }
   };
+  
+  if (loading) {
+    return (
+      <div className="p-6 bg-gray-900 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto"></div>
+          <p className="mt-4 text-teal-400">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="p-6 bg-gray-900 min-h-screen">

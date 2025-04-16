@@ -19,7 +19,6 @@ export default function Login() {
 
   const API_BASE_URL = "https://sharkfund.priyeshpandey.in";
 
-  // Animation for floating elements
   useEffect(() => {
     const floatInterval = setInterval(() => {
       setFloatY(prev => (prev === 0 ? 20 : 0));
@@ -35,7 +34,6 @@ export default function Login() {
     };
   }, []);
 
-  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ 
@@ -44,59 +42,47 @@ export default function Login() {
     }));
   };
 
-  // Determine if the login is an email or username
   const isEmail = (login: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Form validation
+  
     if (!formData.login.trim()) {
       return toast.error("Email or Username is required");
     }
-
+  
     if (!formData.password) {
       return toast.error("Password is required");
     }
-
-    // Make API request
+  
     try {
       setIsLoading(true);
-      
+  
       const response = await axios.post(
-        `${API_BASE_URL}/api/v1/login/`,
+        `${API_BASE_URL}/api/token/`,
         {
-          login: formData.login,
+          username: formData.login,
           password: formData.password
         },
         {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true  // Important for receiving cookies
+          headers: { 'Content-Type': 'application/json' }
         }
       );
-
-      // Handle successful login
-      toast.success(response.data.message || 'Login successful!');
-      
-      // Store user data if needed
-      // localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      // Navigate to dashboard/home after successful login
+  
+      console.log('Login Response:', response.data);
+      localStorage.setItem('accessToken', response.data.access);
+      toast.success('Login successful!');
       setTimeout(() => navigate('/home'), 1000);
+  
     } catch (error) {
-      // Handle login errors
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
-        
-        if (errorData?.errors?.general) {
-          toast.error(errorData.errors.general[0]);
-        } else if (errorData?.errors?.login) {
-          toast.error(errorData.errors.login[0]);
-        } else if (errorData?.errors?.password) {
-          toast.error(errorData.errors.password[0]);
+        if (errorData?.detail) {
+          toast.error(errorData.detail);
+        } else if (errorData?.non_field_errors) {
+          toast.error(errorData.non_field_errors[0]);
         } else {
           toast.error('Login failed. Please try again.');
         }
@@ -107,15 +93,14 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+  
 
-  // Handle cursor movement for button animation
   const handleMouseMove = (e: { clientX: any; clientY: any; }) => {
     setCursorPosition({ x: e.clientX, y: e.clientY });
   };
 
   return (
     <div className="min-h-screen w-full bg-gray-900 flex flex-col overflow-hidden" onMouseMove={handleMouseMove}>
-      {/* Animated background elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(30)].map((_, i) => (
           <div 
@@ -134,10 +119,8 @@ export default function Login() {
         ))}
       </div>
 
-      {/* Main content container */}
       <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto my-auto p-4 md:p-0 z-10 h-full min-h-screen">
         
-        {/* Form Section */}
         <div className="w-full md:w-1/2 p-6 md:p-12 bg-gray-800 bg-opacity-90 flex flex-col justify-center rounded-t-lg md:rounded-l-lg md:rounded-tr-none">
           <div className="mb-8">
             <Link to={"/"}> 
@@ -285,12 +268,9 @@ export default function Login() {
           </p>
         </div>
         
-        {/* Animated Illustration Section - not changed for brevity */}
         <div className="w-full md:w-1/2 bg-gray-900 flex items-center justify-center relative rounded-t-lg md:rounded-l-lg md:rounded-tr-none order-1 md:order-1">
           <div className="w-full h-full flex items-center justify-center">
-            {/* Digital Network Animation */}
             <div className="relative w-full max-w-md aspect-square">
-              {/* Orbiting Rings */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="absolute w-4/5 h-4/5 border border-teal-400 rounded-full opacity-20"
                   style={{ transform: `rotate(${rotation * 0.5}deg)` }}></div>
@@ -300,14 +280,12 @@ export default function Login() {
                   style={{ transform: `rotate(${rotation}deg)` }}></div>
               </div>
               
-              {/* Central Element */}
               <div className="absolute inset-0 flex items-center justify-center"
                 style={{ transform: `translateY(${floatY * 0.5}px)` }}>
                 <div className="w-1/4 h-1/4 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg shadow-lg shadow-teal-400/50"
                   style={{ transform: `rotate(${rotation}deg)` }}></div>
               </div>
               
-              {/* Orbiting Nodes */}
               {[...Array(6)].map((_, i) => {
                 const angle = (rotation + (i * 60)) * Math.PI / 180;
                 const radius = 120;
@@ -329,7 +307,6 @@ export default function Login() {
                 );
               })}
               
-              {/* Connection Lines */}
               <svg className="absolute inset-0 w-full h-full" style={{ transform: `rotate(${rotation * 0.2}deg)` }}>
                 {[...Array(12)].map((_, i) => {
                   const angle1 = ((i * 30) % 360) * Math.PI / 180;
@@ -357,7 +334,6 @@ export default function Login() {
                 })}
               </svg>
               
-              {/* Floating Data Particles */}
               {[...Array(15)].map((_, i) => (
                 <div 
                   key={`particle-${i}`}
