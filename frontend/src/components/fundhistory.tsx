@@ -1,3 +1,4 @@
+import React,{useState, useEffect} from "react";
 interface FundItem {
     id: string;
     amount: string;
@@ -7,19 +8,101 @@ interface FundItem {
   }
   
   interface FundHistoryProps {
-    fundHistory: FundItem[];
+    initialFundHistory?: FundItem[];
     type: "add"| "withdraw" | "deposit";
   }
   
-  const FundHistory: React.FC<FundHistoryProps> = ({ fundHistory ,type }) => {
+  const FundHistory: React.FC<FundHistoryProps> = ({  initialFundHistory ,type }) => {
+    const [fundHistory, setFundHistory] = useState<FundItem[]>(initialFundHistory || []);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const title =
     type === 'add' ? 'Add Fund History' : type === 'deposit' ? 'Deposit Fund History' : 'Withdraw Fund History';
+
+    useEffect(() => {
+       if (type === 'withdraw') {
+        fetchWithdrawalHistory();
+      } else if (type === 'deposit') {
+        fetchDepositHistory();
+      }
+    }, [type]);
+  
+    const fetchWithdrawalHistory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('http://127.0.0.1:7877/api/v1/withdrawal/history/');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch withdrawal history: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setFundHistory(data);
+      } catch (err) {
+        console.error('Error fetching withdrawal history:', err);
+        setError('Failed to load withdrawal history. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const fetchDepositHistory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Replace with your actual deposit history API endpoint
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/transaction/history/');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch deposit history: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setFundHistory(data);
+      } catch (err) {
+        console.error('Error fetching deposit history:', err);
+        setError('Failed to load deposit history. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const retryFetch = () => {
+      if (type === 'withdraw') {
+        fetchWithdrawalHistory();
+      } else if (type === 'deposit') {
+        fetchDepositHistory();
+      }
+    };
+    
     return (
       <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white mb-10 transition-all duration-500">
-        <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
-          {title}
-        </h2>
-  
+      <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
+        {title}
+      </h2>
+
+      {loading ? (
+        <div className="flex justify-center items-center py-10">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-400"></div>
+        </div>
+      ) : error ? (
+        <div className="text-center py-6 text-red-400">
+          <p>{error}</p>
+          <button 
+            onClick={retryFetch}
+            className="mt-4 px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      ) : fundHistory.length === 0 ? (
+        <div className="text-center py-10 text-gray-400">
+          <p>No {type} history available.</p>
+        </div>
+      ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -56,9 +139,10 @@ interface FundItem {
             </tbody>
           </table>
         </div>
-      </div>
-    );
-  };
+      )}
+    </div>
+  );
+};
   
   export default FundHistory;
   

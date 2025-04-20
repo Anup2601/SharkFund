@@ -6,7 +6,21 @@ import toast from 'react-hot-toast';
 export const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
-  
+  const [userData, setUserData] = useState({
+    name: "",
+    joiningDate: "",
+    activationDate: "",
+    sponsorName: "",
+    sponsorEmail: "",
+    email: "",
+    mobile: "",
+    country: "",
+    walletBalance: "",
+    totalIncome: "",
+    profileImage: Avatar
+  });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationProgress(100);
@@ -15,20 +29,31 @@ export const Profile: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Mock user data (would come from database in real implementation)
-  const userData = {
-    name: "Anup Mishra",
-    joiningDate: "2023-05-15",
-    activationDate: "2023-05-20",
-    sponsorName: "Jane Smith",
-    sponsorEmail: "jane.smith@example.com",
-    email: "anup23@example.com",
-    mobile: "+91 7320075001",
-    country: "India",
-    walletBalance: "$1,200",
-    totalIncome: "$3,450",
-    profileImage: Avatar
-  };
+   // Fetch user data from API
+   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile data');
+        }
+        const data = await response.json();
+        console.log(data);
+        setUserData({
+          ...data,
+          profileImage: data.profileImage || Avatar
+        });
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        toast.error('Failed to load profile data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="p-6 bg-[#222831] min-h-screen">
@@ -37,11 +62,18 @@ export const Profile: React.FC = () => {
         <p className="text-gray-400 mt-1">View and manage your profile information</p>
       </div>
 
-      {isEditing ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00ADB5]"></div>
+        </div>
+      ) : isEditing ? (
         <UpdateProfileForm 
           userData={userData} 
           onCancel={() => setIsEditing(false)}
-          onSuccess={() => setIsEditing(false)}
+          onSuccess={(updatedData) => {
+            setUserData({...userData, ...updatedData});
+            setIsEditing(false);
+          }}
         />
       ) : (
         <ViewProfile 
@@ -181,7 +213,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
 interface UpdateProfileFormProps {
   userData: any;
   onCancel: () => void;
-  onSuccess: () => void;
+  onSuccess: (updatedData: any) => void;
 }
 
 const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCancel, onSuccess }) => {
@@ -227,15 +259,29 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real app, you'd submit to your API here
-    console.log("Form submitted:", formData);
     
-    // Simulate API call
-    setTimeout(() => {
-      onSuccess();
-    }, 1000);
+    try {
+      const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedData = await response.json();
+      toast.success("Profile Updated Successfully");
+      onSuccess(updatedData);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
   return (

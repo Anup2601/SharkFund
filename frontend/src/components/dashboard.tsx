@@ -3,14 +3,15 @@ import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
 
 const Dashboard: React.FC = () => {
+  // Existing state variables from your code
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
   const [userProfile, setUserProfile] = useState({
     name: "",
-    totalIncome: "$0",
-    walletBalance: "$0",
-    totalWithdrawal: "$0",
+    totalIncome: `₹0`,
+    walletBalance: "₹0",
+    totalWithdrawal: "₹0",
     country: "",
     joinDate: "",
     activeDate: "",
@@ -22,9 +23,20 @@ const Dashboard: React.FC = () => {
     { title: 'Total Referrals', value: '0', change: '+0', icon: 'user-plus' },
     { title: 'Active Referrals', value: '0', change: '+0', icon: 'user-check' },
   ]);
-  const [fundHistory, setFundHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
   
+  // Updated to match the FundHistory component interface
+  const [fundHistory, setFundHistory] = useState<Array<{
+    id: string;
+    amount: string;
+    date: string;
+    method: string;
+    status: 'completed' | 'pending' | 'failed';
+  }>>([]);
+  
+  const [loading, setLoading] = useState(true);
+  const [fundHistoryLoading, setFundHistoryLoading] = useState(false);
+  
+  // Animation effect
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationProgress(100);
@@ -35,7 +47,7 @@ const Dashboard: React.FC = () => {
   
   // Fetch API data
   useEffect(() => {
-    const fetchApiData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       
       // Retrieve the access token from localStorage
@@ -50,25 +62,11 @@ const Dashboard: React.FC = () => {
       }
       
       try {
-        // Make a GET request to the API, passing the token in the Authorization header
-        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`, // Attach token for authorization
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        // Check if the request was successful
-        if (response.ok) {
-          const data = await response.json(); // Parse the response as JSON
-          
-          // Update the component state with the data from the API
-          updateDashboardWithApiData(data);
-        } else {
-          console.error('Failed to fetch API details. Status:', response.status);
-          toast.error('Failed to load profile data. Please try again.');
-        }
+        // Fetch both profile and stats data simultaneously
+        await Promise.all([
+          fetchProfileData(accessToken),
+          fetchStatsData(accessToken)
+        ]);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Connection error. Please check your internet connection.');
@@ -77,85 +75,211 @@ const Dashboard: React.FC = () => {
       }
     };
     
-    fetchApiData();
+    fetchData();
   }, []);
+
+  // Existing functions for fetching profile and stats data
+  const fetchProfileData = async (accessToken: string) => {
+    try {
+      const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        updateProfileWithApiData(data);
+      } else {
+        console.error('Failed to fetch profile data. Status:', response.status);
+        toast.error('Failed to load profile data. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+      throw error;
+    }
+  };
+
+  const fetchStatsData = async (accessToken: string) => {
+    try {
+      const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/stats/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        updateMetricsWithApiData(data);
+      } else {
+        console.error('Failed to fetch stats data. Status:', response.status);
+        toast.error('Failed to load statistics. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error fetching stats data:', error);
+      throw error;
+    }
+  };
+
+  // Modified function to fetch fund history and transform the data for the FundHistory component
+  const fetchFundHistory = async () => {
+    setFundHistoryLoading(true);
+    
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      console.error('No access token found in localStorage.');
+      toast.error('Authentication error. Please login again.');
+      setFundHistoryLoading(false);
+      return;
+    }
+    
+    try {
+      const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/transaction/history/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fund history API response:', data);
+        
+        // Transform the API data to match the FundHistory component's expected format
+        const transformedData = (data.results || data || []).map((item: any) => ({
+          id: item.transaction_id || item.id || String(Math.random()).substr(2, 8),
+          amount: formatCurrency(item.amount || 0),
+          date: formatDate(item.created_at || item.date || new Date().toISOString()),
+          method: item.payment_method || item.method || 'Bank Transfer',
+          status: mapTransactionStatus(item.status || 'completed')
+        }));
+        
+        setFundHistory(transformedData);
+      } else {
+        console.error('Failed to fetch fund history. Status:', response.status);
+        toast.error('Failed to load fund history. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error fetching fund history:', error);
+      toast.error('Connection error. Please check your internet connection.');
+    } finally {
+      setFundHistoryLoading(false);
+    }
+  };
   
-  // Function to update component state with API data
-  const updateDashboardWithApiData =(data:any)=>{
-    // Update user profile with API data
-    // Assuming the API returns data in a similar structure
-    // Adjust according to the actual API response structure
+  // Helper function to map API status to component status
+  const mapTransactionStatus = (status: string): 'completed' | 'pending' | 'failed' => {
+    switch (status.toLowerCase()) {
+      case 'success':
+      case 'completed':
+      case 'successful':
+        return 'completed';
+      case 'pending':
+      case 'processing':
+      case 'in_progress':
+        return 'pending';
+      case 'failed':
+      case 'failure':
+      case 'error':
+        return 'failed';
+      default:
+        return 'pending';
+    }
+  };
+  
+  // Existing helper functions
+  const updateProfileWithApiData = (data: any) => {
     if (data) {
       setUserProfile({
         name: data.username || "User",
-        totalIncome: formatCurrency(data.total_income) || "$0",
-        walletBalance: formatCurrency(data.wallet_balance) || "$0",
-        totalWithdrawal: formatCurrency(data.total_withdrawal) || "$0",
+        totalIncome: formatCurrency(data.total_income) || "₹0",
+        walletBalance: formatCurrency(data.wallet_balance) || "₹0",
+        totalWithdrawal: formatCurrency(data.total_withdrawal) || "₹0",
         country: data.country || "India", 
         joinDate: data.join_date ? data.join_date.split("T")[0] : "",
         activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
         referralLink: data.referralLink || `https://sharkfund.in/referral/${data.username}` 
       });
     }
-    
-    // Update metrics with API data
-    if (data.metrics) {
+  };
+
+  const updateMetricsWithApiData = (data: any) => {
+    if (data) {
       setMetrics([
         { 
           title: 'Total Team', 
-          value: data.metrics.totalTeam || '0', 
-          change: formatChange(data.metrics.totalTeamChange) || '+0', 
+          value: data.total_teams?.toString() || '0', 
+          change: formatChange(data.total_team_change) || '+0', 
           icon: 'users' 
         },
         { 
           title: 'Active Team', 
-          value: data.metrics.activeTeam || '0', 
-          change: formatChange(data.metrics.activeTeamChange) || '+0', 
+          value: data.active_teams?.toString() || '0', 
+          change: formatChange(data.active_team_change) || '+0', 
           icon: 'users' 
         },
         { 
           title: 'Total Referrals', 
-          value: data.metrics.totalReferrals || '0', 
-          change: formatChange(data.metrics.totalReferralsChange) || '+0', 
+          value: data.total_referrals?.toString() || '0', 
+          change: formatChange(data.total_referrals_change) || '+0', 
           icon: 'user-plus' 
         },
         { 
           title: 'Active Referrals', 
-          value: data.metrics.activeReferrals || '0', 
-          change: formatChange(data.metrics.activeReferralsChange) || '+0', 
+          value: data.active_referrals?.toString() || '0', 
+          change: formatChange(data.active_referrals_change) || '+0', 
           icon: 'user-check' 
         },
       ]);
     }
-    
-    // Update fund history if available
-    if (data.fundHistory) {
-      setFundHistory(data.fundHistory);
+  };
+  
+  const formatCurrency = (value: number | string) => {
+    if (value === undefined || value === null) return "₹0";
+    const numberValue = typeof value === 'string' ? parseFloat(value) : value;
+    return isNaN(numberValue) ? "₹0" : `₹${numberValue.toLocaleString()}`;
+  };
+  
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    } catch (error) {
+      return dateString;
     }
   };
   
-  // Helper functions for formatting data
-  const formatCurrency = (value: number) => {
-    if (!value && value !== 0) return "$0";
-    return typeof value === 'number' ? `$${value.toLocaleString()}` : value;
-  };
-  
-  const formatDate = (dateString: any) => {
-    if (!dateString) return "";
-    return dateString;
-  };
-  
   const formatChange = (value: number) => {
-    if (!value && value !== 0) return "+0";
+    if (value === undefined || value === null) return "+0";
     return value > 0 ? `+${value}` : `${value}`;
   };
 
   const handleAddFund = () => {
-    // Here you would integrate with payment gateway and then update the API
     toast(`🚧 Adding $${fundAmount} to your wallet. Payment gateway will be integrated in the future.`);
     setFundAmount('');
   };
 
+  // Toggle fund history visibility and fetch data if needed
+  const toggleFundHistory = async () => {
+    const nextState = !showAddFundHistory;
+    
+    // If we're showing fund history and we don't have data yet, fetch it
+    if (nextState && fundHistory.length === 0) {
+      await fetchFundHistory();
+    }
+    
+    setShowAddFundHistory(nextState);
+    toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
+  };
+
+  // Existing icon renderer
   const renderIcon = (iconName: string) => {
     switch (iconName) {
       case 'users':
@@ -185,6 +309,7 @@ const Dashboard: React.FC = () => {
     }
   };
   
+  // Loading state
   if (loading) {
     return (
       <div className="p-6 bg-gray-900 min-h-screen flex items-center justify-center">
@@ -196,6 +321,7 @@ const Dashboard: React.FC = () => {
     );
   }
   
+  // Main component render
   return (
     <div className="p-6 bg-gray-900 min-h-screen">
       <div className="mb-8">
@@ -309,11 +435,7 @@ const Dashboard: React.FC = () => {
               </button>
               
               <button
-                onClick={() => {
-                  const nextState = !showAddFundHistory;
-                  setShowAddFundHistory(!showAddFundHistory);
-                  toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
-                }}
+                onClick={toggleFundHistory}
                 className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
               >
                 {showAddFundHistory ? 'Hide' : 'View'} Fund History
@@ -513,11 +635,7 @@ const Dashboard: React.FC = () => {
               </button>
               
               <button
-                onClick={() => {
-                  const nextState = !showAddFundHistory;
-                  setShowAddFundHistory(!showAddFundHistory);
-                  toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
-                }}
+                onClick={toggleFundHistory}
                 className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
               >
                 {showAddFundHistory ? 'Hide' : 'View'} Fund History
@@ -527,7 +645,19 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {showAddFundHistory && <FundHistory fundHistory={fundHistory} type='add' />}
+      {/* Fund History Section */}
+      {showAddFundHistory && (
+        <div className="mb-10">
+          {fundHistoryLoading ? (
+            <div className="bg-gray-800 rounded-xl p-6 flex justify-center items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-400"></div>
+              <p className="ml-3 text-teal-400">Loading fund history...</p>
+            </div>
+          ) : (
+            <FundHistory type="deposit" />
+          )}
+        </div>
+      )}
       
     </div>
   );
