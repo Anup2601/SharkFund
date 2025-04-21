@@ -11,6 +11,8 @@ import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
 
 function App() {
+
+  
    // Mock user data — in a real app, you'd fetch this from context or auth
    const currentUser = {
     name: 'Anup Mishra',
@@ -34,6 +36,7 @@ function App() {
             <HomeLayout currentUser={currentUser}/>
           }
         />
+        {/* <Route path="/referral/:username" element={<RedirectToRegister />} /> */}
       </Routes>
     </>
     

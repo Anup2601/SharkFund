@@ -1,4 +1,5 @@
 import React,{useState, useEffect} from "react";
+const accessToken = localStorage.getItem('accessToken');
 interface FundItem {
     id: string;
     amount: string;
@@ -32,7 +33,12 @@ interface FundItem {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://127.0.0.1:7877/api/v1/withdrawal/history/');
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/withdrawal/history/', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });;
         
         if (!response.ok) {
           throw new Error(`Failed to fetch withdrawal history: ${response.status}`);
@@ -54,7 +60,12 @@ interface FundItem {
         setError(null);
         
         // Replace with your actual deposit history API endpoint
-        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/transaction/history/');
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/transaction/history/', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
         
         if (!response.ok) {
           throw new Error(`Failed to fetch deposit history: ${response.status}`);

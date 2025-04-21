@@ -34,7 +34,15 @@ export const Profile: React.FC = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/');
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log(response);
+        
+
         if (!response.ok) {
           throw new Error('Failed to fetch profile data');
         }
@@ -117,7 +125,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
             </div>
             <div className="text-center md:text-left">
               <h2 className="text-2xl font-bold text-[#222831]">{userData.name}</h2>
-              <p className="text-[#222831] opacity-80">Member since {new Date(userData.joiningDate).toLocaleDateString()}</p>
+              <p className="text-[#222831] opacity-80">Member since {new Date(userData.join_date).toLocaleDateString()}</p>
               <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-3">
                 <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
                   Active
@@ -158,7 +166,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Mobile Number</div>
-              <div className="text-white font-medium mt-1">{userData.mobile}</div>
+              <div className="text-white font-medium mt-1">{userData.mobile_number}</div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Country</div>
@@ -166,11 +174,13 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Joining Date</div>
-              <div className="text-white font-medium mt-1">{userData.joiningDate}</div>
+              <div className="text-white font-medium mt-1">{userData.join_date}
+              </div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Activation Date</div>
-              <div className="text-white font-medium mt-1">{userData.activationDate}</div>
+              <div className="text-white font-medium mt-1">{userData.activation_date}
+              </div>
             </div>
           </div>
           
@@ -181,11 +191,11 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Sponsor Name</div>
-              <div className="text-white font-medium mt-1">{userData.sponsorName}</div>
+              <div className="text-white font-medium mt-1">{userData.sponsored_name}</div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Sponsor Email ID</div>
-              <div className="text-white font-medium mt-1">{userData.sponsorEmail}</div>
+              <div className="text-white font-medium mt-1">{userData.sponsored_email}</div>
             </div>
           </div>
           
@@ -220,7 +230,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
   const [formData, setFormData] = useState({
     name: userData.name,
     email: userData.email,
-    mobile: userData.mobile,
+    mobile_number: userData.mobile_number,
     country: userData.country,
     profileImage: userData.profileImage
   });
@@ -264,8 +274,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     
     try {
       const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -358,9 +369,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                 </label>
                 <input
                   type="tel"
-                  id="mobile"
-                  name="mobile"
-                  value={formData.mobile}
+                  id="mobile_number"
+                  name="mobile_number"
+                  value={formData.mobile_number}
                   onChange={handleChange}
                   className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                   required

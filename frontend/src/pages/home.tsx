@@ -89,9 +89,9 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
       case "profile":
         return <Profile/>;
       case "deposit":
-        return <FundHistory fundHistory={[]} type='deposit'/>;
+        return <FundHistory type="deposit"/>;
       case "withdraw":
-        return <FundHistory fundHistory={[]} type='withdraw'/>;
+        return <FundHistory type="withdraw"/>;
       case "referral":
         return <Referral referral={referralData}/>
       case "support":

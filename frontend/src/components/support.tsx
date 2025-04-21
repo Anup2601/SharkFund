@@ -217,25 +217,6 @@ export const Support: React.FC = () => {
                 <p className="text-gray-400 mt-4 text-sm">Available Monday-Friday, 9AM-6PM ET</p>
               </div>
               
-              {/* Live Chat */}
-              <div className="bg-[#222831] p-6 rounded-lg">
-                <div className="flex items-center mb-4">
-                  <div className="rounded-full bg-[#00ADB5] bg-opacity-20 p-3">
-                    <svg className="w-6 h-6 text-[#00FFF5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h3 className="ml-4 text-lg font-medium text-white">Live Chat</h3>
-                </div>
-                <p className="text-gray-400 mb-4">Get instant help from our support team</p>
-                <button className="w-full bg-gradient-to-r from-[#00ADB5] to-[#00FFF5] text-[#222831] font-medium py-2 px-4 rounded-lg hover:from-[#00899E] hover:to-[#00D8DC] transition-colors duration-300"
-                onClick={()=>toast("🚧 Live Chat coming soon!")}
-                >
-                  Start Live Chat
-                </button>
-                <p className="text-gray-400 mt-4 text-sm">Available 24/7 for Premium members</p>
-              </div>
-              
               {/* Social Media */}
               <div className="bg-[#222831] p-6 rounded-lg">
                 <div className="flex items-center mb-4">
