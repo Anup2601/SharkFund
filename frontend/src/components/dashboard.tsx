@@ -204,7 +204,7 @@ const Dashboard: React.FC = () => {
         country: data.country || "India", 
         joinDate: data.join_date ? data.join_date.split("T")[0] : "",
         activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
-        referralLink: data.referralLink || `https://sharkfund.in/referral/${data.username}` 
+        referralLink: data.referralLink || `https://sharkfund.in//ref/auth/${data.username}` 
       });
     }
   };
@@ -546,7 +546,7 @@ const Dashboard: React.FC = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
-                <div className="text-gray-400 text-sm">Name</div>
+                <div className="text-gray-400 text-sm">Username</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
