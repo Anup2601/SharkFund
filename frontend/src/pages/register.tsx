@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate , useLocation } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail, Phone, Share2Icon, User } from 'lucide-react';
 import axios from 'axios';
@@ -8,6 +8,7 @@ export default function Registration() {
   const [floatY, setFloatY] = useState(0);
   const [rotation, setRotation] = useState(0);
   const [showPassword, setShowPassword]=useState(false);
+  const location = useLocation()
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -22,6 +23,16 @@ export default function Registration() {
     address: '',
     acceptedTerms: false,
   });
+
+// Check for referral in the location state and update form data
+useEffect(() => {
+  if (location.state?.Referrer) {
+    setFormData(prev => ({
+      ...prev,
+      Referral: location.state.Referrer
+    }));
+  }
+}, [location.state]);
 
   // Animation for floating elements
   useEffect(() => {
@@ -78,8 +89,9 @@ export default function Registration() {
         email: formData.email,
         password: formData.password,
         confirm_password: formData.confirmPassword,
-        address: formData.address || formData.name, // Using name as address if not provided
-        mobile_number: formData.mobile || ''
+        address: formData.address || formData.name, 
+        mobile_number: formData.mobile || '',
+        Referral: formData.Referral ,
       };
       
       // Make the API request
@@ -238,7 +250,7 @@ export default function Registration() {
             </div>
 
             <div>
-              <label className="block text-teal-300 mb-2" htmlFor="Referral">Referral ID (Optional)</label>
+              <label className="block text-teal-300 mb-2" htmlFor="Referral">Referral Username (Optional)</label>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                   <Share2Icon className='size-5 text-white'/>
@@ -250,6 +262,7 @@ export default function Registration() {
                   name="Referral"
                   placeholder='Enter your Referral ID (optional)'
                   value={formData.Referral}
+                  readOnly
                   onChange={handleChange}
                 />
               </div>

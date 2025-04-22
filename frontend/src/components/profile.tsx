@@ -131,7 +131,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                   Active
                 </span>
                 <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
-                  Balance: {userData.walletBalance}
+                Balance: {userData.walletBalance?.split("T")[0] ?? "0"}
                 </span>
               </div>
             </div>
@@ -174,12 +174,12 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Joining Date</div>
-              <div className="text-white font-medium mt-1">{userData.join_date}
+              <div className="text-white font-medium mt-1">{userData.join_date.split("T")[0] ?? "Loading..."}
               </div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Activation Date</div>
-              <div className="text-white font-medium mt-1">{userData.activation_date}
+              <div className="text-white font-medium mt-1">{userData.activation_date.split("T")[0] ?? "Loading..."}
               </div>
             </div>
           </div>
@@ -446,7 +446,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.joiningDate}
+                    value={userData.joiningDate.split("T")[0] ?? "0"}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -457,7 +457,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.activationDate}
+                    value={userData.activationDate.split("T")[0] ?? "0"}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />

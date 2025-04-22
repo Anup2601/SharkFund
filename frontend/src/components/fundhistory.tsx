@@ -1,11 +1,11 @@
 import React,{useState, useEffect} from "react";
 const accessToken = localStorage.getItem('accessToken');
 interface FundItem {
-    id: string;
+    serial_number: string;
     amount: string;
-    date: string;
+    timestamp: string;
     method: string;
-    status: 'completed' | 'pending' | 'failed';
+    status: 'Completed' | 'Pending' | 'failed';
   }
   
   interface FundHistoryProps {
@@ -38,7 +38,8 @@ interface FundItem {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-        });;
+        });
+        console.log(response);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch withdrawal history: ${response.status}`);
@@ -72,6 +73,7 @@ interface FundItem {
         }
         
         const data = await response.json();
+        console.log(data);
         setFundHistory(data);
       } catch (err) {
         console.error('Error fetching deposit history:', err);
@@ -127,17 +129,17 @@ interface FundItem {
             </thead>
             <tbody>
               {fundHistory.map((item) => (
-                <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700">
-                  <td className="py-4 px-2">{item.id}</td>
-                  <td className="py-4 px-2">{item.amount}</td>
-                  <td className="py-4 px-2">{item.date}</td>
+                <tr key={item.serial_number} className="border-b border-gray-700 hover:bg-gray-700">
+                  <td className="py-4 px-2">{item.serial_number}</td>
+                  <td className="py-4 px-2">{item?.amount}</td>
+                  <td className="py-4 px-2">{item.timestamp?.split("T")[0] ?? "0"}</td>
                   <td className="py-4 px-2">{item.method}</td>
                   <td className="py-4 px-2">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        item.status === 'completed'
+                        item.status === 'Completed'
                           ? 'bg-green-900 text-green-300'
-                          : item.status === 'pending'
+                          : item.status === 'Pending'
                           ? 'bg-yellow-900 text-yellow-300'
                           : 'bg-red-900 text-red-300'
                       }`}

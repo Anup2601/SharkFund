@@ -1,5 +1,4 @@
-// DEVELOPED BY ANUP MISHRA. CONTANT ME:-https://www.linkedin.com/in/anup-kumar-263154254/  EMAIL:-anupm0873@gmail.com
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate, useParams, useLocation } from 'react-router-dom'
 import './App.css'
 import Registration from '../pages/register'
 import Login from '../pages/login'
@@ -9,19 +8,34 @@ import ForgotPassword from '../pages/forgotPassword'
 import Landing from '../pages/landing'
 import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
+import { useEffect } from 'react'
+
+// Redirect function inside App file
+function RedirectToRegister() {
+  const { username } = useParams<{ username: string }>()
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    if (username) {
+      // Updated to use "Referrer" instead of "referrer" to match Registration component
+      navigate('/register', { state: { Referrer: username } })
+    }
+  }, [username, navigate])
+  
+  return null
+}
 
 function App() {
-
-  
-   // Mock user data — in a real app, you'd fetch this from context or auth
-   const currentUser = {
+  // Mock user data — in a real app, you'd fetch this from context or auth
+  const currentUser = {
     name: 'Anup Mishra',
     email: 'anup@example.com',
     profileImage: '/api/placeholder/32/32',
   };
+  
   return (
     <>
-    <Toaster position="top-right" />
+      <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Landing/>}/>
         <Route path="/register" element={<Registration/>}/>
@@ -36,10 +50,10 @@ function App() {
             <HomeLayout currentUser={currentUser}/>
           }
         />
-        {/* <Route path="/referral/:username" element={<RedirectToRegister />} /> */}
+        <Route path="/referral/:username" element={<RedirectToRegister />} />
+        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
     </>
-    
   )
 }
 
