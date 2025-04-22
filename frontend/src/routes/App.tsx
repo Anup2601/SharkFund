@@ -8,7 +8,7 @@ import ForgotPassword from '../pages/forgotPassword'
 import Landing from '../pages/landing'
 import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // Redirect function inside App file
 function RedirectToRegister() {
@@ -17,7 +17,6 @@ function RedirectToRegister() {
   
   useEffect(() => {
     if (username) {
-      // Updated to use "Referrer" instead of "referrer" to match Registration component
       navigate('/register', { state: { Referrer: username } })
     }
   }, [username, navigate])
@@ -26,12 +25,51 @@ function RedirectToRegister() {
 }
 
 function App() {
-  // Mock user data — in a real app, you'd fetch this from context or auth
-  const currentUser = {
-    name: 'Anup Mishra',
-    email: 'anup@example.com',
-    profileImage: '/api/placeholder/32/32',
-  };
+  // State to store user data from API
+  const [currentUser, setCurrentUser] = useState({
+    name: '',
+    email: '',
+    profileImage: '/api/placeholder/32/32', // Retain mock profileImage as API doesn't provide it
+  });
+
+  // Fetch user details from API
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          console.error('No access token found in localStorage');
+          return;
+        }
+
+        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('User Details:', data); // Log the full response for debugging
+
+        // Update currentUser with only name and email from the API response
+        setCurrentUser({
+          name: data.name || '',
+          email: data.email || '',
+          profileImage: '/api/placeholder/32/32', // Retain mock profileImage
+        });
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []); // Empty dependency array to run only once on mount
   
   return (
     <>
@@ -50,7 +88,7 @@ function App() {
             <HomeLayout currentUser={currentUser}/>
           }
         />
-        <Route path="/referral/:username" element={<RedirectToRegister />} />
+        <Route path="/ref/auth/:username" element={<RedirectToRegister />} />
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
     </>
