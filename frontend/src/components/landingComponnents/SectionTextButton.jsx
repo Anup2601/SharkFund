@@ -1,15 +1,7 @@
 import React from "react";
 import "./SectionTextButton.css"; // for styling
 
-interface SectionTextButtonProps {
-  id: string;
-  bgColor: string;
-  title: string;
-  text: string;
-  buttonText: string;
-}
-
-const SectionTextButton: React.FC<SectionTextButtonProps> = ({ id, bgColor, title, text, buttonText }) => {
+const SectionTextButton = ({ id, bgColor, title, text, buttonText }) => {
   return (
     <section id={id} className={`section-text-button ${bgColor}`}>
       <div className="container">

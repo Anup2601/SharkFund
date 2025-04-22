@@ -1,15 +1,6 @@
 import "./SectionImageText.css";
 
-interface SectionImageTextProps {
-  id: string;
-  bgColor: string;
-  image: string;
-  title: string;
-  text: string;
-  buttonText?: string;
-}
-
-const SectionImageText = ({ id, bgColor, image, title, text, buttonText }: SectionImageTextProps) => {
+const SectionImageText = ({ id, bgColor, image, title, text, buttonText}) => {
   return (
     <section id={id} className={`section-image-text ${bgColor}`}>
       <div className="container">

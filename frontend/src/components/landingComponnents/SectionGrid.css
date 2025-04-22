@@ -1,49 +1,61 @@
-  .section-grid {
-    padding: 80px 20px;
-    
-  }
+.section-grid {
+  padding: 20px 10px;
+}
 
-  .section-grid .container {
-    max-width: 100%;
-    margin: 0;
-  }
+.section-grid .container {
+  max-width: 1200px;
+  margin: 0 auto; /* Center the container */
+}
 
-  .section-title {
-    text-align: center;
-    font-size: 32px;
-    margin-bottom: 50px;
-  }
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 15px;
+}
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 7px;
+  justify-content: center; /* Center the grid items */
+  margin-top: 0px;
+}
 
-  .grid-item {
-    text-align: center;
-    justify-self: center;
-    width: 100%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    border: 3px solid oklch(67.7% 0.152 181.912);
-    border-radius: 20px;
-  }
+.grid-item {
+  text-align: center;
+  justify-content: center;
+  justify-items: center;
+  justify-self: center;
+  width: 100%;
+  margin-top: 2px;
+  max-width: 350px; /* Optional: limits item width */
+  padding-top: 0px;
+  padding-bottom: 5px;
+  border: 3px solid #b8860b;
+  border-radius: 20px;
+  background-color: #111;
+}
 
+.grid-item .icon {
+  margin-top: 5px;
+  margin-bottom: 10px !important;
+  color: oklch(0.77 0.11 85.25);
+  justify-self: center;
+  justify-content: center;
+  justify-items: center;
+}
 
-  .grid-item .icon{  
-    margin-bottom: 20px !important; 
-    color: oklch(67.7% 0.152 181.912);
-    justify-self: center;
-  }
-  .grid-item .icon img {  width: 80px; }
+.grid-item .icon img {
+  width: 80px;
+  justify-self: center;
+}
 
-  .grid-item h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
+.grid-item h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
 
-  .grid-item p {
-    font-size: 16px;
-    line-height: 1.5;
-  }
+.grid-item p {
+  font-size: 16px;
+  line-height: 1.5;
+}

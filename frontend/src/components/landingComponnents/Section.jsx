@@ -1,6 +1,6 @@
 import './Section.css';
 
-function Section({ id, title, dark }: { id: string; title: string; dark: boolean }) {
+function Section({ id, title, dark }) {
   return (
     <section id={id} className={`section ${dark ? 'dark' : 'light'}`}>
       <h2>{title}</h2>

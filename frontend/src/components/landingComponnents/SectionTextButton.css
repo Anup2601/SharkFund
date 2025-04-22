@@ -19,21 +19,6 @@
   line-height: 1.6;
 }
 
-.section-text-button button {
-  padding: 12px 30px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  background-color: oklch(67.7% 0.152 181.912);
-  color: #fff;
-  border-radius: 4px;
-}
-.section-text-button button:hover {
-  background-color: oklch(77.7% 0.152 181.912);
-}
-
-
-
 .dark-bg {
   background-color: #111;
   color: #fff;
