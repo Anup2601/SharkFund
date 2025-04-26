@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate , useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail, Phone, Share2Icon, User } from 'lucide-react';
 import axios from 'axios';
@@ -7,8 +7,8 @@ import axios from 'axios';
 export default function Registration() {
   const [floatY, setFloatY] = useState(0);
   const [rotation, setRotation] = useState(0);
-  const [showPassword, setShowPassword]=useState(false);
-  const location = useLocation()
+  const [showPassword, setShowPassword] = useState(false);
+  const location = useLocation();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -18,21 +18,21 @@ export default function Registration() {
     email: '',
     password: '',
     confirmPassword: '',
-    Referral: '',
+    Referral: '', // Keep as Referral for form state
     mobile: '',
     address: '',
     acceptedTerms: false,
   });
 
-// Check for referral in the location state and update form data
-useEffect(() => {
-  if (location.state?.Referrer) {
-    setFormData(prev => ({
-      ...prev,
-      Referral: location.state.Referrer
-    }));
-  }
-}, [location.state]);
+  // Check for referral in the location state and update form data
+  useEffect(() => {
+    if (location.state?.Referrer) {
+      setFormData(prev => ({
+        ...prev,
+        Referral: location.state.Referrer
+      }));
+    }
+  }, [location.state]);
 
   // Animation for floating elements
   useEffect(() => {
@@ -72,13 +72,13 @@ useEffect(() => {
     e.preventDefault();
     
     // Frontend validation
-    if(!formData.name.trim()) return toast.error("Name is required");
-    if(!formData.email.trim()) return toast.error("Email is required");
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
-    if(!formData.password) return toast.error("Password is required");
-    if(formData.password.length < 8) return toast.error("Password must be at least 8 characters");
-    if(formData.password !== formData.confirmPassword) return toast.error("Passwords do not match");
-    if(!formData.acceptedTerms) return toast.error("Please accept the Terms and Conditions");
+    if (!formData.name.trim()) return toast.error("Name is required");
+    if (!formData.email.trim()) return toast.error("Email is required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
+    if (!formData.password) return toast.error("Password is required");
+    if (formData.password.length < 8) return toast.error("Password must be at least 8 characters");
+    if (formData.password !== formData.confirmPassword) return toast.error("Passwords do not match");
+    if (!formData.acceptedTerms) return toast.error("Please accept the Terms and Conditions");
 
     setIsLoading(true);
     setFieldErrors({});
@@ -86,12 +86,13 @@ useEffect(() => {
     try {
       // Prepare the data for the API format
       const apiData = {
+        name: formData.name,
         email: formData.email,
         password: formData.password,
         confirm_password: formData.confirmPassword,
-        address: formData.address || formData.name, 
+        address: formData.address || '', // Use empty string if address is not provided
         mobile_number: formData.mobile || '',
-        Referral: formData.Referral ,
+        referred_by: formData.Referral || '', // Map Referral to referred_by
       };
       
       // Make the API request
@@ -100,20 +101,20 @@ useEffect(() => {
         apiData,
         {
           headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
+          withCredentials: true // Ensure cookies are sent/received
         }
       );
       
-      toast.success('Registration successful! Redirecting to login...');
+      toast.success('Registration successful! Redirecting...');
       
-      // Store user data in localStorage if needed
+      // Store username in localStorage (optional, since tokens are in cookies)
       localStorage.setItem('userData', JSON.stringify({
         username: response.data.user.username,
-        email: response.data.user.email
+        email: formData.email
       }));
       
-      // Redirect after a delay
-      setTimeout(() => navigate('/login'), 1500);
+      // Redirect to /home after a delay (user is authenticated via cookies)
+      setTimeout(() => navigate('/home'), 1500);
       
     } catch (error) {
       console.error('Registration error:', error);
@@ -121,11 +122,16 @@ useEffect(() => {
       // Handle API error responses
       if (axios.isAxiosError(error) && error.response?.data?.errors) {
         const errors = error.response.data.errors;
-        setFieldErrors(errors);
+        // Map referred_by errors to Referral for display
+        const mappedErrors = {
+          ...errors,
+          Referral: errors.referred_by || errors.Referral,
+        };
+        setFieldErrors(mappedErrors);
         
         // Show the first error as a toast
-        const firstErrorField = Object.keys(errors)[0];
-        const firstError = errors[firstErrorField][0];
+        const firstErrorField = Object.keys(mappedErrors)[0];
+        const firstError = mappedErrors[firstErrorField][0];
         toast.error(firstError);
       } else {
         toast.error('Registration failed. Please try again later.');
@@ -256,16 +262,16 @@ useEffect(() => {
                   <Share2Icon className='size-5 text-white'/>
                 </div>
                 <input
-                  className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.Referral ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
                   type="text"
                   id="Referral"
                   name="Referral"
                   placeholder='Enter your Referral ID (optional)'
                   value={formData.Referral}
-                  readOnly
-                  onChange={handleChange}
+                  onChange={handleChange} // Removed readOnly to allow manual input
                 />
               </div>
+              {fieldErrors.Referral && <p className="text-red-500 text-sm mt-1">{fieldErrors.Referral[0]}</p>}
             </div>
             
             <div>
