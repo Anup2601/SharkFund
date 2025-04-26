@@ -1,5 +1,5 @@
-// src/components/Hero.tsx
 import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -37,17 +37,20 @@ const Hero = () => {
             >
               SharkFund is a full-service marketing agency that's been purpose-built to help organizations thrive in an increasingly complex landscape.
             </motion.p>
+
+            <Link to="/login">
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(212, 175, 55, 0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-4 rounded-full text-lg shadow-gold"
+              >
+                GET STARTED
+              </motion.button>
+            </Link>
             
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
-              whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(212, 175, 55, 0.5)" }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-4 rounded-full text-lg shadow-gold"
-            >
-              GET STARTED
-            </motion.button>
           </motion.div>
           
           <motion.div

@@ -1,13 +1,13 @@
 // src/components/Navbar.tsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
 import { FaBars, FaTimes } from 'react-icons/fa';
 
 const navItems = [
   { name: 'Home', link: '#home' },
   { name: 'About', link: '#company' },
   { name: 'Features', link: '#features' },
-  { name: 'Vision', link: '#vision' },
   { name: 'Contact', link: '#contact' }
 ];
 
@@ -71,16 +71,18 @@ const Navbar = () => {
                   {item.name}
                 </motion.a>
               ))}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
-                className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-5 py-2 rounded-full shadow-gold"
-              >
-                Login
-              </motion.button>
+              <Link to="/login">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+                  className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-5 py-2 rounded-full shadow-gold"
+                >
+                   Login
+                </motion.button>
+              </Link>
             </div>
           </div>
           

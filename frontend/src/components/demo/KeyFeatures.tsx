@@ -77,12 +77,12 @@ const KeyFeatures = () => {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
               Powerful Features
             </span> For Success
           </motion.h2>
           <motion.div 
-            className="w-20 h-1 bg-gradient-to-r from-blue-400 to-purple-600 mx-auto my-4"
+            className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto my-4"
             initial={{ width: 0 }}
             animate={inView ? { width: "5rem" } : { width: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -107,14 +107,14 @@ const KeyFeatures = () => {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="bg-gray-900 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition-colors duration-300"
+              className="bg-gray-900 rounded-xl p-6 border border-gray-700 hover: from-yellow-400 transition-colors duration-300"
               variants={featureVariants}
               whileHover={{ 
                 y: -10,
                 boxShadow: "0 10px 30px -15px rgba(124, 58, 237, 0.5)"
               }}
             >
-              <div className="rounded-full bg-gradient-to-br from-blue-400 to-purple-600 w-16 h-16 flex items-center justify-center text-3xl mb-4">
+              <div className="rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 w-16 h-16 flex items-center justify-center text-3xl mb-4">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>

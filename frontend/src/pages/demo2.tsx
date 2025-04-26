@@ -6,13 +6,13 @@ import AboutSection from '../components/demo/About';
 import WhyChooseUs from '../components/demo/ChooseUs';
 import SecuritySection from '../components/demo/SecuritySection';
 import ValueSection from '../components/demo/ValueSection';
-// import KeyFeatures from '../components/demo/KeyFeatures';
-// import InvestmentSection from '../components/demo/InvestmentSection';
-// import Strategies from '../components/demo/Strategies';
-// import ValuesSection from '../components/demo/ValuesSection';
-// import ContactSection from '../components/demo/ContactSection';
-// import Footer from '../components/demo/Footer';
-import { motion, useAnimation } from 'framer-motion';
+import KeyFeatures from '../components/demo/KeyFeatures';
+import InvestmentSection from '../components/demo/InvestmentSection';
+import Strategies from '../components/demo/Strategies';
+import ValuesSection from '../components/demo/ValueSection';
+import ContactSection from '../components/demo/ContactSection';
+import Footer from '../components/demo/Footer';
+import { useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const LandingPage = () => {
@@ -36,12 +36,12 @@ const LandingPage = () => {
       <WhyChooseUs />
       <SecuritySection />
       <ValueSection />
-      {/* <KeyFeatures /> */}
+      <KeyFeatures />
       {/* <InvestmentSection /> */}
-      {/* <Strategies /> */}
-      {/* <ValuesSection /> */}
-      {/* <ContactSection /> */}
-      {/* <Footer /> */}
+      <Strategies />
+      <ValuesSection />
+      <ContactSection />
+      <Footer />
     </div>
   );
 };
