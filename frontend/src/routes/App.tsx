@@ -1,14 +1,15 @@
-import { Route, Routes, useNavigate, useParams, useLocation } from 'react-router-dom'
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import './App.css'
 import Registration from '../pages/register'
 import Login from '../pages/login'
 import { Toaster } from 'react-hot-toast'
 import TermsAndConditions from '../pages/TermsAndConditions'
 import ForgotPassword from '../pages/forgotPassword'
-import Landing from '../pages/landing'
+import Demo2 from '../pages/demo2'
 import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
 import { useEffect, useState } from 'react'
+import CoffeeFundingPage from '../pages/demo'
 
 // Redirect function inside App file
 function RedirectToRegister() {
@@ -69,18 +70,19 @@ function App() {
     };
 
     fetchUserDetails();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
   
   return (
     <>
       <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<Landing/>}/>
+        <Route path="/" element={<Demo2/>}/>
         <Route path="/register" element={<Registration/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/demo" element={<CoffeeFundingPage/>}/>
         {/* Wrap your home page with HomeLayout and pass user data */}
         <Route
           path="/home"
