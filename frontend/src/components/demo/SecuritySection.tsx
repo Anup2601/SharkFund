@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import { FaShieldAlt, FaLock, FaUserShield } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const SecuritySection = () => {
   const controls = useAnimation();
@@ -173,22 +174,24 @@ const SecuritySection = () => {
             >
               SharkFund is a trust company regulated by the Department of Financial Services. We are subject to capital reserve requirements, cybersecurity requirements, and banking compliance standards set forth by the Banking Law. SharkFund is also a fiduciary and Qualified Custodian.
             </motion.p>
+            <Link to={'/login'}>
+              <motion.button
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { duration: 0.5, delay: 0.7 }
+                  }
+                }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(212, 175, 55, 0.3)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-4 rounded-full text-lg shadow-gold"
+              >
+                GET STARTED
+              </motion.button>
+            </Link>
             
-            <motion.button
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { 
-                  opacity: 1, 
-                  y: 0,
-                  transition: { duration: 0.5, delay: 0.7 }
-                }
-              }}
-              whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(212, 175, 55, 0.3)" }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-4 rounded-full text-lg shadow-gold"
-            >
-              GET STARTED
-            </motion.button>
           </motion.div>
         </div>
       </div>

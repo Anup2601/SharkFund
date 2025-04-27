@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
+import PaymentOptions from '../components/PaymentOptions';
 
 const Dashboard: React.FC = () => {
-  // Existing state variables from your code
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
-  const [fundAmount, setFundAmount] = useState('');
+  const [fundAmount, setFundAmount] = useState<number>(0);
   const [userProfile, setUserProfile] = useState({
     name: "",
     totalIncome: `₹0`,
@@ -151,7 +152,6 @@ const Dashboard: React.FC = () => {
         const data = await response.json();
         console.log('Fund history API response:', data);
         
-        // Transform the API data to match the FundHistory component's expected format
         const transformedData = (data.results || data || []).map((item: any) => ({
           id: item.transaction_id || item.id || String(Math.random()).substr(2, 8),
           amount: formatCurrency(item.amount || 0),
@@ -262,15 +262,17 @@ const Dashboard: React.FC = () => {
   };
 
   const handleAddFund = () => {
-    toast(`🚧 Adding $${fundAmount} to your wallet. Payment gateway will be integrated in the future.`);
-    setFundAmount('');
+    if (!fundAmount) {
+      toast.error('Please enter an amount to add');
+      return;
+    }
+    setShowPaymentForm(true);
   };
 
   // Toggle fund history visibility and fetch data if needed
   const toggleFundHistory = async () => {
     const nextState = !showAddFundHistory;
     
-    // If we're showing fund history and we don't have data yet, fetch it
     if (nextState && fundHistory.length === 0) {
       await fetchFundHistory();
     }
@@ -415,7 +417,7 @@ const Dashboard: React.FC = () => {
                   <input
                     type="number"
                     value={fundAmount}
-                    onChange={(e) => setFundAmount(e.target.value)}
+                    onChange={(e) => setFundAmount(Number(e.target.value))}
                     className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
                     placeholder="0.00"
                   />
@@ -615,7 +617,7 @@ const Dashboard: React.FC = () => {
                   <input
                     type="number"
                     value={fundAmount}
-                    onChange={(e) => setFundAmount(e.target.value)}
+                    onChange={(e) => setFundAmount(Number(e.target.value))}
                     className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
                     placeholder="0.00"
                   />
@@ -658,6 +660,13 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       )}
+
+      {showPaymentForm && (
+          <PaymentOptions 
+            amount={fundAmount} 
+            onClose={() => setShowPaymentForm(false)} 
+          />
+        )}
       
     </div>
   );

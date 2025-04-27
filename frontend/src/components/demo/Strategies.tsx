@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-
+import { Link } from 'react-router-dom';
+import IncomeStrategy from '../../assets/Income Strategy.png'
+import GrowthStrategy from '../../assets/Growth.png'
+import BalanceStrategy from '../../assets/balance.png'
 const Strategies = () => {
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -35,7 +38,7 @@ const Strategies = () => {
     {
       title: "Growth Strategy",
       description: "Focus on long-term capital appreciation through investments in high-growth sectors like technology and renewable energy.",
-      image: "/api/placeholder/600/400",
+      image : GrowthStrategy,
       stats: [
         { value: "18%", label: "Average Annual Return" },
         { value: "5-7", label: "Years Horizon" },
@@ -45,7 +48,7 @@ const Strategies = () => {
     {
       title: "Income Strategy",
       description: "Generate consistent monthly income through dividend stocks, bonds, and real estate investments.",
-      image: "/api/placeholder/600/400",
+      image : IncomeStrategy,
       stats: [
         { value: "12%", label: "Average Annual Return" },
         { value: "3-5", label: "Years Horizon" },
@@ -55,7 +58,7 @@ const Strategies = () => {
     {
       title: "Balanced Strategy",
       description: "Achieve steady growth while maintaining income through a diversified portfolio across multiple asset classes.",
-      image: "/api/placeholder/600/400",
+      image: GrowthStrategy,
       stats: [
         { value: "15%", label: "Average Annual Return" },
         { value: "4-6", label: "Years Horizon" },
@@ -103,7 +106,7 @@ const Strategies = () => {
               >
                 <div className="relative overflow-hidden rounded-2xl">
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 opacity-30"
+                    className="absolute inset-0  opacity-30"
                     whileHover={{ opacity: 0.5 }}
                   />
                   <img 
@@ -152,14 +155,16 @@ const Strategies = () => {
                     </motion.div>
                   ))}
                 </div>
+                <Link to ={'/login'}>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="py-3 px-8 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-medium shadow-lg"
+                  >
+                    Learn More
+                  </motion.button>
+                </Link>
                 
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="py-3 px-8 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-medium shadow-lg"
-                >
-                  Learn More
-                </motion.button>
               </div>
             </motion.div>
           ))}

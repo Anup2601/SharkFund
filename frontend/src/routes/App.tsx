@@ -11,6 +11,7 @@ import Profile from '../components/profile'
 import { useEffect, useState } from 'react'
 import CoffeeFundingPage from '../pages/demo'
 
+
 // Redirect function inside App file
 function RedirectToRegister() {
   const { username } = useParams<{ username: string }>()

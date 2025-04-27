@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import { FaHeadset, FaShieldAlt, FaLightbulb } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const features = [
   {
@@ -92,12 +93,14 @@ const WhyChooseUs = () => {
           variants={containerVariants}
           className="text-center mb-16"
         >
-          <motion.h2 
-            variants={itemVariants}
-            className="text-3xl md:text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600"
-          >
-            WHY CHOOSE US
-          </motion.h2>
+          
+            <motion.h2 
+              variants={itemVariants}
+              className="text-3xl md:text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600"
+            >
+              WHY CHOOSE US
+            </motion.h2>
+          
           <motion.div
             variants={itemVariants}
             className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto mb-6"
@@ -140,12 +143,14 @@ const WhyChooseUs = () => {
                 whileTap={{ scale: 0.95 }}
                 className="mt-6 inline-block"
               >
-                <span className="text-yellow-500 font-medium flex items-center justify-center cursor-pointer">
-                  Learn More
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
+                <Link to="/login">
+                  <span className="text-yellow-500 font-medium flex items-center justify-center cursor-pointer">
+                    Learn More
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </Link>
               </motion.div>
             </motion.div>
           ))}

@@ -2,7 +2,7 @@
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
-
+import { Link } from 'react-router-dom';
 const AboutSection = () => {
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -151,13 +151,15 @@ const AboutSection = () => {
                   ))}
                 </div>
                 
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-6 py-3 rounded-full inline-block"
-                >
-                  Explore Platform
-                </motion.div>
+                <Link to={"/login"}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-6 py-3 rounded-full inline-block"
+                  >
+                    Explore Platform
+                  </motion.div>
+                </Link>
               </motion.div>
               
               <motion.div

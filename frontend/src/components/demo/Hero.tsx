@@ -72,8 +72,18 @@ const Hero = () => {
                     </div>
                     <span className="text-yellow-500 font-bold">SHARK FUND</span>
                   </div>
-                  <div className="text-yellow-500">LINK FUND</div>
+
+                  <a
+                    href="https://www.instagram.com/sharkfund.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-yellow-500 font-bold hover:text-yellow-400 transition-colors duration-300"
+                  >
+                    LINK FUND
+                  </a>
                 </div>
+
+
                 
                 <div className="text-center mb-6">
                   <motion.div
@@ -126,6 +136,7 @@ const Hero = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => window.open("https://www.instagram.com/sharkfund.in/", "_blank")}
                     className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-medium py-2 px-6 rounded-full flex-1"
                   >
                     LINK IN BIO
@@ -133,6 +144,7 @@ const Hero = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => window.open("https://www.instagram.com/sharkfund.in/", "_blank")}
                     className="border border-yellow-600 text-yellow-500 font-medium py-2 px-6 rounded-full flex-1"
                   >
                     LINK IN BOT

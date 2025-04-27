@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import toast from 'react-hot-toast';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,40 @@ const ContactSection = () => {
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  const validateForm = () => {
+    const { name, email, subject, message } = formData;
+
+    // Check for empty fields
+    if (!name) {
+      toast.error("Please enter your name");
+      return false;
+    }
+    
+    if (!email) {
+      toast.error("Please enter your email address");
+      return false;
+    }
+    
+    if (!subject) {
+      toast.error("Please enter a subject");
+      return false;
+    }
+    
+    if (!message) {
+      toast.error("Please enter your message");
+      return false;
+    }
+
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    return true;
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -47,21 +82,25 @@ const ContactSection = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
+    
+    // Check if the form is valid
+    if (validateForm()) {
+      // Show success toast if form is valid
+      toast.success("Your message has been sent successfully!");
+
+      // Reset the form after submission
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    }
   };
 
   const contactInfo = [
@@ -122,8 +161,9 @@ const ContactSection = () => {
           <motion.div variants={itemVariants}>
             <div className="bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-700">
               <h3 className="text-2xl font-bold mb-6">Send us a message</h3>
-              <form onSubmit={handleSubmit }>
+              <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
+                  {/* Full Name Field */}
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                       Full Name
@@ -138,9 +178,10 @@ const ContactSection = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
                       placeholder="Your name"
-                      required
                     />
                   </div>
+
+                  {/* Email Address Field */}
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                       Email Address
@@ -155,9 +196,10 @@ const ContactSection = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
                       placeholder="your.email@example.com"
-                      required
                     />
                   </div>
+                  
+                  {/* Subject Field */}
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
                       Subject
@@ -172,9 +214,9 @@ const ContactSection = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
                       placeholder="What's this about?"
-                      required
                     />
                   </div>
+                  
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
                       Message
@@ -189,9 +231,9 @@ const ContactSection = () => {
                       rows={4}
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
                       placeholder="How can we help you?"
-                      required
                     ></motion.textarea>
                   </div>
+                  
                   <div>
                     <motion.button
                       type="submit"

@@ -169,6 +169,7 @@ const ValueSection = () => {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(212, 175, 55, 0.3)" }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => window.open("https://www.instagram.com/sharkfund.in/", "_blank")}
               className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-4 rounded-full text-lg shadow-lg"
             >
               JOIN THE COMMUNITY

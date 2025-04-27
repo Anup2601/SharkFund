@@ -1,7 +1,16 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 
+
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+   // Email validation regex
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -30,13 +39,26 @@ const Footer = () => {
       }
     }
   };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!emailRegex.test(email)) {
+      setIsEmailValid(false); // Set email validity state to false
+      toast.error("Please enter a valid email address!"); // Show error toast
+      return; // Prevent form submission if email is invalid
+    }
+
+    // Here you can make your API call or perform other logic
+    // For now, we'll just display the success toast
+
+    toast.success("You have successfully subscribed!");  // Show success message
+    setEmail(""); // Optionally reset the form field
+  };
 
   const quickLinks = [
     { name: 'Home', href: '#' },
     { name: 'About', href: '#company' },
     { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Testimonials', href: '#testimonials' },
     { name: 'Contact', href: '#contact' }
   ];
 
@@ -153,14 +175,22 @@ const Footer = () => {
           <motion.div variants={itemVariants} className="col-span-1">
             <h3 className="text-lg font-semibold mb-4 text-white">Subscribe to Our Newsletter</h3>
             <p className="text-gray-400 mb-4">Stay updated with the latest news and exclusive offers.</p>
-            <form className="space-y-3">
+            <form className="space-y-3" onSubmit={handleSubmit}>
               <div>
                 <motion.input
                   type="email"
                   placeholder="Your email address"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setIsEmailValid(true); // Reset email validity when user starts typing
+                  }}
+                  className={`w-full px-4 py-3 bg-gray-800 border ${isEmailValid ? 'border-gray-700' : 'border-red-500'} rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white`}
                   whileFocus={{ scale: 1.01 }}
                 />
+                {!isEmailValid && (
+                  <div className="text-red-500 text-sm mt-1">Please enter a valid email address.</div>
+                )}
               </div>
               <motion.button
                 type="submit"
