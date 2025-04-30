@@ -11,7 +11,11 @@ interface Referral {
   activeDate: string;
 }
 
-const Referral: React.FC = () => {
+interface ReferralProps {
+  referral?: Referral;
+}
+
+const Referral: React.FC<ReferralProps> = ({ }) => {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,13 +39,13 @@ const Referral: React.FC = () => {
 
         // Map the API response to the Referral interface
         const mappedReferrals: Referral[] = response.data.map((item: any) => ({
-          id: item.username, // Use username as the ID (still needed for key prop)
+          id: item.username, 
           login: item.username,
           name: item.name,
           mobile: item.mobile_number,
           joinDate: item.join_date,
-          activeDate: '', // API doesn't provide this; set to empty or fetch separately
-          status: item.status === 'Inactive' ? 'Not Active' : 'Active', // Transform status
+          activeDate: '', 
+          status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
         }));
 
         setReferrals(mappedReferrals);
@@ -57,7 +61,7 @@ const Referral: React.FC = () => {
     };
 
     fetchReferrals();
-  }, []); // Empty dependency array to run once on mount
+  }, []); 
 
   if (loading) {
     return <div className="text-white">Loading referrals...</div>;
@@ -77,7 +81,7 @@ const Referral: React.FC = () => {
         <table className="w-full">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-700">
-              <th className="pb-3 px-2">S.No.</th> {/* Changed from "ID" to "S.No." */}
+              <th className="pb-3 px-2">S.No.</th> 
               <th className="pb-3 px-2">Login Id</th>
               <th className="pb-3 px-2">Name</th>
               <th className="pb-3 px-2">Mobile No.</th>
@@ -89,7 +93,7 @@ const Referral: React.FC = () => {
           <tbody>
             {referrals.map((item, index) => (
               <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-700">
-                <td className="py-4 px-2">{index + 1}</td> {/* Serial number: index + 1 */}
+                <td className="py-4 px-2">{index + 1}</td>
                 <td className="py-4 px-2">{item.login}</td>
                 <td className="py-4 px-2">{item.name}</td>
                 <td className="py-4 px-2">{item.mobile}</td>

@@ -42,9 +42,6 @@ export default function Login() {
     }));
   };
 
-  const isEmail = (login: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

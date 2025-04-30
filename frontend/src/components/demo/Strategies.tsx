@@ -3,7 +3,6 @@ import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import IncomeStrategy from '../../assets/Income Strategy.png'
 import GrowthStrategy from '../../assets/Growth.png'
-import BalanceStrategy from '../../assets/balance.png'
 const Strategies = () => {
   const [ref, inView] = useInView({
     triggerOnce: true,

@@ -15,53 +15,7 @@ interface HomeLayoutProps {
   };
 }
 
-const referralData: Referral[] = [
-  {
-    id: '001',
-    login: 'john_doe',
-    name: 'John Doe',
-    mobile: '9876543210',
-    status: 'Active',
-    joinDate: '2024-11-01',
-    activeDate: '2024-11-15',
-  },
-  {
-    id: '002',
-    login: 'jane_smith',
-    name: 'Jane Smith',
-    mobile: '9123456789',
-    status: 'Not Active',
-    joinDate: '2024-12-05',
-    activeDate: '',
-  },
-  {
-    id: '003',
-    login: 'raj_kumar',
-    name: 'Raj Kumar',
-    mobile: '9988776655',
-    status: 'Active',
-    joinDate: '2025-01-10',
-    activeDate: '2025-01-20',
-  },
-  {
-    id: '004',
-    login: 'anita_j',
-    name: 'Anita Joshi',
-    mobile: '9871122334',
-    status: 'Not Active',
-    joinDate: '2025-02-14',
-    activeDate: '',
-  },
-  {
-    id: '005',
-    login: 'siddharth_m',
-    name: 'Siddharth Mehra',
-    mobile: '9000012345',
-    status: 'Active',
-    joinDate: '2025-03-05',
-    activeDate: '2025-03-15',
-  },
-];
+
 
 const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
   const [activeComponent, setActiveComponent] = useState<string>('dashboard');
@@ -93,7 +47,11 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
       case "withdraw":
         return <FundHistory type="withdraw"/>;
       case "referral":
-        return <Referral referral={referralData}/>
+        return (
+          <>
+            <Referral referral={undefined} />
+          </>
+        );
       case "support":
         return <Support/>;
       default:

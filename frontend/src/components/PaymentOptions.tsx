@@ -221,7 +221,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
           </div>
         )}
 
-        {/* Crypto Form */}
+        {/* Crypto Form
         {selectedMethod === 'crypto' && (
           <div className="space-y-4">
             <div>
@@ -248,7 +248,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
               />
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="mt-6 flex gap-4">
           <button
