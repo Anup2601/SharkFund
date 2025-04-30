@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+// import Navbar from './navebar';
 
 interface PaymentOptionsProps {
   amount: number;
   onClose: () => void;
+  // Add userBankDetails prop
+  userBankDetails?: {
+    accountNumber: string;
+    ifsc: string;
+    accountName: string;
+  };
 }
 
-const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
+const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose, userBankDetails }) => {
   const [selectedMethod, setSelectedMethod] = useState('upi');
   const [formData, setFormData] = useState({
     upi: {
@@ -23,13 +30,23 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
       cvv: '',
       nameOnCard: '',
     },
-    crypto: {
-      walletAddress: '',
-      network: 'ETH',
-    }
   });
 
-  const handleInputChange = (method: 'upi' | 'bank' | 'card' | 'crypto', field: string, value: string) => {
+  // Pre-fill bank details if available
+  useEffect(() => {
+    if (userBankDetails && userBankDetails.accountNumber) {
+      setFormData(prevState => ({
+        ...prevState,
+        bank: {
+          accountNumber: userBankDetails.accountNumber,
+          ifsc: userBankDetails.ifsc,
+          accountName: userBankDetails.accountName,
+        }
+      }));
+    }
+  }, [userBankDetails]);
+
+  const handleInputChange = (method: 'upi' | 'bank' | 'card', field: string, value: string) => {
     setFormData({
       ...formData,
       [method]: {
@@ -60,11 +77,6 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
       }
     }
     
-    if (selectedMethod === 'crypto' && !formData.crypto.walletAddress) {
-      toast.error('Please enter a valid wallet address');
-      return;
-    }
-
     // Mock API call for payment processing
     toast.success(`Processing ₹${amount} payment via ${selectedMethod.toUpperCase()}`);
     // In a real app, you would make an API call here to process the payment
@@ -111,12 +123,6 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
             >
               <span className="font-medium">Credit/Debit Card</span>
             </button>
-            <button 
-              className={`py-3 px-4 rounded-lg flex items-center justify-center transition-all ${selectedMethod === 'crypto' ? 'bg-teal-500 text-gray-900' : 'bg-gray-700 text-white'}`}
-              onClick={() => setSelectedMethod('crypto')}
-            >
-              <span className="font-medium">Cryptocurrency</span>
-            </button>
           </div>
         </div>
 
@@ -148,6 +154,9 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
                 className="bg-gray-900 text-white px-4 py-3 rounded-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
                 placeholder="Account Holder Name"
               />
+              {userBankDetails && userBankDetails.accountNumber && (
+                <p className="text-teal-400 text-xs mt-1">Auto-filled from your profile</p>
+              )}
             </div>
             <div>
               <label className="block text-gray-400 text-sm mb-2">Account Number</label>
@@ -220,35 +229,6 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, onClose }) => {
             </div>
           </div>
         )}
-
-        {/* Crypto Form
-        {selectedMethod === 'crypto' && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Network</label>
-              <select
-                value={formData.crypto.network}
-                onChange={(e) => handleInputChange('crypto', 'network', e.target.value)}
-                className="bg-gray-900 text-white px-4 py-3 rounded-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
-              >
-                <option value="ETH">Ethereum (ETH)</option>
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="USDT">Tether (USDT)</option>
-                <option value="BNB">Binance Coin (BNB)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">Wallet Address</label>
-              <input
-                type="text"
-                value={formData.crypto.walletAddress}
-                onChange={(e) => handleInputChange('crypto', 'walletAddress', e.target.value)}
-                className="bg-gray-900 text-white px-4 py-3 rounded-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="0x..."
-              />
-            </div>
-          </div>
-        )} */}
 
         <div className="mt-6 flex gap-4">
           <button

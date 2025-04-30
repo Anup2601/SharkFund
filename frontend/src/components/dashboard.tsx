@@ -3,6 +3,7 @@ import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
 import PaymentOptions from '../components/PaymentOptions';
 
+
 const Dashboard: React.FC = () => {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -660,13 +661,16 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       )}
-
+      <div>
       {showPaymentForm && (
           <PaymentOptions 
             amount={fundAmount} 
             onClose={() => setShowPaymentForm(false)} 
           />
         )}
+      </div>
+
+      
       
     </div>
   );

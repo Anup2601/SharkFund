@@ -43,7 +43,11 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
           login: item.username,
           name: item.name,
           mobile: item.mobile_number,
-          joinDate: item.join_date,
+          joinDate: new Date(item.join_date).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
           activeDate: '', 
           status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
         }));

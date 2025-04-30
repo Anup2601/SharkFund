@@ -17,7 +17,12 @@ export const Profile: React.FC = () => {
     country: "",
     walletBalance: "",
     totalIncome: "",
-    profileImage: Avatar
+    profileImage: Avatar,
+    bankDetails: {
+      accountNumber: "",
+      ifsc: "",
+      accountName: ""
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -46,8 +51,12 @@ export const Profile: React.FC = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch profile data');
         }
+
         const data = await response.json();
+
+
         console.log(data);
+
         setUserData({
           ...data,
           profileImage: data.profileImage || Avatar
@@ -131,7 +140,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                   Active
                 </span>
                 <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
-                Balance: {userData.walletBalance?.split("T")[0] ?? "0"}
+                Balance: {userData.walletBalance}
                 </span>
               </div>
             </div>
@@ -213,11 +222,63 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
               <div className="text-white font-medium mt-1">{userData.totalIncome}</div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+
+          <h3 className="text-xl font-bold text-[#00ADB5] mt-8 mb-6 border-b border-[#00ADB5] pb-2">
+                      Payment Methods
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Bank Details */}
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">Account Holder Name</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.accountName || "Not provided"}
+                        </div>
+                      </div>
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">Account Number</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.accountNumber ? 
+                            userData.bankDetails.accountNumber.replace(/\d(?=\d{4})/g, "*") : 
+                            "Not provided"}
+                        </div>
+                      </div>
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">IFSC Code</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.ifsc || "Not provided"}
+                        </div>
+                      </div>
+                      
+                      {/* UPI Details */}
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">UPI ID</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.upiId || "Not provided"}
+                        </div>
+                      </div>
+                      
+                      {/* Card Details */}
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">Card Number</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.cardDetails?.cardNumber ? 
+                            "xxxx xxxx xxxx " + userData.bankDetails.cardDetails.cardNumber.slice(-4) : 
+                            "Not provided"}
+                        </div>
+                      </div>
+                      <div className="bg-[#222831] p-4 rounded-lg">
+                        <div className="text-gray-400 text-sm">Card Holder Name</div>
+                        <div className="text-white font-medium mt-1">
+                          {userData.bankDetails?.cardDetails?.nameOnCard || "Not provided"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          };
 
 // Update Profile Form Component
 interface UpdateProfileFormProps {
@@ -232,7 +293,19 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     email: userData.email,
     mobile_number: userData.mobile_number,
     country: userData.country,
-    profileImage: userData.profileImage
+    profileImage: userData.profileImage,
+    bankDetails: {
+      accountNumber: userData.bankDetails?.accountNumber || "",
+      ifsc: userData.bankDetails?.ifsc || "",
+      accountName: userData.bankDetails?.accountName || "",
+      upiId: userData.bankDetails?.upiId || "",
+      cardDetails: {
+        cardNumber: userData.bankDetails?.cardDetails?.cardNumber || "",
+        expiryDate: userData.bankDetails?.cardDetails?.expiryDate || "",
+        cvv: userData.bankDetails?.cardDetails?.cvv || "",
+        nameOnCard: userData.bankDetails?.cardDetails?.nameOnCard || ""
+      }
+    }
   });
 
   const [imagePreview, setImagePreview] = useState(userData.profileImage);
@@ -249,6 +322,31 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     setFormData({
       ...formData,
       [name]: value
+    });
+  };
+
+  const handleBankDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      bankDetails: {
+        ...formData.bankDetails,
+        [name]: value
+      }
+    });
+  };
+
+  const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      bankDetails: {
+        ...formData.bankDetails,
+        cardDetails: {
+          ...formData.bankDetails.cardDetails,
+          [name]: value
+        }
+      }
     });
   };
 
@@ -271,7 +369,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
         method: 'PUT',
@@ -279,7 +377,20 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
           'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          mobile_number: formData.mobile_number,
+          country: formData.country,
+          profileImage: formData.profileImage,
+          bank_account_name: formData.bankDetails.accountName,
+          bank_account_number: formData.bankDetails.accountNumber,
+          bank_ifsc: formData.bankDetails.ifsc,
+          upi_id: formData.bankDetails.upiId,
+          card_number: formData.bankDetails.cardDetails.cardNumber,
+          card_expiry: formData.bankDetails.cardDetails.expiryDate,
+          card_name: formData.bankDetails.cardDetails.nameOnCard
+        }),
       });
 
       if (!response.ok) {
@@ -446,7 +557,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.joiningDate.split("T")[0] ?? "0"}
+                    value={userData.joiningDate}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -457,13 +568,145 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.activationDate.split("T")[0] ?? "0"}
+                    value={userData.activationDate}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
                 </div>
               </div>
             </div>
+
+            {/*  Bank Details Section - Optional */}
+            <div className="mt-8">
+                <h3 className="text-xl font-bold text-[#00ADB5] mb-4 border-b border-[#00ADB5] pb-2">
+                  Payment Details (Optional)
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  Add your payment details to auto-fill payment information when adding funds
+                </p>
+                
+                <div className="mb-6">
+                  <h4 className="text-[#00FFF5] font-semibold mb-4">Bank Account</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        Account Holder Name
+                      </label>
+                      <input
+                        type="text"
+                        name="accountName"
+                        value={formData.bankDetails.accountName}
+                        onChange={handleBankDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="Account Holder Name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        Account Number
+                      </label>
+                      <input
+                        type="text"
+                        name="accountNumber"
+                        value={formData.bankDetails.accountNumber}
+                        onChange={handleBankDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="Account Number"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        IFSC Code
+                      </label>
+                      <input
+                        type="text"
+                        name="ifsc"
+                        value={formData.bankDetails.ifsc}
+                        onChange={handleBankDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="IFSC Code"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h4 className="text-[#00FFF5] font-semibold mb-4">UPI</h4>
+                  <div>
+                    <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                      UPI ID
+                    </label>
+                    <input
+                      type="text"
+                      name="upiId"
+                      value={formData.bankDetails.upiId}
+                      onChange={handleBankDetailsChange}
+                      className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                      placeholder="username@upi"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-[#00FFF5] font-semibold mb-4">Card Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        Card Number
+                      </label>
+                      <input
+                        type="text"
+                        name="cardNumber"
+                        value={formData.bankDetails.cardDetails.cardNumber}
+                        onChange={handleCardDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="1234 5678 9012 3456"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        Name on Card
+                      </label>
+                      <input
+                        type="text"
+                        name="nameOnCard"
+                        value={formData.bankDetails.cardDetails.nameOnCard}
+                        onChange={handleCardDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="Full Name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        Expiry Date
+                      </label>
+                      <input
+                        type="text"
+                        name="expiryDate"
+                        value={formData.bankDetails.cardDetails.expiryDate}
+                        onChange={handleCardDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="MM/YY"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#00FFF5] text-sm font-medium mb-2">
+                        CVV
+                      </label>
+                      <input
+                        type="password"
+                        name="cvv"
+                        value={formData.bankDetails.cardDetails.cvv}
+                        onChange={handleCardDetailsChange}
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="123"
+                        maxLength={3}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             
             {/* Action Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-end">
