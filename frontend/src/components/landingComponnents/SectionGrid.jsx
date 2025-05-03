@@ -1,17 +1,6 @@
 import "./SectionGrid.css";
 
-interface SectionGridProps {
-  id: string;
-  bgColor: string;
-  title: string;
-  items: {
-    icon: string | React.ComponentType<{ size: number }>;
-    heading: string;
-    text: string;
-  }[];
-}
-
-const SectionGrid: React.FC<SectionGridProps> = ({ id, bgColor, title, items }) => {
+const SectionGrid = ({ id, bgColor, title, items }) => {
   return (
     <section id={id} className={`section-grid ${bgColor}`}>
       <div className="container">

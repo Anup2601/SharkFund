@@ -1,0 +1,253 @@
+/* DEVELOPEDED AND MAINTAINED BY ->  UDIT SINGH (uditsingh34567@gmail.com) */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  background: linear-gradient(135deg, #0b0b0b, #1a1a1a);
+  background-image: url(/images/sharkd.jpg);
+  background-repeat: repeat;
+  background-size: contain;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sections */
+.section {
+  padding: 4rem 2rem;
+  width: 100vw;
+  background: linear-gradient(145deg, #0b0b0b 0%, #1f1f1f 100%);
+  color: #fff;
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.section:hover {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+/* Section Content */
+.section-content {
+  width: 100vw;
+  margin: auto;
+  max-width: 1200px;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.1);
+}
+
+/* Dark Theme */
+.dark {
+  background-color: #0a0a0a;
+  color: #fdfdfd;
+}
+
+/* Light Theme (for contrast elements) */
+.light {
+  background-color: #fff8e1;
+  color: #111;
+}
+
+/* Golden Text Gradient */
+.golden-text2 {
+  background: linear-gradient(to right, #ffd700, #fff, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+.golden-text {
+  background: linear-gradient(90deg, #b8860b, #ffd700, #fff8dc, #b8860b);
+  background-size: 200% auto;
+  color: #000;
+  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-glow 5s linear infinite;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes gold-glow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+/* Light Background Section (if needed) */
+.light-bg {
+  /*background: linear-gradient(to bottom, #fff8e1, #ffeaa7);*/
+  background: url("/images/pattern.jpg");
+  background-size: fit;
+  background-position: center;
+  background-repeat: repeat;
+  overflow: hidden;
+  color: #f9f9f9 !important;
+  width: 100%;
+  position: relative;
+}
+
+/* Dark Background Section */
+.dark-bg {
+  /*background: linear-gradient(145deg, #0c0c0c, #1a1a1a);*/
+  background: url("/images/pattern.jpg");
+  background-size: fit;
+  background-position: center;
+  background-repeat: repeat;
+  overflow: hidden;
+  color: #f9f9f9;
+  width: 100%;
+  position: relative;
+}
+/* Buttons */
+button {
+  background: linear-gradient(to right, #ffd700, #e6ac00);
+  color: #111;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 5px;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+@media (max-width: 770px) {
+  .section-image-text button {
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 7px;
+    justify-self: center;
+    text-align: center;
+  }  
+}
+
+button:hover {
+  background: linear-gradient(to right, #fff, #ffd700);
+  color: #000;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+/* Heading Enhancements */
+h1, h2, h3, h4 {
+  background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b, #ffd700);
+  background-size: 200% auto;
+  color: #000;
+  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-glow 15s linear infinite;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* Links */
+a {
+  color: #ffd700;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+a:hover {
+  color: #ffffff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ffd700, #e6ac00);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(#fff, #ffd700);
+}
+
+
+/*Coin animation Css*/
+
+.coin-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.coin {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-image: url('/images/coin.gif'); /* Use a small golden coin GIF or PNG */
+  background-size: cover;
+  animation: fall linear infinite;
+  opacity: 1;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+/* Randomize position and speed using nth-child */
+.coin:nth-child(1) {
+  left: 10%;
+  animation-duration: 6s;
+  animation-delay: 0s;
+}
+.coin:nth-child(2) {
+  left: 25%;
+  animation-duration: 8s;
+  animation-delay: 1s;
+}
+.coin:nth-child(3) {
+  left: 40%;
+  animation-duration: 5s;
+  animation-delay: 2s;
+}
+.coin:nth-child(4) {
+  left: 55%;
+  animation-duration: 7s;
+  animation-delay: 0.5s;
+}
+.coin:nth-child(5) {
+  left: 70%;
+  animation-duration: 6s;
+  animation-delay: 1.5s;
+}
+.coin:nth-child(6) {
+  left: 85%;
+  animation-duration: 9s;
+  animation-delay: 2.5s;
+}
+.coin:nth-child(7) {
+  left: 95%;
+  animation-duration: 4s;
+  animation-delay: 0.2s;
+}

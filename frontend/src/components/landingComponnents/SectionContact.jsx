@@ -1,12 +1,8 @@
+import React from "react";
 import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import "./SectionContact.css";
 
-interface SectionContactProps {
-  id: string;
-  bgColor: string;
-}
-
-const SectionContact = ({ id, bgColor }: SectionContactProps) => {
+const SectionContact = ({ id, bgColor }) => {
   return (
     <section id={id} className={`section-contact ${bgColor}`}>
       <div className="container">
@@ -18,7 +14,7 @@ const SectionContact = ({ id, bgColor }: SectionContactProps) => {
               <input type="text" placeholder="Your Name" required />
               <input type="email" placeholder="Your Email" required />
               <input type="text" placeholder="Subject" required />
-              <textarea placeholder="Your Message" rows={5} required></textarea>
+              <textarea placeholder="Your Message" rows="5" required></textarea>
               <button type="submit">Send Message</button>
             </form>
           </div>
@@ -26,8 +22,8 @@ const SectionContact = ({ id, bgColor }: SectionContactProps) => {
           {/* Right - Address */}
           <div className="contact-info">
             <h3>Contact Info</h3>
-            <p><span className="icon"><FaMapMarkerAlt /></span> 123 Main Street, Mumbai, India</p>
-            <p><span className="icon"><FaEnvelope /></span> contact@company.com</p>
+            <p><FaMapMarkerAlt className="icon" /> 123 Main Street, Mumbai, India</p>
+            <p><FaEnvelope className="icon" /> contact@company.com</p>
           </div>
         </div>
       </div>
