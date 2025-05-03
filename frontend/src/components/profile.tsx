@@ -18,10 +18,10 @@ export const Profile: React.FC = () => {
     walletBalance: "",
     totalIncome: "",
     profileImage: Avatar,
-    bankDetails: {
-      accountNumber: "",
-      ifsc: "",
-      accountName: ""
+    payment_detail: {
+      account_number: "",
+      ifsc_code: "",
+      account_holder_name: ""
     }
   });
   const [loading, setLoading] = useState(true);
@@ -140,7 +140,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                   Active
                 </span>
                 <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
-                Balance: {userData.walletBalance}
+                Balance: {userData.balance}
                 </span>
               </div>
             </div>
@@ -232,21 +232,21 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                       <div className="bg-[#222831] p-4 rounded-lg">
                         <div className="text-gray-400 text-sm">Account Holder Name</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.accountName || "Not provided"}
+                          {userData.payment_detail?.account_holder_name || "Not provided"}
                         </div>
                       </div>
                       <div className="bg-[#222831] p-4 rounded-lg">
                         <div className="text-gray-400 text-sm">Account Number</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.accountNumber ? 
-                            userData.bankDetails.accountNumber.replace(/\d(?=\d{4})/g, "*") : 
+                          {userData.payment_detail?.account_number ? 
+                            userData.payment_detail.account_number.replace(/\d(?=\d{4})/g, "*") : 
                             "Not provided"}
                         </div>
                       </div>
                       <div className="bg-[#222831] p-4 rounded-lg">
-                        <div className="text-gray-400 text-sm">IFSC Code</div>
+                        <div className="text-gray-400 text-sm">ifsc_code Code</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.ifsc || "Not provided"}
+                          {userData.payment_detail?.ifsc_code_code || "Not provided"}
                         </div>
                       </div>
                       
@@ -254,7 +254,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                       <div className="bg-[#222831] p-4 rounded-lg">
                         <div className="text-gray-400 text-sm">UPI ID</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.upiId || "Not provided"}
+                          {userData.payment_detail?.upi_id || "Not provided"}
                         </div>
                       </div>
                       
@@ -262,15 +262,14 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                       <div className="bg-[#222831] p-4 rounded-lg">
                         <div className="text-gray-400 text-sm">Card Number</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.cardDetails?.cardNumber ? 
-                            "xxxx xxxx xxxx " + userData.bankDetails.cardDetails.cardNumber.slice(-4) : 
-                            "Not provided"}
+                          {userData.payment_detail?.card_number ? 
+                            "xxxx xxxx xxxx " + userData.payment_detail.card_number.slice(-4) : "Not provided"}
                         </div>
                       </div>
                       <div className="bg-[#222831] p-4 rounded-lg">
                         <div className="text-gray-400 text-sm">Card Holder Name</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.bankDetails?.cardDetails?.nameOnCard || "Not provided"}
+                          {userData.payment_detail?.name_on_card || "Not provided"}
                         </div>
                       </div>
                     </div>
@@ -294,17 +293,17 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     mobile_number: userData.mobile_number,
     country: userData.country,
     profileImage: userData.profileImage,
-    bankDetails: {
-      accountNumber: userData.bankDetails?.accountNumber || "",
-      ifsc: userData.bankDetails?.ifsc || "",
-      accountName: userData.bankDetails?.accountName || "",
-      upiId: userData.bankDetails?.upiId || "",
-      cardDetails: {
-        cardNumber: userData.bankDetails?.cardDetails?.cardNumber || "",
-        expiryDate: userData.bankDetails?.cardDetails?.expiryDate || "",
-        cvv: userData.bankDetails?.cardDetails?.cvv || "",
-        nameOnCard: userData.bankDetails?.cardDetails?.nameOnCard || ""
-      }
+    joiningDate: userData.join_date,
+    activationDate: userData.activation_date,
+    payment_detail: {
+      account_number: userData.payment_detail?.account_number || "",
+      ifsc_code: userData.payment_detail?.ifsc_code || "",
+      account_holder_name: userData.payment_detail?.account_holder_name || "",
+      upi_id: userData.payment_detail?.upi_id || "",
+      card_number: userData.payment_detail?.card_number || "",
+      expiry_date: userData.payment_detail?.expiry_date || "",
+      cvv: userData.payment_detail?.cvv || "",
+      name_on_card: userData.payment_detail?.name_on_card || ""
     }
   });
 
@@ -325,27 +324,13 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     });
   };
 
-  const handleBankDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      bankDetails: {
-        ...formData.bankDetails,
-        [name]: value
-      }
-    });
-  };
-
   const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      bankDetails: {
-        ...formData.bankDetails,
-        cardDetails: {
-          ...formData.bankDetails.cardDetails,
-          [name]: value
-        }
+      payment_detail: {
+        ...formData.payment_detail,
+        [name]: value
       }
     });
   };
@@ -353,8 +338,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      // In a real app, you'd upload this to your server
-      // For now, we'll just create a local preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -383,15 +366,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
           mobile_number: formData.mobile_number,
           country: formData.country,
           profileImage: formData.profileImage,
-          bank_account_name: formData.bankDetails.accountName,
-          bank_account_number: formData.bankDetails.accountNumber,
-          bank_ifsc: formData.bankDetails.ifsc,
-          upi_id: formData.bankDetails.upiId,
-          card_number: formData.bankDetails.cardDetails.cardNumber,
-          card_expiry: formData.bankDetails.cardDetails.expiryDate,
-          card_name: formData.bankDetails.cardDetails.nameOnCard
+          account_number: formData.payment_detail.account_number,
+          bank_account_number: formData.payment_detail.account_number,
+          bank_ifsc_code: formData.payment_detail.ifsc_code,
+          upi_id: formData.payment_detail.upi_id,
+          card_number: formData.payment_detail.card_number,
+          card_expiry: formData.payment_detail.expiry_date,
+          card_name: formData.payment_detail.name_on_card
         }),
       });
+      console.log(response);
 
       if (!response.ok) {
         throw new Error('Failed to update profile');
@@ -557,7 +541,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.joiningDate}
+                    value={userData.join_date.split("T")[0] ?? "Loading..."}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -568,7 +552,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.activationDate}
+                    value={userData.activation_date.split("T")[0] ?? "Loading..."}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -590,41 +574,44 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        Account Holder Name
+                        Account Holder Name (Read-only)
                       </label>
                       <input
                         type="text"
-                        name="accountName"
-                        value={formData.bankDetails.accountName}
-                        onChange={handleBankDetailsChange}
-                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        name="account_holder_name"
+                        value={formData.payment_detail.account_holder_name}
+                        onChange={handleChange}
+                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                         placeholder="Account Holder Name"
+                        readOnly
                       />
                     </div>
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        Account Number
+                        Account Number (Read-only)
                       </label>
                       <input
                         type="text"
-                        name="accountNumber"
-                        value={formData.bankDetails.accountNumber}
-                        onChange={handleBankDetailsChange}
-                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        name="account_number"
+                        value={formData.payment_detail.account_number}
+                        onChange={handleChange}
+                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                         placeholder="Account Number"
+                        readOnly
                       />
                     </div>
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        IFSC Code
+                        IFSC Code (Read-only)
                       </label>
                       <input
                         type="text"
-                        name="ifsc"
-                        value={formData.bankDetails.ifsc}
-                        onChange={handleBankDetailsChange}
-                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        name="ifsc_code"
+                        value={formData.payment_detail.ifsc_code}
+                        onChange={handleChange}
+                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                         placeholder="IFSC Code"
+                        readOnly
                       />
                     </div>
                   </div>
@@ -634,15 +621,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   <h4 className="text-[#00FFF5] font-semibold mb-4">UPI</h4>
                   <div>
                     <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                      UPI ID
+                      UPI ID (Read-only)
                     </label>
                     <input
                       type="text"
-                      name="upiId"
-                      value={formData.bankDetails.upiId}
-                      onChange={handleBankDetailsChange}
-                      className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                      name="upi_id"
+                      value={formData.payment_detail.upi_id}
+                      onChange={handleChange}
+                      className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                       placeholder="username@upi"
+                      readOnly
                     />
                   </div>
                 </div>
@@ -656,8 +644,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="cardNumber"
-                        value={formData.bankDetails.cardDetails.cardNumber}
+                        name="card_number"
+                        value={formData.payment_detail.card_number}
                         onChange={handleCardDetailsChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="1234 5678 9012 3456"
@@ -669,8 +657,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="nameOnCard"
-                        value={formData.bankDetails.cardDetails.nameOnCard}
+                        name="name_on_card"
+                        value={formData.payment_detail.name_on_card}
                         onChange={handleCardDetailsChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="Full Name"
@@ -682,8 +670,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="expiryDate"
-                        value={formData.bankDetails.cardDetails.expiryDate}
+                        name="expiry_date"
+                        value={formData.payment_detail.expiry_date}
                         onChange={handleCardDetailsChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="MM/YY"
@@ -696,7 +684,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       <input
                         type="password"
                         name="cvv"
-                        value={formData.bankDetails.cardDetails.cvv}
+                        value={formData.payment_detail.cvv}
                         onChange={handleCardDetailsChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="123"
