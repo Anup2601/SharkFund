@@ -18,7 +18,7 @@ export default function Registration() {
     email: '',
     password: '',
     confirmPassword: '',
-    Referral: '', // Keep as Referral for form state
+    Referral: '', 
     mobile: '',
     address: '',
     acceptedTerms: false,

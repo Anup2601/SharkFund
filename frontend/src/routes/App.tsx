@@ -5,11 +5,10 @@ import Login from '../pages/login'
 import { Toaster } from 'react-hot-toast'
 import TermsAndConditions from '../pages/TermsAndConditions'
 import ForgotPassword from '../pages/forgotPassword'
-import Demo2 from '../pages/demo2'
+import Demo2 from '../pages/landing'
 import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
 import { useEffect, useState } from 'react'
-import CoffeeFundingPage from '../pages/demo'
 
 
 // Redirect function inside App file
@@ -83,7 +82,6 @@ function App() {
         <Route path="/terms" element={<TermsAndConditions/>}/>
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
         <Route path="/profile" element={<Profile/>}/>
-        <Route path="/demo" element={<CoffeeFundingPage/>}/>
         {/* Wrap your home page with HomeLayout and pass user data */}
         <Route
           path="/home"
@@ -92,7 +90,6 @@ function App() {
           }
         />
         <Route path="/ref/auth/:username" element={<RedirectToRegister />} />
-        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
       </Routes>
     </>
   )
