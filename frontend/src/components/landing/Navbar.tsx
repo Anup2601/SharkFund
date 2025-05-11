@@ -119,6 +119,15 @@ const Navbar = () => {
                 {item.name}
               </motion.a>
             ))}
+            <Link to="/login">
+                <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full text-center bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-5 py-2 rounded-full shadow-gold mt-3"
+              >
+                Login
+              </motion.button>
+            </Link>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
