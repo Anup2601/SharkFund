@@ -914,11 +914,9 @@ const Dashboard: React.FC = () => {
       
       {/* Fund History Expansion Panel */}
       {showAddFundHistory && (
-        <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold tracking-wide text-teal-400">
-              Fund History
-            </h2>
+        <div className="bg-gray-800 rounded-xl shadow-lg ">
+          <div className="flex justify-end p-4 ">
+            
             <button
               onClick={toggleFundHistory}
               className="text-gray-400 hover:text-teal-400"

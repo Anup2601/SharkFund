@@ -47,7 +47,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
         return <FundHistory type="deposit"/>;
       case "withdraw":
         return <FundHistory type="withdraw"/>;
-      case "monthly-income":
+      case "myincome":
         return <Monthly/>
       case "referral":
         return (

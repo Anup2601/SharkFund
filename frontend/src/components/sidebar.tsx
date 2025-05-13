@@ -10,7 +10,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent }) => {
   const [expandedMenus, setExpandedMenus] = useState<{[key: string]: boolean}>({
     teamArea: false,
-    fundArea: false
+    fundArea: false,
+    income: false
   });
   
   const toggleMenu = (menu: string) => {
@@ -102,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                     <span className="truncate">Withdraw</span>
                   </button>
 
-                  <button
+                  {/* <button
                     className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
                       activeComponent === 'monthly-income' 
                         ? 'bg-gray-700 text-teal-300' 
@@ -111,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                     onClick={() => onComponentChange('monthly-income')}
                   >
                     <span className="truncate">Monthly-Income</span>
-                  </button>
+                  </button> */}
                 </div>
               )}
             </div>
@@ -149,6 +150,45 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                     onClick={() => onComponentChange('referral')}
                   >
                     <span className="truncate">Referral ID</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Income Dropdown */}
+            <div>
+              <button
+                className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 group transition-colors"
+                onClick={() => toggleMenu('income')}
+              >
+                <div className="flex items-center">
+                  <svg className="mr-3 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+                  </svg>
+                  Income
+                </div>
+                <svg 
+                  className={`h-5 w-5 transform transition-transform duration-200 ${expandedMenus.income ? 'rotate-90' : ''}`} 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                >
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              {/* Income Submenu */}
+              {expandedMenus.income && (
+                <div className="pl-8 space-y-1">
+                  <button
+                    className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
+                      activeComponent === "myincome" 
+                        ? 'bg-gray-700 text-teal-300' 
+                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                    }`}
+                    onClick={() => onComponentChange('myincome')}
+                  >
+                    <span className="truncate">My Income</span>
                   </button>
                 </div>
               )}
