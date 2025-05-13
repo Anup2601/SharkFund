@@ -63,10 +63,10 @@ const Footer = () => {
   ];
 
   const legalLinks = [
-    { name: 'Privacy Policy', href: '#' },
-    { name: 'Terms of Service', href: '#' },
-    { name: 'Cookie Policy', href: '#' },
-    { name: 'Disclaimer', href: '#' }
+    { name: 'Privacy Policy', href: '/privacy-policy' },
+    { name: 'Terms of Service', href: '/terms' },
+    { name: 'Cookie Policy', href: '/cookie-policy' },
+    { name: 'Disclaimer', href: '/disclaimer' }
   ];
 
   return (
@@ -81,10 +81,7 @@ const Footer = () => {
           {/* Logo and description */}
           <motion.div variants={itemVariants} className="col-span-1 lg:col-span-1">
             <div className="flex items-center mb-4">
-              <svg className="h-8 w-8 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
-              </svg>
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">CloudFunding</span>
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">SharkFund</span>
             </div>
             <p className="text-gray-400 mb-6">
               Empowering investors with innovative funding solutions. Join our growing community and start your investment journey today.

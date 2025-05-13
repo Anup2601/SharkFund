@@ -9,6 +9,9 @@ import Demo2 from '../pages/landing'
 import HomeLayout from '../pages/home'
 import Profile from '../components/profile'
 import { useEffect, useState } from 'react'
+import Disclaimer from '../pages/Disclaimer'
+import PrivacyPolicy from '../pages/PrivacyPolicy'
+import CookiePolicy from '../pages/CookiePolicy'
 
 
 // Redirect function inside App file
@@ -80,6 +83,9 @@ function App() {
         <Route path="/register" element={<Registration/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
         <Route path="/profile" element={<Profile/>}/>
         {/* Wrap your home page with HomeLayout and pass user data */}

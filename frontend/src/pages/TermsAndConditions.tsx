@@ -1,66 +1,85 @@
-const TermsAndConditions = () => {
+import React from "react";
+import { Link } from "react-router-dom";
+
+const Terms: React.FC = () => {
   return (
-    <div className="max-w-full mx-auto p-6 text-gray-200 bg-gray-900 min-h-screen ">
-      <h1 className="text-4xl font-bold text-teal-400 mb-6">Terms and Conditions</h1>
+    <div className="max-w-5xl mx-auto px-4 py-10 text-gray-800">
+      <h1 className="text-3xl font-bold mb-6 text-center">Terms & Conditions</h1>
 
-      <p className="mb-4 text-gray-300">
-        These Terms and Conditions ("Terms") govern your use of our cloud services platform ("Service"). By accessing or using the Service, you agree to be bound by these Terms.
-      </p>
-
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">1. Use of Service</h2>
-        <p className="text-gray-400">
-          You agree to use our cloud services only for lawful purposes and in accordance with all applicable laws and regulations. Unauthorized access, distribution, or misuse of the Service is strictly prohibited.
+      <div className="space-y-6">
+        <p>
+          Welcome to SharkFund. By accessing or using this platform, you agree to abide by the following Terms & Conditions. These terms govern your relationship with SharkFund, its administrators, and the community. If you do not agree with these terms, please do not use the platform.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">2. Account Registration</h2>
-        <p className="text-gray-400">
-          To access certain features of the Service, you must register for an account. You are responsible for maintaining the confidentiality of your login information and for all activities under your account.
+        <h2 className="text-xl font-semibold">1. Platform Nature & Purpose</h2>
+        <p>
+          SharkFund operates as a community-driven crowdfunding platform. It is not a financial institution, investment scheme, or trading platform. SharkFund is built on peer-to-peer voluntary contributions, where users participate in a system-based distribution model.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">3. Data and Privacy</h2>
-        <p className="text-gray-400">
-          We respect your privacy and protect your data in accordance with our Privacy Policy. By using our Service, you consent to the collection and use of your data as outlined in the policy.
+        <h2 className="text-xl font-semibold">2. User Eligibility</h2>
+        <p>
+          Users must be at least 18 years old and legally eligible to enter into agreements as per the applicable laws of their country. By registering, users confirm that all personal information provided is accurate and up-to-date.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">4. Service Availability</h2>
-        <p className="text-gray-400">
-          We strive to maintain 99.9% uptime for our cloud services. However, we are not liable for any downtime, service interruptions, or loss of data.
+        <h2 className="text-xl font-semibold">3. Contribution Policy</h2>
+        <p>
+          Users join SharkFund by contributing a fixed amount of ₹1000. This contribution is used to support the community model and is strictly non-refundable. Contributions are voluntary, and users understand that this is not an investment or deposit.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">5. Intellectual Property</h2>
-        <p className="text-gray-400">
-          All content, branding, and technology used in our Service are the intellectual property of the company. Unauthorized reproduction or use is strictly prohibited.
+        <h2 className="text-xl font-semibold">4. System-Based Payouts</h2>
+        <p>
+          All payouts made through SharkFund are based on the system's performance, activity levels, and user engagement. SharkFund does not guarantee fixed returns, profits, or income of any kind. The platform merely facilitates peer-based support within the network.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">6. Termination</h2>
-        <p className="text-gray-400">
-          We reserve the right to suspend or terminate your access to the Service at any time for violations of these Terms or for any other reason at our discretion.
+        <h2 className="text-xl font-semibold">5. System Load & Technical Interruptions</h2>
+        <p>
+          In the event of system overload, maintenance, server failure, or a slowdown in community activity, SharkFund reserves the right to pause, delay, or reschedule payouts without prior notice. Users agree not to hold SharkFund liable for such disruptions.
         </p>
-      </section>
 
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-teal-300 mb-2">7. Changes to Terms</h2>
-        <p className="text-gray-400">
-          We may update these Terms from time to time. Continued use of the Service after any changes constitutes your acceptance of the new Terms.
+        <h2 className="text-xl font-semibold">6. Exit & Refund Clause</h2>
+        <p>
+          Users may exit the system at any time by ceasing their participation. However, no refunds will be issued for the initial contribution. Exiting users also forfeit any remaining or pending payouts or referral bonuses.
         </p>
-      </section>
 
-      <p className="text-gray-400 mt-8">
-        If you have any questions about these Terms, please contact our support team at <a href="mailto:support@cloudprovider.com" className="text-teal-400 underline">support@sharkfund.com</a>.
-      </p>
+        <h2 className="text-xl font-semibold">7. Referral Bonus & KYC Verification</h2>
+        <p>
+          Referral bonuses are provided to users who invite others to join the platform using their referral code. These bonuses are subject to successful KYC verification of the new users. SharkFund reserves the right to delay or withhold referral bonuses in cases of suspected misuse, fraud, or system manipulation.
+        </p>
+
+        <h2 className="text-xl font-semibold">8. Account Termination</h2>
+        <p>
+          SharkFund reserves the right to suspend or terminate user accounts in cases of suspicious activity, misinformation, or violation of community guidelines. Terminated users will not be eligible for future participation or payouts.
+        </p>
+
+        <h2 className="text-xl font-semibold">9. Intellectual Property</h2>
+        <p>
+          All content, branding, code, and platform structure are the intellectual property of SharkFund. No user is permitted to reproduce, copy, or use platform materials without explicit written permission.
+        </p>
+
+        <h2 className="text-xl font-semibold">10. Amendments to Terms</h2>
+        <p>
+          SharkFund may update or modify these Terms & Conditions at any time. Continued use of the platform after such changes constitutes agreement to the new terms. Users are encouraged to review this page periodically.
+        </p>
+
+        <h2 className="text-xl font-semibold">11. Legal Jurisdiction</h2>
+        <p>
+          Any disputes arising from the use of SharkFund will be subject to the jurisdiction of the appropriate courts in the location of SharkFund’s operational headquarters.
+        </p>
+
+        <p className="mt-6 text-sm text-gray-500 text-center">
+          Last updated: {new Date().toLocaleDateString("en-IN", { year: 'numeric', month: 'long', day: 'numeric' })}
+        </p>
+      </div>
+      <div className="flex justify-center mt-10">
+        <Link
+          to="/"
+          className="bg-black text-white px-6 py-2 rounded-lg shadow hover:bg-gray-700 transition"
+        >
+          ← Back to Home
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default TermsAndConditions;
+export default Terms;

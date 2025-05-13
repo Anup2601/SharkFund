@@ -101,6 +101,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                   >
                     <span className="truncate">Withdraw</span>
                   </button>
+
+                  <button
+                    className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
+                      activeComponent === 'monthly-income' 
+                        ? 'bg-gray-700 text-teal-300' 
+                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                    }`}
+                    onClick={() => onComponentChange('monthly-income')}
+                  >
+                    <span className="truncate">Monthly-Income</span>
+                  </button>
                 </div>
               )}
             </div>

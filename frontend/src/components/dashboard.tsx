@@ -1,34 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
-import { QrCode, ImagePlus, X, Check } from 'lucide-react';
-import PaymentOptions from '../components/PaymentOptions';
-
+import Scanner from '../assets/scaner.png'
+import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
-  const [fundAmount, setFundAmount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState('direct'); 
+  const [fundAmount, setFundAmount] = useState<number>();
+  const [paymentMethod, setPaymentMethod] = useState('scan'); 
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
-  const [showQrCode, setShowQrCode] = useState(false);
   const [userProfile, setUserProfile] = useState({
     name: "",
-    totalIncome: `₹0`,
-    walletBalance: "₹0",
-    totalWithdrawal: "₹0",
+    totalIncome: `₹1`,
+    walletBalance: "₹3",
+    totalWithdrawal: "₹2",
     country: "",
     joinDate: "",
     activeDate: "",
     referralLink: ""
   });
   const [metrics, setMetrics] = useState([
-    { title: 'Total Team', value: '0', change: '+0', icon: 'users' },
-    { title: 'Active Team', value: '0', change: '+0', icon: 'users' },
-    { title: 'Total Referrals', value: '0', change: '+0', icon: 'user-plus' },
-    { title: 'Active Referrals', value: '0', change: '+0', icon: 'user-check' },
+    { title: 'Total Team', value: '1', change: '+1', icon: 'users' },
+    { title: 'Active Team', value: '3', change: '+2', icon: 'users' },
+    { title: 'Total Referrals', value: '2', change: '+1', icon: 'user-plus' },
+    { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
   ]);
+  
+  // Bank details for bank payment method
+  const bankDetails = {
+    accountHolder: "SharkFund Pvt Ltd",
+    accountNumber: "12345678901234",
+    bankName: "State Bank of India",
+    ifscCode: "SBIN0001234",
+    branch: "Main Branch, Mumbai"
+  };
   
   // Updated to match the FundHistory component interface
   const [fundHistory, setFundHistory] = useState<Array<{
@@ -37,6 +43,7 @@ const Dashboard: React.FC = () => {
     date: string;
     method: string;
     status: 'completed' | 'pending' | 'failed';
+
   }>>([]);
   
   const [loading, setLoading] = useState(true);
@@ -255,7 +262,7 @@ const Dashboard: React.FC = () => {
     if (!dateString) return "";
     try {
       const date = new Date(dateString);
-      return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      return date.toISOString().split('T')[0];
     } catch (error) {
       return dateString;
     }
@@ -267,26 +274,28 @@ const Dashboard: React.FC = () => {
   };
 
   const handleAddFund = () => {
-    if (!fundAmount) {
-      toast.error('Please enter an amount to add');
-      return;
-    }
-    
-    if (paymentMethod === 'direct') {
-      // Handle direct payment (existing functionality)
-      setShowPaymentForm(true);
-    } else if (paymentMethod === 'qrcode') {
-      // For QR code payment, we either show the QR or validate the screenshot
-      if (!uploadedScreenshot) {
-        setShowQrCode(true);
-      } else {
-        // Process payment with screenshot verification
-        console.log(`Processing QR payment of ${fundAmount} with screenshot`);
-        toast.success('Payment screenshot uploaded successfully!');
-        // You might want to call your payment API here
-      }
-    }
-  };
+  if (!fundAmount) {
+    toast.error('Please enter an amount to add');
+    return;
+  }
+
+  if ((paymentMethod === 'scan' || paymentMethod === 'bank') && !uploadedScreenshot) {
+    toast.error('Please upload payment screenshot');
+    return;
+  }
+
+  // Simulate processing delay
+  toast.success('Payment done successfully! Updating...');
+
+  setTimeout(() => {
+    setUploadedScreenshot(null);
+    setFundAmount(0); 
+    setPaymentMethod("scan"); 
+
+    toast.success('Your payment has been recorded.');
+  }, 2000);
+};
+
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
@@ -309,7 +318,7 @@ const Dashboard: React.FC = () => {
   
   const resetScreenshot = () => {
     setUploadedScreenshot(null);
-    setShowQrCode(false);
+    //  setShowQrCode(false);
   };
 
   // Toggle fund history visibility and fetch data if needed
@@ -365,6 +374,46 @@ const Dashboard: React.FC = () => {
       </div>
     );
   }
+  
+  // Render screenshot upload section
+  const renderScreenshotUpload = () => (
+    <div className="mt-4">
+      {uploadedScreenshot ? (
+        <div className="text-center">
+          <div className="relative w-48 h-48 mx-auto mb-2">
+            <img 
+              src={uploadedScreenshot} 
+              alt="Payment Screenshot" 
+              className="w-full h-full object-cover rounded-lg"
+            />
+            <button
+              onClick={resetScreenshot}
+              className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <div className="flex items-center justify-center text-teal-400 text-sm">
+            <Check size={16} className="mr-1" />
+            <span>Screenshot uploaded</span>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center">
+          <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-800 border border-dashed border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors">
+            <ImagePlus className="h-8 w-8 text-teal-400 mb-2" />
+            <span className="text-sm text-gray-300">Upload payment screenshot</span>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFileUpload} 
+              className="hidden" 
+            />
+          </label>
+        </div>
+      )}
+    </div>
+  );
   
   // Main component render
   return (
@@ -454,7 +503,7 @@ const Dashboard: React.FC = () => {
                 </label>
                 <div className="flex">
                   <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
-                    <span className="text-gray-400">$</span>
+                    <span className="text-gray-400">₹</span>
                   </div>
                   <input
                     type="number"
@@ -471,75 +520,84 @@ const Dashboard: React.FC = () => {
                 <div className="flex mb-4">
                   <button
                     onClick={() => {
-                      setPaymentMethod('direct');
+                      setPaymentMethod('scan');
                       resetScreenshot();
                     }}
-                    className={`flex-1 py-2 rounded-l-lg font-medium transition-all duration-300 ${
-                      paymentMethod === 'direct'
+                    className={`flex-1 py-2 px-2 rounded-l-lg font-medium transition-all duration-300 flex items-center justify-center ${
+                      paymentMethod === 'scan'
                         ? 'bg-teal-500 text-gray-900'
                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     }`}
                   >
-                    Direct Payment
+                    <QrCode size={16} className="mr-1" />
+                    <span className="text-xs sm:text-sm">Scan to Pay</span>
                   </button>
                   <button
-                    onClick={() => setPaymentMethod('qrcode')}
-                    className={`flex-1 py-2 rounded-r-lg font-medium transition-all duration-300 ${
-                      paymentMethod === 'qrcode'
+                    onClick={() => {
+                      setPaymentMethod('bank');
+                      resetScreenshot();
+                    }}
+                    className={`flex-1 py-2 px-2 rounded-r-lg font-medium transition-all duration-300 flex items-center justify-center ${
+                      paymentMethod === 'bank'
                         ? 'bg-teal-500 text-gray-900'
                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     }`}
                   >
-                    QR Code Payment
+                    <Building size={16} className="mr-1" />
+                    <span className="text-xs sm:text-sm">Bank Payment</span>
                   </button>
                 </div>
                 
-                {/* QR Code Payment Section */}
-                {paymentMethod === 'qrcode' && (
+                {/* Payment Methods Content */}
+                {paymentMethod === 'scan' && (
                   <div className="mt-4">
-                    {showQrCode && !uploadedScreenshot ? (
-                      <div className="text-center p-4">
-                        <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
-                          <QrCode className="text-gray-900 w-40 h-40" />
-                        </div>
-                        <p className="text-sm text-gray-400 mb-3">
-                          Scan the QR code and upload payment screenshot
-                        </p>
+                    <div className="text-center p-4">
+                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
+                        <img
+                          src={Scanner}
+                          alt="QR Code"
+                          className="w-40 h-40 mr-1 inline-block"
+                        />
                       </div>
-                    ) : uploadedScreenshot ? (
-                      <div className="text-center">
-                        <div className="relative w-48 h-48 mx-auto mb-2">
-                          <img 
-                            src={uploadedScreenshot} 
-                            alt="Payment Screenshot" 
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                          <button
-                            onClick={resetScreenshot}
-                            className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
-                          >
-                            <X size={16} />
-                          </button>
+                      <p className="text-sm text-gray-400 mb-3">
+                        Scan the QR code and upload payment screenshot
+                      </p>
+                    </div>
+                    {renderScreenshotUpload()}
+                  </div>
+                )}
+                
+                {paymentMethod === 'bank' && (
+                  <div className="mt-4">
+                    <div className="bg-gray-800 p-4 rounded-lg mb-4">
+                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Holder:</span>
+                          <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
-                        <div className="flex items-center justify-center text-teal-400 text-sm">
-                          <Check size={16} className="mr-1" />
-                          <span>Screenshot uploaded</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Number:</span>
+                          <span className="text-white">{bankDetails.accountNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Bank Name:</span>
+                          <span className="text-white">{bankDetails.bankName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">IFSC Code:</span>
+                          <span className="text-white">{bankDetails.ifscCode}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Branch:</span>
+                          <span className="text-white">{bankDetails.branch}</span>
                         </div>
                       </div>
-                    ) : (
-                      <div className="text-center">
-                        <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-800 border border-dashed border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors">
-                          <ImagePlus className="h-8 w-8 text-teal-400 mb-2" />
-                          <span className="text-sm text-gray-300">Upload payment screenshot</span>
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            onChange={handleFileUpload} 
-                            className="hidden" 
-                          />
-                        </label>
-                      </div>
-                    )}
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3 text-center">
+                      Make a transfer and upload payment screenshot
+                    </p>
+                    {renderScreenshotUpload()}
                   </div>
                 )}
               </div>
@@ -553,11 +611,7 @@ const Dashboard: React.FC = () => {
                     : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {paymentMethod === 'direct' || (paymentMethod === 'qrcode' && uploadedScreenshot) 
-                  ? 'Add Funds' 
-                  : paymentMethod === 'qrcode' && showQrCode
-                    ? 'Upload Payment Screenshot'
-                    : 'Show QR Code'}
+                Add Funds
               </button>
               
               <button
@@ -656,11 +710,11 @@ const Dashboard: React.FC = () => {
             </div>
           ))}
         </div>
-  
-        {/* User Card - Redesigned */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+      
+        {/* User Profile and Add Fund - Desktop Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           {/* User Profile */}
-          <div className="lg:col-span-2 bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
                 User Profile
@@ -672,7 +726,7 @@ const Dashboard: React.FC = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
-                <div className="text-gray-400 text-sm">Username</div>
+                <div className="text-gray-400 text-sm">Name</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
@@ -736,7 +790,7 @@ const Dashboard: React.FC = () => {
                 </label>
                 <div className="flex">
                   <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
-                    <span className="text-gray-400">$</span>
+                    <span className="text-gray-400">₹</span>
                   </div>
                   <input
                     type="number"
@@ -753,75 +807,84 @@ const Dashboard: React.FC = () => {
                 <div className="flex mb-4">
                   <button
                     onClick={() => {
-                      setPaymentMethod('direct');
+                      setPaymentMethod('scan');
                       resetScreenshot();
                     }}
-                    className={`flex-1 py-2 rounded-l-lg font-medium transition-all duration-300 ${
-                      paymentMethod === 'direct'
+                    className={`flex-1 py-2 px-2 rounded-l-lg font-medium transition-all duration-300 flex items-center justify-center ${
+                      paymentMethod === 'scan'
                         ? 'bg-teal-500 text-gray-900'
                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     }`}
                   >
-                    Direct Payment
+                    <QrCode size={16} className="mr-1" />
+                    <span className="text-xs sm:text-sm">Scan to Pay</span>
                   </button>
                   <button
-                    onClick={() => setPaymentMethod('qrcode')}
-                    className={`flex-1 py-2 rounded-r-lg font-medium transition-all duration-300 ${
-                      paymentMethod === 'qrcode'
+                    onClick={() => {
+                      setPaymentMethod('bank');
+                      resetScreenshot();
+                    }}
+                    className={`flex-1 py-2 px-2 rounded-r-lg font-medium transition-all duration-300 flex items-center justify-center ${
+                      paymentMethod === 'bank'
                         ? 'bg-teal-500 text-gray-900'
                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     }`}
                   >
-                    QR Code Payment
+                    <Building size={16} className="mr-1" />
+                    <span className="text-xs sm:text-sm">Bank Payment</span>
                   </button>
                 </div>
                 
-                {/* QR Code Payment Section */}
-                {paymentMethod === 'qrcode' && (
+                {/* Payment Methods Content */}
+                {paymentMethod === 'scan' && (
                   <div className="mt-4">
-                    {showQrCode && !uploadedScreenshot ? (
-                      <div className="text-center p-4">
-                        <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
-                          <QrCode className="text-gray-900 w-40 h-40" />
-                        </div>
-                        <p className="text-sm text-gray-400 mb-3">
-                          Scan the QR code and upload payment screenshot
-                        </p>
+                    <div className="text-center p-4">
+                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
+                        <img
+                          src={Scanner}
+                          alt="QR Code"
+                          className="w-40 h-40 mr-1 inline-block"
+                        />
                       </div>
-                    ) : uploadedScreenshot ? (
-                      <div className="text-center">
-                        <div className="relative w-48 h-48 mx-auto mb-2">
-                          <img 
-                            src={uploadedScreenshot} 
-                            alt="Payment Screenshot" 
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                          <button
-                            onClick={resetScreenshot}
-                            className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
-                          >
-                            <X size={16} />
-                          </button>
+                      <p className="text-sm text-gray-400 mb-3">
+                        Scan the QR code and upload payment screenshot
+                      </p>
+                    </div>
+                    {renderScreenshotUpload()}
+                  </div>
+                )}
+                
+                {paymentMethod === 'bank' && (
+                  <div className="mt-4">
+                    <div className="bg-gray-800 p-4 rounded-lg mb-4">
+                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Holder:</span>
+                          <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
-                        <div className="flex items-center justify-center text-teal-400 text-sm">
-                          <Check size={16} className="mr-1" />
-                          <span>Screenshot uploaded</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Number:</span>
+                          <span className="text-white">{bankDetails.accountNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Bank Name:</span>
+                          <span className="text-white">{bankDetails.bankName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">IFSC Code:</span>
+                          <span className="text-white">{bankDetails.ifscCode}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Branch:</span>
+                          <span className="text-white">{bankDetails.branch}</span>
                         </div>
                       </div>
-                    ) : (
-                      <div className="text-center">
-                        <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-800 border border-dashed border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors">
-                          <ImagePlus className="h-8 w-8 text-teal-400 mb-2" />
-                          <span className="text-sm text-gray-300">Upload payment screenshot</span>
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            onChange={handleFileUpload} 
-                            className="hidden" 
-                          />
-                        </label>
-                      </div>
-                    )}
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3 text-center">
+                      Make a transfer and upload payment screenshot
+                    </p>
+                    {renderScreenshotUpload()}
                   </div>
                 )}
               </div>
@@ -835,11 +898,7 @@ const Dashboard: React.FC = () => {
                     : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {paymentMethod === 'direct' || (paymentMethod === 'qrcode' && uploadedScreenshot) 
-                  ? 'Add Funds' 
-                  : paymentMethod === 'qrcode' && showQrCode
-                    ? 'Upload Payment Screenshot'
-                    : 'Show QR Code'}
+                Add Funds
               </button>
               
               <button
@@ -852,31 +911,35 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-  
-      {/* Fund History Section */}
+      
+      {/* Fund History Expansion Panel */}
       {showAddFundHistory && (
-        <div className="mb-10">
+        <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold tracking-wide text-teal-400">
+              Fund History
+            </h2>
+            <button
+              onClick={toggleFundHistory}
+              className="text-gray-400 hover:text-teal-400"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          
           {fundHistoryLoading ? (
-            <div className="bg-gray-800 rounded-xl p-6 flex justify-center items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-400"></div>
-              <p className="ml-3 text-teal-400">Loading fund history...</p>
+            <div className="flex justify-center py-10">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-400"></div>
             </div>
           ) : (
-            <FundHistory type="deposit" />
+            <FundHistory type='deposit' />
           )}
         </div>
       )}
-  
-      {/* Payment Form */}
-      <div>
-        {showPaymentForm && (
-          <PaymentOptions 
-            amount={fundAmount} 
-            onClose={() => setShowPaymentForm(false)} 
-          />
-        )}
-      </div>
+      
+
     </div>
   );
-}
+};
+
 export default Dashboard;

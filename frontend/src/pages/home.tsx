@@ -6,6 +6,7 @@ import Profile from '../components/profile';
 import FundHistory from '../components/fundhistory';
 import Referral from '../components/referral';
 import Support from '../components/support';
+import Monthly from '../components/Monthly';
 
 interface HomeLayoutProps {
   currentUser: {
@@ -46,6 +47,8 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
         return <FundHistory type="deposit"/>;
       case "withdraw":
         return <FundHistory type="withdraw"/>;
+      case "monthly-income":
+        return <Monthly/>
       case "referral":
         return (
           <>
