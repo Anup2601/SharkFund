@@ -531,7 +531,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
             {/* Dates Information - Read Only Section */}
             <div className="mt-8">
               <h3 className="text-xl font-bold text-[#00ADB5] mb-4 border-b border-[#00ADB5] pb-2">
-                Account Information (Read-only)
+                Account Information 
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -574,44 +574,40 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        Account Holder Name (Read-only)
+                        Account Holder Name 
                       </label>
                       <input
                         type="text"
                         name="account_holder_name"
                         value={formData.payment_detail.account_holder_name}
                         onChange={handleChange}
-                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
-                        placeholder="Account Holder Name"
-                        readOnly
+                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                       />
                     </div>
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        Account Number (Read-only)
+                        Account Number 
                       </label>
                       <input
                         type="text"
                         name="account_number"
                         value={formData.payment_detail.account_number}
                         onChange={handleChange}
-                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
+                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="Account Number"
-                        readOnly
                       />
                     </div>
                     <div>
                       <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                        IFSC Code (Read-only)
+                        IFSC Code 
                       </label>
                       <input
                         type="text"
                         name="ifsc_code"
                         value={formData.payment_detail.ifsc_code}
                         onChange={handleChange}
-                        className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
+                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="IFSC Code"
-                        readOnly
                       />
                     </div>
                   </div>
@@ -621,16 +617,15 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   <h4 className="text-[#00FFF5] font-semibold mb-4">UPI</h4>
                   <div>
                     <label className="block text-[#00FFF5] text-sm font-medium mb-2">
-                      UPI ID (Read-only)
+                      UPI ID 
                     </label>
                     <input
                       type="text"
                       name="upi_id"
                       value={formData.payment_detail.upi_id}
                       onChange={handleChange}
-                      className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
+                      className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                       placeholder="username@upi"
-                      readOnly
                     />
                   </div>
                 </div>

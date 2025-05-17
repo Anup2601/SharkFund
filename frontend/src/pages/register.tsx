@@ -114,7 +114,7 @@ export default function Registration() {
       }));
       
       // Redirect to /home after a delay (user is authenticated via cookies)
-      setTimeout(() => navigate('/home'), 1500);
+      setTimeout(() => navigate('/login'), 1500);
       
     } catch (error) {
       console.error('Registration error:', error);
