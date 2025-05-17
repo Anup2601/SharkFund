@@ -27,7 +27,7 @@ const MonthlyIncomeHistory: React.FC = () => {
         throw new Error("No authentication token found. Please log in.");
       }
 
-      const response = await axios.get("http://127.0.0.1:7878/api/v1/earnings/monthly/", {
+      const response = await axios.get("http://sharkfund.priyeshpandey.in/api/v1/earnings/monthly/", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -50,7 +50,11 @@ const MonthlyIncomeHistory: React.FC = () => {
           setError(err.response?.data?.detail || "Failed to fetch monthly income data.");
         }
       } else {
-        setError(err.message || "An unexpected error occurred.");
+        setError(
+          typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message?: unknown }).message)
+            : "An unexpected error occurred."
+        );
       }
     } finally {
       setLoading(false);

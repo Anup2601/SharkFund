@@ -8,7 +8,7 @@ interface Referral {
   mobile: string;
   status: 'Active' | 'Not Active';
   joinDate: string;
-  activeDate: string;
+  // activeDate: string;
 }
 
 interface ReferralProps {
@@ -48,7 +48,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             month: 'long',
             day: 'numeric',
           }),
-          activeDate: '', 
+          // activeDate: '', 
           status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
         }));
 
@@ -90,7 +90,6 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
               <th className="pb-3 px-2">Name</th>
               <th className="pb-3 px-2">Mobile No.</th>
               <th className="pb-3 px-2">Join Date</th>
-              <th className="pb-3 px-2">Active Date</th>
               <th className="pb-3 px-2">Status</th>
             </tr>
           </thead>
@@ -102,7 +101,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
                 <td className="py-4 px-2">{item.name}</td>
                 <td className="py-4 px-2">{item.mobile}</td>
                 <td className="py-4 px-2">{item.joinDate}</td>
-                <td className="py-4 px-2">{item.activeDate}</td>
+                {/* <td className="py-4 px-2">{item.activeDate}</td> */}
                 <td className="py-4 px-2">
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

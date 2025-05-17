@@ -274,10 +274,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleAddFund = () => {
-  if (!fundAmount) {
-    toast.error('Please enter an amount to add');
-    return;
-  }
+ 
 
   if ((paymentMethod === 'scan' || paymentMethod === 'bank') && !uploadedScreenshot) {
     toast.error('Please upload payment screenshot');
@@ -495,26 +492,7 @@ const Dashboard: React.FC = () => {
             <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
               Add Funds
             </h2>
-            
             <div className="space-y-6">
-              <div>
-                <label className="block text-gray-400 text-sm mb-2">
-                  Enter Amount
-                </label>
-                <div className="flex">
-                  <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
-                    <span className="text-gray-400">₹</span>
-                  </div>
-                  <input
-                    type="number"
-                    value={fundAmount}
-                    onChange={(e) => setFundAmount(Number(e.target.value))}
-                    className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-              
               {/* Payment Method Selection */}
               <div className="bg-gray-900 rounded-lg p-4">
                 <div className="flex mb-4">
@@ -604,14 +582,10 @@ const Dashboard: React.FC = () => {
               
               <button
                 onClick={handleAddFund}
-                disabled={!fundAmount}
-                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                  fundAmount
-                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
-                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                }`}
+                // disabled={!fundAmount}
+                className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
               >
-                Add Funds
+                Submit Payment
               </button>
               
               <button
@@ -782,26 +756,7 @@ const Dashboard: React.FC = () => {
             <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
               Add Funds
             </h2>
-            
             <div className="space-y-6">
-              <div>
-                <label className="block text-gray-400 text-sm mb-2">
-                  Enter Amount
-                </label>
-                <div className="flex">
-                  <div className="bg-gray-900 flex items-center px-3 rounded-l-lg border-r border-gray-700">
-                    <span className="text-gray-400">₹</span>
-                  </div>
-                  <input
-                    type="number"
-                    value={fundAmount}
-                    onChange={(e) => setFundAmount(Number(e.target.value))}
-                    className="bg-gray-900 text-white px-4 py-3 rounded-r-lg w-full shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-              
               {/* Payment Method Selection */}
               <div className="bg-gray-900 rounded-lg p-4">
                 <div className="flex mb-4">
@@ -891,14 +846,11 @@ const Dashboard: React.FC = () => {
               
               <button
                 onClick={handleAddFund}
-                disabled={!fundAmount}
-                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                  fundAmount
-                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
-                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                className={`w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300'
+                    
                 }`}
               >
-                Add Funds
+                Submit Payment
               </button>
               
               <button

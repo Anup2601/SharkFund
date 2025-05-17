@@ -7,6 +7,8 @@ import FundHistory from '../components/fundhistory';
 import Referral from '../components/referral';
 import Support from '../components/support';
 import Monthly from '../components/Monthly';
+import InvestmentLevel from '../components/InvestmentLevel';
+import Footer from '../components/Footer';
 
 interface HomeLayoutProps {
   currentUser: {
@@ -49,6 +51,8 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
         return <FundHistory type="withdraw"/>;
       case "myincome":
         return <Monthly/>
+      case "mylevel":
+        return <InvestmentLevel/>
       case "referral":
         return (
           <>
@@ -87,6 +91,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
           {renderComponent()}
         </main>
       </div>
+      <Footer/>
     </div>
   );
 };

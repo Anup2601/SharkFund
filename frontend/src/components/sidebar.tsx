@@ -11,7 +11,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
   const [expandedMenus, setExpandedMenus] = useState<{[key: string]: boolean}>({
     teamArea: false,
     fundArea: false,
-    income: false
+    income: false,
+    level: false,
   });
   
   const toggleMenu = (menu: string) => {
@@ -84,8 +85,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                   <button
                     className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
                       activeComponent === 'deposit' 
-                        ? 'bg-gray-700 text-teal-300' 
-                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                        ? 'bg-teal-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700'
                     }`}
                     onClick={() => onComponentChange('deposit')}
                   >
@@ -95,8 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                   <button
                     className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
                       activeComponent === 'withdraw' 
-                        ? 'bg-gray-700 text-teal-300' 
-                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                        ? 'bg-teal-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700'
                     }`}
                     onClick={() => onComponentChange('withdraw')}
                   >
@@ -144,8 +145,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                   <button
                     className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
                       activeComponent === "referral" 
-                        ? 'bg-gray-700 text-teal-300' 
-                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                        ? 'bg-teal-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700'
                     }`}
                     onClick={() => onComponentChange('referral')}
                   >
@@ -183,12 +184,53 @@ const Sidebar: React.FC<SidebarProps> = ({ onComponentChange, activeComponent })
                   <button
                     className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
                       activeComponent === "myincome" 
-                        ? 'bg-gray-700 text-teal-300' 
-                        : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                       ? 'bg-teal-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700'
                     }`}
                     onClick={() => onComponentChange('myincome')}
                   >
                     <span className="truncate">My Income</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Level Dropdown */}
+            <div>
+              <button
+                className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 group transition-colors"
+                onClick={() => toggleMenu('level')}
+              >
+                <div className="flex items-center">
+                  <svg className="mr-2 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.463a1 1 0 00-.364 1.118l1.287 3.967c.3.921-.755 1.688-1.538 1.118l-3.39-2.463a1 1 0 00-1.175 0l-3.39 2.463c-.783.57-1.838-.197-1.538-1.118l1.287-3.967a1 1 0 00-.364-1.118L2.049 9.394c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.967z" />
+                </svg>
+
+
+
+                  Level
+                </div>
+                <svg 
+                  className={`h-5 w-5 transform transition-transform duration-200 ${expandedMenus.level ? 'rotate-90' : ''}`} 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                >
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              {/* Level Submenu */}
+              {expandedMenus.level && (
+                <div className="pl-8 space-y-1">
+                  <button
+                    className={`flex items-center w-full px-4 py-2 text-sm font-medium rounded-md group transition-colors ${
+                      activeComponent === "mylevel" 
+                        ? 'bg-teal-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700'
+                    }`}
+                    onClick={() => onComponentChange('mylevel')}
+                  >
+                    <span className="truncate">My Level</span>
                   </button>
                 </div>
               )}
