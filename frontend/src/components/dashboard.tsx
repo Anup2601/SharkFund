@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
-import Scanner from '../assets/scaner.png'
+import Scanner from '../assets/scanner.jpg'
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -29,11 +29,12 @@ const Dashboard: React.FC = () => {
   
   // Bank details for bank payment method
   const bankDetails = {
-    accountHolder: "SharkFund Pvt Ltd",
-    accountNumber: "12345678901234",
-    bankName: "State Bank of India",
-    ifscCode: "SBIN0001234",
-    branch: "Main Branch, Mumbai"
+    accountHolder: "MOHIT PANCHAL",
+    accountNumber:"50100760185466",
+    bankName: "HDFC",
+    ifscCode: "HDFC0003592",
+    branch: "SAMAIPUR",
+    virtualPaymentAddress: "8168320826@hdfcbank",
   };
   
   // Updated to match the FundHistory component interface
@@ -534,7 +535,7 @@ const Dashboard: React.FC = () => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-40 h-40 mr-1 inline-block"
+                          className="w-48 h-48 mr-1 inline-block"
                         />
                       </div>
                       <p className="text-sm text-gray-400 mb-3">
@@ -569,6 +570,10 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">Branch:</span>
                           <span className="text-white">{bankDetails.branch}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Virtual Payment Address:</span>
+                          <span className="text-white">{bankDetails.virtualPaymentAddress}</span>
                         </div>
                       </div>
                     </div>
@@ -798,7 +803,7 @@ const Dashboard: React.FC = () => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-40 h-40 mr-1 inline-block"
+                          className="w-48 h-48 mr-1 inline-block"
                         />
                       </div>
                       <p className="text-sm text-gray-400 mb-3">
@@ -833,6 +838,10 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">Branch:</span>
                           <span className="text-white">{bankDetails.branch}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Virtual Payment Address:</span>
+                          <span className="text-white">{bankDetails.virtualPaymentAddress}</span>
                         </div>
                       </div>
                     </div>
