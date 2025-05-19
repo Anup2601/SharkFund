@@ -45,7 +45,7 @@ export const Profile: React.FC = () => {
             'Content-Type': 'application/json',
           }
         });
-        console.log(response);
+        // console.log("Batch 1: ",response);
         
 
         if (!response.ok) {
@@ -55,7 +55,7 @@ export const Profile: React.FC = () => {
         const data = await response.json();
 
 
-        console.log(data);
+        // console.log(data);
 
         setUserData({
           ...data,
@@ -244,9 +244,9 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                         </div>
                       </div>
                       <div className="bg-[#222831] p-4 rounded-lg">
-                        <div className="text-gray-400 text-sm">ifsc_code Code</div>
+                        <div className="text-gray-400 text-sm">IFSC Code</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.payment_detail?.ifsc_code_code || "Not provided"}
+                          {userData.payment_detail?.ifsc_code || "Not provided"}
                         </div>
                       </div>
                       
@@ -365,20 +365,20 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
         },
         body: JSON.stringify({
           name: formData.name,
-          email: formData.email,
           mobile_number: formData.mobile_number,
           country: formData.country,
-          profileImage: formData.profileImage,
-          account_number: formData.payment_detail.account_number,
-          bank_account_number: formData.payment_detail.account_number,
-          bank_ifsc_code: formData.payment_detail.ifsc_code,
-          upi_id: formData.payment_detail.upi_id,
-          card_number: formData.payment_detail.card_number,
-          card_expiry: formData.payment_detail.expiry_date,
-          card_name: formData.payment_detail.name_on_card
+          payment_detail: {
+            account_holder_name: formData.payment_detail.account_holder_name,
+            account_number: formData.payment_detail.account_number,
+            ifsc_code: formData.payment_detail.ifsc_code,
+            upi_id: formData.payment_detail.upi_id,
+            card_number: formData.payment_detail.card_number,
+            expiry_date: formData.payment_detail.expiry_date,
+            name_on_card: formData.payment_detail.name_on_card
+          }
         }),
       });
-      console.log(response);
+      
 
       if (!response.ok) {
         throw new Error('Failed to update profile');
@@ -392,6 +392,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
       toast.error('Failed to update profile');
     }
   };
+
 
   return (
     <div className="bg-[#393E46] rounded-xl shadow-lg overflow-hidden animate-fade-in">

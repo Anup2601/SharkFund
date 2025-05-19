@@ -55,7 +55,7 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
     } else if (type === 'deposit') {
       fetchDepositHistory();
     } else if (type === 'add') {
-      console.log("Using sample data for type: add");
+      // console.log("Using sample data for type: add");
       setFundHistory(sampleFundHistory);
     }
   }, [type]);

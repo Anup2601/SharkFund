@@ -266,13 +266,13 @@ useEffect(() => {
       setMetrics([
         {
           title: 'Total Team',
-          value: data.total_teams?.toString() || '0',
+          value: data.total_team?.toString() || '0',
           change: formatChange(data.total_team_change) || '+0',
           icon: 'users'
         },
         {
           title: 'Active Team',
-          value: data.active_teams?.toString() || '0',
+          value: data.active_team?.toString() || '0',
           change: formatChange(data.active_team_change) || '+0',
           icon: 'users'
         },
@@ -337,20 +337,20 @@ useEffect(() => {
         toast.error('Please log in to submit payment');
         return;
       }
-      console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
+      // console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
 
       const base64Response = await fetch(uploadedScreenshot!);
       const blob = await base64Response.blob();
-      console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
+      // console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
 
       const file = new File([blob], `payment_screenshot_${Date.now()}.jpg`, { type: 'image/jpeg' });
       const formData = new FormData();
       formData.append('amount', fundAmount.toString());
       formData.append('screenshot', file);
 
-      console.log('[AddFund] Preparing FormData:');
-      console.log(`- amount: ${fundAmount}`);
-      console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
+      // console.log('[AddFund] Preparing FormData:');
+      // console.log(`- amount: ${fundAmount}`);
+      // console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
 
       for (const url of API_URLS) {
         console.log(`[AddFund] Attempting to send request to: ${url}`);
@@ -370,17 +370,17 @@ useEffect(() => {
           clearTimeout(timeoutId);
 
           const responseText = await response.text();
-          console.log(`[AddFund] Response from ${url}:`);
-          console.log(`- Status: ${response.status} ${response.statusText}`);
-          console.log(`- Headers:`, Object.fromEntries(response.headers.entries()));
-          console.log(`- Body: ${responseText}`);
+          // console.log(`[AddFund] Response from ${url}:`);
+          // console.log(`- Status: ${response.status} ${response.statusText}`);
+          // console.log(`- Headers:`, Object.fromEntries(response.headers.entries()));
+          // console.log(`- Body: ${responseText}`);
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${responseText}`);
           }
 
           const result = JSON.parse(responseText);
-          console.log('[AddFund] Parsed response:', result);
+          // console.log('[AddFund] Parsed response:', result);
           toast.success(result.message || 'Payment screenshot uploaded successfully');
           setUploadedScreenshot(null);
           setFundAmount(undefined);
