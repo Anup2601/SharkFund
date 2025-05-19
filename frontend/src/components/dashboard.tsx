@@ -256,7 +256,7 @@ useEffect(() => {
         country: data.country || "India",
         joinDate: data.join_date ? data.join_date.split("T")[0] : "",
         activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
-        referralLink: data.referralLink || `https://sharks.shalimarsalescorporation.com/ref/auth/${data.username}`
+        referralLink: data.referralLink || `https://sharkfund.in/ref/auth/${data.username}`
       });
     }
   };
