@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Avatar from "../assets/avatar.png";
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 // Profile Page Component
 export const Profile: React.FC = () => {
@@ -15,9 +16,10 @@ export const Profile: React.FC = () => {
     email: "",
     mobile: "",
     country: "",
-    walletBalance: "",
-    totalIncome: "",
+    wallet_balance: "",
+    total_withdrawal: "",
     profileImage: Avatar,
+    total_income: "",
     payment_detail: {
       account_number: "",
       ifsc_code: "",
@@ -39,38 +41,60 @@ export const Profile: React.FC = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
+         const accessToken = localStorage.getItem('accessToken') || '';
+
+      const [editRes, profileRes,referralRes] = await Promise.all([
+        fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
-          }
-        });
-        console.log(response);
-        
+          },
+        }),
+        fetch('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }),
+         fetch('https://sharkfund.priyeshpandey.in/api/v1/my-referrals/', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }),
+      ]);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
-        }
-
-        const data = await response.json();
-
-
-        console.log(data);
-
-        setUserData({
-          ...data,
-          profileImage: data.profileImage || Avatar
-        });
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
-        toast.error('Failed to load profile data');
-      } finally {
-        setLoading(false);
+      if (!editRes.ok || !profileRes.ok || !referralRes.ok) {
+        throw new Error('One or more API calls failed');
       }
-    };
 
-    fetchUserData();
-  }, []);
+      const editData = await editRes.json();
+      const profileData = await profileRes.json();
+      const referralData = await referralRes.json();
+
+      console.log(referralData);
+
+      const userReferral = referralData.find((user: any) => user.username === profileData.username);
+      const status = userReferral?.status === 'Inactive' ? 'Not Active' : 'Active';
+      // Merge or update state however needed
+      setUserData({
+        ...editData,
+        ...profileData,
+        profileImage: profileData.profileImage || Avatar,
+        status,
+        // status: userData.status === 'Inactive' ? 'Not Active' : 'Active',
+      });
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+      toast.error('Failed to load profile data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUserData();
+}, []);
+
 
   return (
     <div className="p-6 bg-[#222831] min-h-screen">
@@ -80,7 +104,7 @@ export const Profile: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
+        <div className="flex justify-center userDatas-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00ADB5]"></div>
         </div>
       ) : isEditing ? (
@@ -121,42 +145,62 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
     >
       <div className="bg-[#393E46] rounded-xl shadow-lg overflow-hidden">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-[#00ADB5] to-[#00FFF5] p-6">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="relative">
-              <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-[#222831] p-1">
-                <img 
-                  src={userData.profileImage} 
-                  alt={userData.name} 
-                  className="rounded-full w-full h-full object-cover"
-                />
+          <div className="bg-gradient-to-r from-[#00ADB5] to-[#00FFF5] p-6">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+              
+              {/* Profile Image */}
+              <div className="relative flex-shrink-0">
+                <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-[#222831] p-1 mx-auto md:mx-0">
+                  <img 
+                    src={userData.profileImage} 
+                    alt={userData.name} 
+                    className="rounded-full w-full h-full object-cover"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="text-center md:text-left">
-              <h2 className="text-2xl font-bold text-[#222831]">{userData.name}</h2>
-              <p className="text-[#222831] opacity-80">Member since {new Date(userData.join_date).toLocaleDateString()}</p>
-              <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-3">
-                <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
-                  Active
-                </span>
-                <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
-                Balance: {userData.balance}
-                </span>
+
+              {/* Info Section */}
+              <div className="text-center md:text-left flex-1">
+                <h2 className="text-2xl font-bold text-[#222831]">{userData.name}</h2>
+                <p className="text-[#222831] opacity-80">
+                  Member since {new Date(userData.join_date).toLocaleDateString()}
+                </p>
+
+                {/* Tags */}
+                <div className="mt-3 flex flex-wrap justify-center md:justify-start gap-3">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      userData.status === 'Active'
+                        ? 'bg-green-900 text-green-300'
+                        : userData.status === 'Not Active'
+                        ? 'bg-yellow-900 text-yellow-300'
+                        : 'bg-red-900 text-red-300'
+                    }`}
+                  >
+                    {userData.status}
+                  </span>
+                  <span className="bg-[#222831] text-[#00FFF5] px-3 py-1 rounded-full text-sm font-medium">
+                    Withdrawal: {userData.total_withdrawal}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="md:ml-auto">
-              <button
-                onClick={onEdit}
-                className="bg-[#222831] hover:bg-opacity-80 text-[#00FFF5] py-2 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Edit Profile
-              </button>
+
+              {/* Edit Button */}
+              <div className="w-full md:w-auto text-center md:text-right">
+                <button
+                  onClick={onEdit}
+                  className="mt-4 md:mt-0 bg-[#222831] hover:bg-opacity-80 text-[#00FFF5] py-2 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 mx-auto md:mx-0"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit Profile
+                </button>
+              </div>
+
             </div>
           </div>
-        </div>
+
         
         {/* Profile Content */}
         <div className="p-6">
@@ -183,15 +227,29 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Joining Date</div>
-              <div className="text-white font-medium mt-1">{userData.join_date.split("T")[0] ?? "Loading..."}
-              </div>
+              <div className="text-white text-base mt-1">
+                {userData.join_date
+                ? new Date(userData.join_date).toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                : 'N/A'}
+                </div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Activation Date</div>
-              <div className="text-white font-medium mt-1">{userData.activation_date.split("T")[0] ?? "Loading..."}
+              <div className="text-white text-base mt-1">
+                {userData.activation_date
+                  ? new Date(userData.activation_date).toLocaleDateString('en-IN', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : 'N/A'}
               </div>
             </div>
-          </div>
+            </div>
           
           <h3 className="text-xl font-bold text-[#00ADB5] mt-8 mb-6 border-b border-[#00ADB5] pb-2">
             Sponsor Information
@@ -215,11 +273,11 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Wallet Balance</div>
-              <div className="text-white font-medium mt-1">{userData.walletBalance}</div>
+              <div className="text-white font-medium mt-1">{userData.wallet_balance}</div>
             </div>
             <div className="bg-[#222831] p-4 rounded-lg">
               <div className="text-gray-400 text-sm">Total Income</div>
-              <div className="text-white font-medium mt-1">{userData.totalIncome}</div>
+              <div className="text-white font-medium mt-1">{userData.total_income}</div>
             </div>
           </div>
 
@@ -244,9 +302,9 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ userData, onEdit, animationPr
                         </div>
                       </div>
                       <div className="bg-[#222831] p-4 rounded-lg">
-                        <div className="text-gray-400 text-sm">ifsc_code Code</div>
+                        <div className="text-gray-400 text-sm">IFSC Code</div>
                         <div className="text-white font-medium mt-1">
-                          {userData.payment_detail?.ifsc_code_code || "Not provided"}
+                          {userData.payment_detail?.ifsc_code || "Not provided"}
                         </div>
                       </div>
                       
@@ -286,28 +344,27 @@ interface UpdateProfileFormProps {
   onSuccess: (updatedData: any) => void;
 }
 
-const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCancel, onSuccess }) => {
+const UpdateProfileForm: React.FC<UpdateProfileFormProps>  = ({ userData, onCancel, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: userData.name,
-    email: userData.email,
-    mobile_number: userData.mobile_number,
-    country: userData.country,
-    profileImage: userData.profileImage,
-    joiningDate: userData.join_date,
-    activationDate: userData.activation_date,
+    name: userData.name || '',
+    email: userData.email || '',
+    mobile_number: userData.mobile_number || '',
+    country: userData.country || '',
+    profileImage: userData.profileImage || '',
     payment_detail: {
-      account_number: userData.payment_detail?.account_number || "",
-      ifsc_code: userData.payment_detail?.ifsc_code || "",
-      account_holder_name: userData.payment_detail?.account_holder_name || "",
-      upi_id: userData.payment_detail?.upi_id || "",
-      card_number: userData.payment_detail?.card_number || "",
-      expiry_date: userData.payment_detail?.expiry_date || "",
-      cvv: userData.payment_detail?.cvv || "",
-      name_on_card: userData.payment_detail?.name_on_card || ""
+      account_holder_name: userData.payment_detail?.account_holder_name || '',
+      account_number: userData.payment_detail?.account_number || '',
+      ifsc_code: userData.payment_detail?.ifsc_code || '',
+      upi_id: userData.payment_detail?.upi_id || '',
+      card_number: userData.payment_detail?.card_number || '',
+      expiry_date: userData.payment_detail?.expiry_date || '',
+      cvv: userData.payment_detail?.cvv || '',
+      name_on_card: userData.payment_detail?.name_on_card || ''
     }
   });
 
   const [imagePreview, setImagePreview] = useState(userData.profileImage);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Countries list
   const countries = [
@@ -318,78 +375,95 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      payment_detail: {
-        ...formData.payment_detail,
+    
+    // Check if this is a payment detail field
+    if (name.includes('payment_detail.')) {
+      const paymentField = name.split('.')[1];
+      setFormData({
+        ...formData,
+        payment_detail: {
+          ...formData.payment_detail,
+          [paymentField]: value
+        }
+      });
+    } else {
+      // Regular field
+      setFormData({
+        ...formData,
         [name]: value
-      }
-    });
+      });
+    }
   };
 
-  const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      payment_detail: {
-        ...formData.payment_detail,
-        [name]: value
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if ('files' in e.target && e.target.files) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+          setFormData({
+            ...formData,
+            profileImage: reader.result
+          });
+        };
+        reader.readAsDataURL(file);
       }
-    });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setFormData({
-          ...formData,
-          profileImage: reader.result
-        });
-      };
-      reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const updateData = {
           name: formData.name,
           email: formData.email,
           mobile_number: formData.mobile_number,
           country: formData.country,
           profileImage: formData.profileImage,
-          account_number: formData.payment_detail.account_number,
-          bank_account_number: formData.payment_detail.account_number,
-          bank_ifsc_code: formData.payment_detail.ifsc_code,
-          upi_id: formData.payment_detail.upi_id,
-          card_number: formData.payment_detail.card_number,
-          card_expiry: formData.payment_detail.expiry_date,
-          card_name: formData.payment_detail.name_on_card
-        }),
-      });
-      console.log(response);
+          payment_detail: {
+            account_holder_name: formData.payment_detail.account_holder_name || null,
+            account_number: formData.payment_detail.account_number || null,
+            ifsc_code: formData.payment_detail.ifsc_code || null,
+            upi_id: formData.payment_detail.upi_id || null,
+            card_number: formData.payment_detail.card_number || null,
+            expiry_date: formData.payment_detail.expiry_date || null,
+            cvv: formData.payment_detail.cvv || null,
+            name_on_card: formData.payment_detail.name_on_card || null
+          }
+        };
+      
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
+      const token = localStorage.getItem('accessToken') || '';
+      
+      const response = await axios.put(
+        'https://sharkfund.priyeshpandey.in/api/v1/edit/information/', 
+        updateData, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-      const updatedData = await response.json();
       toast.success("Profile Updated Successfully");
-      onSuccess(updatedData);
+      
+      // If the API call succeeds, pass the updated data to the parent component
+      if (onSuccess && typeof onSuccess === 'function') {
+        onSuccess(response.data);
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      if (typeof error === "object" && error !== null && "response" in error && typeof (error as any).response === "object") {
+        toast.error((error as any).response?.data?.message || 'Failed to update profile');
+      } else {
+        toast.error('Failed to update profile');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -406,7 +480,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
             <div className="relative">
               <div className="h-32 w-32 rounded-full bg-[#222831] p-1">
                 <img 
-                  src={imagePreview} 
+                  src={imagePreview || '/default-avatar.png'} 
                   alt="Profile" 
                   className="rounded-full w-full h-full object-cover"
                 />
@@ -462,7 +536,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
               
               {/* Mobile Field */}
               <div>
-                <label htmlFor="mobile" className="block text-[#00FFF5] text-sm font-medium mb-2">
+                <label htmlFor="mobile_number" className="block text-[#00FFF5] text-sm font-medium mb-2">
                   Mobile Number
                 </label>
                 <input
@@ -512,7 +586,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.sponsorName}
+                    value={userData.sponsorName || "N/A"}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -523,7 +597,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.sponsorEmail}
+                    value={userData.sponsorEmail || "N/A"}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -544,7 +618,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.join_date.split("T")[0] ?? "Loading..."}
+                    value={(userData.join_date && userData.join_date.split("T")[0]) || "Loading..."}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -555,7 +629,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                   </label>
                   <input
                     type="text"
-                    value={userData.activation_date.split("T")[0] ?? "Loading..."}
+                    value={(userData.activation_date && userData.activation_date.split("T")[0]) || "Loading..."}
                     className="w-full bg-[#222831] text-gray-400 px-4 py-3 rounded-lg border border-gray-700 cursor-not-allowed"
                     readOnly
                   />
@@ -581,10 +655,11 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="account_holder_name"
+                        name="payment_detail.account_holder_name"
                         value={formData.payment_detail.account_holder_name}
                         onChange={handleChange}
-                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        placeholder="Full Name"
                       />
                     </div>
                     <div>
@@ -593,10 +668,10 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="account_number"
+                        name="payment_detail.account_number"
                         value={formData.payment_detail.account_number}
                         onChange={handleChange}
-                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="Account Number"
                       />
                     </div>
@@ -606,10 +681,10 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="ifsc_code"
+                        name="payment_detail.ifsc_code"
                         value={formData.payment_detail.ifsc_code}
                         onChange={handleChange}
-                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
+                        className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="IFSC Code"
                       />
                     </div>
@@ -624,7 +699,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                     </label>
                     <input
                       type="text"
-                      name="upi_id"
+                      name="payment_detail.upi_id"
                       value={formData.payment_detail.upi_id}
                       onChange={handleChange}
                       className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
@@ -642,9 +717,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="card_number"
+                        name="payment_detail.card_number"
                         value={formData.payment_detail.card_number}
-                        onChange={handleCardDetailsChange}
+                        onChange={handleChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="1234 5678 9012 3456"
                       />
@@ -655,9 +730,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="name_on_card"
+                        name="payment_detail.name_on_card"
                         value={formData.payment_detail.name_on_card}
-                        onChange={handleCardDetailsChange}
+                        onChange={handleChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="Full Name"
                       />
@@ -668,9 +743,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="text"
-                        name="expiry_date"
+                        name="payment_detail.expiry_date"
                         value={formData.payment_detail.expiry_date}
-                        onChange={handleCardDetailsChange}
+                        onChange={handleChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="MM/YY"
                       />
@@ -681,9 +756,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                       </label>
                       <input
                         type="password"
-                        name="cvv"
+                        name="payment_detail.cvv"
                         value={formData.payment_detail.cvv}
-                        onChange={handleCardDetailsChange}
+                        onChange={handleChange}
                         className="w-full bg-[#222831] text-white px-4 py-3 rounded-lg border border-[#00ADB5] focus:outline-none focus:ring-2 focus:ring-[#00FFF5]"
                         placeholder="123"
                         maxLength={3}
@@ -700,15 +775,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
                 type="button"
                 onClick={onCancel}
                 className="bg-[#222831] hover:bg-opacity-80 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300"
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                onClick={()=>toast.success("Profile Updated")}
+                disabled={isSubmitting}
                 className="bg-gradient-to-r from-[#00ADB5] to-[#00FFF5] hover:from-[#00899E] hover:to-[#00D8DC] text-[#222831] py-3 px-6 rounded-lg font-bold transition-all duration-300"
               >
-                Save Changes
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>
