@@ -27,7 +27,7 @@ const MonthlyIncomeHistory: React.FC = () => {
         throw new Error("No authentication token found. Please log in.");
       }
 
-      const response = await axios.get("http://sharkfund.priyeshpandey.in/api/v1/earnings/monthly/", {
+      const response = await axios.get("https://sharkfund.priyeshpandey.in/api/v1/earnings/monthly/", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",

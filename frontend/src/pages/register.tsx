@@ -14,6 +14,7 @@ export default function Registration() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    username: '',
     name: '',
     email: '',
     password: '',
@@ -73,6 +74,7 @@ export default function Registration() {
     
     // Frontend validation
     if (!formData.name.trim()) return toast.error("Name is required");
+    if (!formData.username.trim()) return toast.error("Username is required");
     if (!formData.email.trim()) return toast.error("Email is required");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
     if (!formData.password) return toast.error("Password is required");
@@ -86,13 +88,14 @@ export default function Registration() {
     try {
       // Prepare the data for the API format
       const apiData = {
+        username: formData.username,
         name: formData.name,
         email: formData.email,
         password: formData.password,
         confirm_password: formData.confirmPassword,
-        address: formData.address || '', // Use empty string if address is not provided
+        address: formData.address || '', 
         mobile_number: formData.mobile || '',
-        referred_by: formData.Referral || '', // Map Referral to referred_by
+        referred_by: formData.Referral || '', 
       };
       
       // Make the API request
@@ -179,6 +182,25 @@ export default function Registration() {
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-teal-300 mb-2" htmlFor="name">Username</label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <User className='size-5 text-white'/>
+                </div>
+                <input
+                  className={`w-full bg-gray-700 rounded p-3 pl-10 text-white border ${fieldErrors.username ? 'border-red-500' : 'border-gray-600'} focus:border-teal-400 focus:outline-none`}
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder='Enter your Username'
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+              {fieldErrors.name && <p className="text-red-500 text-sm mt-1">{fieldErrors.Username[0]}</p>}
+            </div>
+
             <div>
               <label className="block text-teal-300 mb-2" htmlFor="name">Name</label>
               <div className='relative'>
