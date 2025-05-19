@@ -5,15 +5,20 @@ import Scanner from '../assets/scanner.jpg';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  console.log('[Dashboard] Component loaded - Debug Version 1.2');
+  
 
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
   const [fundAmount, setFundAmount] = useState<number | undefined>();
-  const [paymentMethod, setPaymentMethod] = useState('scan');
+  const [paymentMethod, setPaymentMethod] = useState('bank');
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [dots, setDots] = useState('.'); 
+  const [dots, setDots] = useState('.');
+  const [timeLeft, setTimeLeft] = useState({
+  hours: 48,
+  minutes: 0,
+  seconds: 0
+  });
 
   const [userProfile, setUserProfile] = useState({
     name: "",
@@ -81,6 +86,32 @@ const Dashboard: React.FC = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Countdown timer logic
+useEffect(() => {
+  // Calculate end time (48 hours from now)
+  const endTime = new Date();
+  endTime.setHours(endTime.getHours() + 48);
+  
+  const interval = setInterval(() => {
+    const now = new Date();
+    const difference = endTime.getTime() - now.getTime();
+    
+    if (difference <= 0) {
+      clearInterval(interval);
+      setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+    
+    const hours = Math.floor(difference / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    
+    setTimeLeft({ hours, minutes, seconds });
+  }, 1000);
+  
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -508,7 +539,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="p-6 bg-gray-900 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard (Debug Version 1.2)</h1>
+        <h1 className="text-2xl font-bold text-white">Dashboard (Version 1.2)</h1>
         <p className="text-gray-400 mt-1">Welcome to your cloud management portal</p>
       </div>
 
@@ -620,14 +651,32 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'scan' && (
                   <div className="mt-4">
                     <div className="text-center p-4">
-                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
+                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center relative">
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block"
+                          className="w-48 h-48 mr-1 inline-block blur-md"
                         />
+                         {/* Centered countdown overlay */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+    <p className="text-black text-sm mb-1 font-medium bg-white bg-opacity-70 px-2 rounded">Coming Soon:</p>
+    <div className="flex space-x-1">
+      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+        <span className="text-xs sm:text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
+        <p className="text-xs">Hrs</p>
+      </div>
+      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+        <span className="text-xs sm:text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+        <p className="text-xs">Min</p>
+      </div>
+      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+        <span className="text-xs sm:text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+        <p className="text-xs">Sec</p>
+      </div>
+    </div>
+  </div>
                       </div>
-                      <p className="text-sm text-gray-400 mb-3">
+                      <p className="text-sm text-gray-400 mb-3 ">
                         Scan the QR code and upload payment screenshot
                       </p>
                     </div>
@@ -878,12 +927,30 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'scan' && (
                   <div className="mt-4">
                     <div className="text-center p-4">
-                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center">
+                      <div className="bg-white p-2 rounded-lg mx-auto w-48 h-48 mb-3 flex items-center justify-center relative">
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block"
+                          className="w-48 h-48 mr-1 inline-block blur-md"
                         />
+                         {/* Countdown overlay on image */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center  bg-opacity-50 rounded-lg">
+                          <p className="text-black text-sm mb-1">Comming Soon:</p>
+                          <div className="flex space-x-1">
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
+                              <span className="text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Hrs</p>
+                            </div>
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
+                              <span className="text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Min</p>
+                            </div>
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
+                              <span className="text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Sec</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <p className="text-sm text-gray-400 mb-3">
                         Scan the QR code and upload payment screenshot

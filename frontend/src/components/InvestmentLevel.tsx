@@ -41,6 +41,7 @@ const InvestmentLevel: React.FC = () => {
       if (!Array.isArray(response.data) || response.data.length === 0) {
         throw new Error("No monthly earnings data available.");
       }
+      console.log(response.data);
 
       // Get the latest month's data (assuming the API returns data sorted by date)
       const latestMonthData = response.data[0];
@@ -157,6 +158,7 @@ const InvestmentLevel: React.FC = () => {
               <p className="text-gray-300 mb-4">
                 Monthly Payout: <span className="font-semibold">{currentLevel.monthlyPayout}</span>
               </p>
+              
               
               <div className="w-full max-w-md bg-gray-700 rounded-full h-4 mt-4">
                 <div 
