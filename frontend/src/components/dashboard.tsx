@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
-import Scanner from '../assets/scaner.png'
+import Scanner from '../assets/scaner.png';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  console.log('[Dashboard] Component loaded - Debug Version 1.2');
+
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
-  const [fundAmount, setFundAmount] = useState<number>();
-  const [paymentMethod, setPaymentMethod] = useState('scan'); 
+  const [fundAmount, setFundAmount] = useState<number | undefined>();
+  const [paymentMethod, setPaymentMethod] = useState('scan');
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [dots, setDots] = useState('.'); // For progressive dots animation
+
   const [userProfile, setUserProfile] = useState({
     name: "",
     totalIncome: `₹1`,
@@ -26,72 +31,82 @@ const Dashboard: React.FC = () => {
     { title: 'Total Referrals', value: '2', change: '+1', icon: 'user-plus' },
     { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
   ]);
-  
-  // Bank details for bank payment method
+
   const bankDetails = {
     accountHolder: "SharkFund Pvt Ltd",
-    accountNumber: "12345678901234",
-    bankName: "State Bank of India",
-    ifscCode: "SBIN0001234",
-    branch: "Main Branch, Mumbai"
+    accountNumber: "50100760185466",
+    bankName: "HDFC Bank",
+    ifscCode: "HDFC0003592",
   };
-  
-  // Updated to match the FundHistory component interface
+
   const [fundHistory, setFundHistory] = useState<Array<{
     id: string;
     amount: string;
     date: string;
     method: string;
     status: 'completed' | 'pending' | 'failed';
-
   }>>([]);
-  
+
   const [loading, setLoading] = useState(true);
   const [fundHistoryLoading, setFundHistoryLoading] = useState(false);
-  
-  // Animation effect
+
+  const API_URLS = [
+    'https://sharkfund.priyeshpandey.in/api/v1/payments/upload/',
+    'https://sharkfund.priyeshpandey.in/api/v1/payments/upload/',
+    'https://sharkfund.priyeshpandey.in/api/v1/payments/upload/'
+  ];
+
+  // Progressive dots animation effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (submitting) {
+      interval = setInterval(() => {
+        setDots((prev) => {
+          if (prev === '...') return '.';
+          if (prev === '..') return '...';
+          return '..';
+        });
+      }, 500);
+    } else {
+      setDots('.'); // Reset dots when not submitting
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [submitting]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationProgress(100);
     }, 500);
-    
     return () => clearTimeout(timer);
   }, []);
-  
-  // Fetch API data
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      
-      // Retrieve the access token from localStorage
       const accessToken = localStorage.getItem('accessToken');
-      
-      // Check if the access token exists
       if (!accessToken) {
-        console.error('No access token found in localStorage.');
+        console.error('[FetchData] No access token found in localStorage.');
         toast.error('Authentication error. Please login again.');
         setLoading(false);
         return;
       }
-      
       try {
-        // Fetch both profile and stats data simultaneously
         await Promise.all([
           fetchProfileData(accessToken),
           fetchStatsData(accessToken)
         ]);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('[FetchData] Error fetching data:', error);
         toast.error('Connection error. Please check your internet connection.');
       } finally {
         setLoading(false);
       }
     };
-    
     fetchData();
   }, []);
 
-  // Existing functions for fetching profile and stats data
   const fetchProfileData = async (accessToken: string) => {
     try {
       const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
@@ -101,16 +116,17 @@ const Dashboard: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+      const responseText = await response.text();
+      console.log('[FetchProfile] Response:', response.status, responseText);
       if (response.ok) {
-        const data = await response.json();
+        const data = JSON.parse(responseText);
         updateProfileWithApiData(data);
       } else {
-        console.error('Failed to fetch profile data. Status:', response.status);
+        console.error('[FetchProfile] Failed to fetch profile data. Status:', response.status);
         toast.error('Failed to load profile data. Please try again.');
       }
     } catch (error) {
-      console.error('Error fetching profile data:', error);
+      console.error('[FetchProfile] Error:', error);
       throw error;
     }
   };
@@ -124,33 +140,30 @@ const Dashboard: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+      const responseText = await response.text();
+      console.log('[FetchStats] Response:', response.status, responseText);
       if (response.ok) {
-        const data = await response.json();
+        const data = JSON.parse(responseText);
         updateMetricsWithApiData(data);
       } else {
-        console.error('Failed to fetch stats data. Status:', response.status);
+        console.error('[FetchStats] Failed to fetch stats data. Status:', response.status);
         toast.error('Failed to load statistics. Please try again.');
       }
     } catch (error) {
-      console.error('Error fetching stats data:', error);
+      console.error('[FetchStats] Error:', error);
       throw error;
     }
   };
 
-  // Modified function to fetch fund history and transform the data for the FundHistory component
   const fetchFundHistory = async () => {
     setFundHistoryLoading(true);
-    
     const accessToken = localStorage.getItem('accessToken');
-    
     if (!accessToken) {
-      console.error('No access token found in localStorage.');
+      console.error('[FetchFundHistory] No access token found in localStorage.');
       toast.error('Authentication error. Please login again.');
       setFundHistoryLoading(false);
       return;
     }
-    
     try {
       const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/transaction/history/', {
         method: 'GET',
@@ -159,11 +172,10 @@ const Dashboard: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+      const responseText = await response.text();
+      console.log('[FetchFundHistory] Response:', response.status, responseText);
       if (response.ok) {
-        const data = await response.json();
-        console.log('Fund history API response:', data);
-        
+        const data = JSON.parse(responseText);
         const transformedData = (data.results || data || []).map((item: any) => ({
           id: item.transaction_id || item.id || String(Math.random()).substr(2, 8),
           amount: formatCurrency(item.amount || 0),
@@ -171,21 +183,19 @@ const Dashboard: React.FC = () => {
           method: item.payment_method || item.method || 'Bank Transfer',
           status: mapTransactionStatus(item.status || 'completed')
         }));
-        
         setFundHistory(transformedData);
       } else {
-        console.error('Failed to fetch fund history. Status:', response.status);
+        console.error('[FetchFundHistory] Failed to fetch fund history. Status:', response.status);
         toast.error('Failed to load fund history. Please try again.');
       }
     } catch (error) {
-      console.error('Error fetching fund history:', error);
+      console.error('[FetchFundHistory] Error:', error);
       toast.error('Connection error. Please check your internet connection.');
     } finally {
       setFundHistoryLoading(false);
     }
   };
-  
-  // Helper function to map API status to component status
+
   const mapTransactionStatus = (status: string): 'completed' | 'pending' | 'failed' => {
     switch (status.toLowerCase()) {
       case 'success':
@@ -204,8 +214,7 @@ const Dashboard: React.FC = () => {
         return 'pending';
     }
   };
-  
-  // Existing helper functions
+
   const updateProfileWithApiData = (data: any) => {
     if (data) {
       setUserProfile({
@@ -213,10 +222,10 @@ const Dashboard: React.FC = () => {
         totalIncome: formatCurrency(data.total_income) || "₹0",
         walletBalance: formatCurrency(data.wallet_balance) || "₹0",
         totalWithdrawal: formatCurrency(data.total_withdrawal) || "₹0",
-        country: data.country || "India", 
+        country: data.country || "India",
         joinDate: data.join_date ? data.join_date.split("T")[0] : "",
         activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
-        referralLink: data.referralLink || `https://sharks.shalimarsalescorporation.com/ref/auth/${data.username}` 
+        referralLink: data.referralLink || `https://sharks.shalimarsalescorporation.com/ref/auth/${data.username}`
       });
     }
   };
@@ -224,40 +233,40 @@ const Dashboard: React.FC = () => {
   const updateMetricsWithApiData = (data: any) => {
     if (data) {
       setMetrics([
-        { 
-          title: 'Total Team', 
-          value: data.total_teams?.toString() || '0', 
-          change: formatChange(data.total_team_change) || '+0', 
-          icon: 'users' 
+        {
+          title: 'Total Team',
+          value: data.total_teams?.toString() || '0',
+          change: formatChange(data.total_team_change) || '+0',
+          icon: 'users'
         },
-        { 
-          title: 'Active Team', 
-          value: data.active_teams?.toString() || '0', 
-          change: formatChange(data.active_team_change) || '+0', 
-          icon: 'users' 
+        {
+          title: 'Active Team',
+          value: data.active_teams?.toString() || '0',
+          change: formatChange(data.active_team_change) || '+0',
+          icon: 'users'
         },
-        { 
-          title: 'Total Referrals', 
-          value: data.total_referrals?.toString() || '0', 
-          change: formatChange(data.total_referrals_change) || '+0', 
-          icon: 'user-plus' 
+        {
+          title: 'Total Referrals',
+          value: data.total_referrals?.toString() || '0',
+          change: formatChange(data.total_referrals_change) || '+0',
+          icon: 'user-plus'
         },
-        { 
-          title: 'Active Referrals', 
-          value: data.active_referrals?.toString() || '0', 
-          change: formatChange(data.active_referrals_change) || '+0', 
-          icon: 'user-check' 
+        {
+          title: 'Active Referrals',
+          value: data.active_referrals?.toString() || '0',
+          change: formatChange(data.active_referrals_change) || '+0',
+          icon: 'user-check'
         },
       ]);
     }
   };
-  
+
   const formatCurrency = (value: number | string) => {
     if (value === undefined || value === null) return "₹0";
     const numberValue = typeof value === 'string' ? parseFloat(value) : value;
     return isNaN(numberValue) ? "₹0" : `₹${numberValue.toLocaleString()}`;
   };
-  
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     try {
@@ -267,70 +276,148 @@ const Dashboard: React.FC = () => {
       return dateString;
     }
   };
-  
+
   const formatChange = (value: number) => {
     if (value === undefined || value === null) return "+0";
     return value > 0 ? `+${value}` : `${value}`;
   };
 
-  const handleAddFund = () => {
- 
+  const handleAddFund = async () => {
+    if (submitting) {
+      console.warn('[AddFund] Submission already in progress');
+      return;
+    }
+    if ((paymentMethod === 'scan' || paymentMethod === 'bank') && !uploadedScreenshot) {
+      console.warn('[AddFund] No screenshot uploaded');
+      toast.error('Please upload payment screenshot');
+      return;
+    }
+    if (!fundAmount || fundAmount <= 0) {
+      console.warn('[AddFund] Invalid fund amount:', fundAmount);
+      toast.error('Please enter a valid fund amount');
+      return;
+    }
 
-  if ((paymentMethod === 'scan' || paymentMethod === 'bank') && !uploadedScreenshot) {
-    toast.error('Please upload payment screenshot');
-    return;
-  }
+    setSubmitting(true);
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        console.error('[AddFund] No access token found in localStorage');
+        toast.error('Please log in to submit payment');
+        return;
+      }
+      console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
 
-  // Simulate processing delay
-  toast.success('Payment done successfully! Updating...');
+      const base64Response = await fetch(uploadedScreenshot!);
+      const blob = await base64Response.blob();
+      console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
 
-  setTimeout(() => {
-    setUploadedScreenshot(null);
-    setFundAmount(0); 
-    setPaymentMethod("scan"); 
+      const file = new File([blob], `payment_screenshot_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      const formData = new FormData();
+      formData.append('amount', fundAmount.toString());
+      formData.append('screenshot', file);
 
-    toast.success('Your payment has been recorded.');
-  }, 2000);
-};
+      console.log('[AddFund] Preparing FormData:');
+      console.log(`- amount: ${fundAmount}`);
+      console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
 
+      for (const url of API_URLS) {
+        console.log(`[AddFund] Attempting to send request to: ${url}`);
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+            body: formData,
+            signal: controller.signal,
+          });
+
+          clearTimeout(timeoutId);
+
+          const responseText = await response.text();
+          console.log(`[AddFund] Response from ${url}:`);
+          console.log(`- Status: ${response.status} ${response.statusText}`);
+          console.log(`- Headers:`, Object.fromEntries(response.headers.entries()));
+          console.log(`- Body: ${responseText}`);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${responseText}`);
+          }
+
+          const result = JSON.parse(responseText);
+          console.log('[AddFund] Parsed response:', result);
+          toast.success(result.message || 'Payment screenshot uploaded successfully');
+          setUploadedScreenshot(null);
+          setFundAmount(undefined);
+          setPaymentMethod('scan');
+          await fetchFundHistory();
+          return;
+        } catch (error) {
+          console.error(`[AddFund] Error with ${url}:`, error.message);
+          if (url === API_URLS[API_URLS.length - 1]) {
+            throw error;
+          }
+          console.log('[AddFund] Trying next URL...');
+        }
+      }
+    } catch (error) {
+      console.error('[AddFund] Final error:', error);
+      toast.error(`Failed to submit payment: ${error.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
+      console.log(`[FileUpload] Selected file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
       if (!file.type.includes('image/')) {
+        console.error('[FileUpload] Invalid file type');
         toast.error('Please upload an image file');
         return;
       }
-      
+      if (file.size > 5 * 1024 * 1024) {
+        console.error('[FileUpload] File size exceeds 5MB limit');
+        toast.error('File size must not exceed 5MB');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target && event.target.result) {
+          console.log('[FileUpload] File read successfully as Data URL');
           setUploadedScreenshot(event.target.result as string);
+          toast.success('Screenshot uploaded!');
         }
-        toast.success('Screenshot uploaded!');
+      };
+      reader.onerror = () => {
+        console.error('[FileUpload] Failed to read file');
+        toast.error('Failed to read file');
       };
       reader.readAsDataURL(file);
+    } else {
+      console.warn('[FileUpload] No file selected');
     }
   };
-  
+
   const resetScreenshot = () => {
+    console.log('[ResetScreenshot] Clearing uploaded screenshot');
     setUploadedScreenshot(null);
-    //  setShowQrCode(false);
   };
 
-  // Toggle fund history visibility and fetch data if needed
   const toggleFundHistory = async () => {
     const nextState = !showAddFundHistory;
-    
     if (nextState && fundHistory.length === 0) {
       await fetchFundHistory();
     }
-    
     setShowAddFundHistory(nextState);
     toast.success(`${nextState ? 'Showing' : 'Hiding'} Fund History`);
   };
 
-  // Existing icon renderer
   const renderIcon = (iconName: string) => {
     switch (iconName) {
       case 'users':
@@ -359,28 +446,15 @@ const Dashboard: React.FC = () => {
         );
     }
   };
-  
-  // Loading state
-  if (loading) {
-    return (
-      <div className="p-6 bg-gray-900 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto"></div>
-          <p className="mt-4 text-teal-400">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Render screenshot upload section
+
   const renderScreenshotUpload = () => (
     <div className="mt-4">
       {uploadedScreenshot ? (
         <div className="text-center">
           <div className="relative w-48 h-48 mx-auto mb-2">
-            <img 
-              src={uploadedScreenshot} 
-              alt="Payment Screenshot" 
+            <img
+              src={uploadedScreenshot}
+              alt="Payment Screenshot"
               className="w-full h-full object-cover rounded-lg"
             />
             <button
@@ -400,29 +474,37 @@ const Dashboard: React.FC = () => {
           <label className="cursor-pointer flex flex-col items-center justify-center bg-gray-800 border border-dashed border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors">
             <ImagePlus className="h-8 w-8 text-teal-400 mb-2" />
             <span className="text-sm text-gray-300">Upload payment screenshot</span>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleFileUpload} 
-              className="hidden" 
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
             />
           </label>
         </div>
       )}
     </div>
   );
-  
-  // Main component render
+
+  if (loading) {
+    return (
+      <div className="p-6 bg-gray-900 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto"></div>
+          <p className="mt-4 text-teal-400">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-gray-900 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-white">Dashboard (Debug Version 1.2)</h1>
         <p className="text-gray-400 mt-1">Welcome to your cloud management portal</p>
       </div>
-  
-      {/* Mobile-specific order: User Profile first, Metrics second */}
+
       <div className="block md:hidden">
-        {/* User Profile */}
         <div className="grid grid-cols-1 gap-6 mb-10">
           <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
             <div className="flex justify-between items-center mb-6">
@@ -433,7 +515,6 @@ const Dashboard: React.FC = () => {
                 Active
               </div>
             </div>
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Name</div>
@@ -464,7 +545,6 @@ const Dashboard: React.FC = () => {
                 <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
               </div>
             </div>
-            
             <div className="mt-6">
               <div className="text-sm text-gray-400 mb-2">Referral Link</div>
               <div className="flex flex-wrap gap-3">
@@ -475,7 +555,7 @@ const Dashboard: React.FC = () => {
                   className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
                 />
                 <button
-                  onClick={() =>{ 
+                  onClick={() => {
                     navigator.clipboard.writeText(userProfile.referralLink);
                     toast.success('Link copied!');
                   }}
@@ -486,15 +566,19 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          {/* Add Fund Card */}
           <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
             <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
               Add Funds
             </h2>
             <div className="space-y-6">
-              {/* Payment Method Selection */}
               <div className="bg-gray-900 rounded-lg p-4">
+                <input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={fundAmount || ''}
+                  onChange={(e) => setFundAmount(parseFloat(e.target.value) || undefined)}
+                  className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                />
                 <div className="flex mb-4">
                   <button
                     onClick={() => {
@@ -525,8 +609,6 @@ const Dashboard: React.FC = () => {
                     <span className="text-xs sm:text-sm">Bank Payment</span>
                   </button>
                 </div>
-                
-                {/* Payment Methods Content */}
                 {paymentMethod === 'scan' && (
                   <div className="mt-4">
                     <div className="text-center p-4">
@@ -544,7 +626,6 @@ const Dashboard: React.FC = () => {
                     {renderScreenshotUpload()}
                   </div>
                 )}
-                
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
@@ -566,10 +647,6 @@ const Dashboard: React.FC = () => {
                           <span className="text-gray-400">IFSC Code:</span>
                           <span className="text-white">{bankDetails.ifscCode}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Branch:</span>
-                          <span className="text-white">{bankDetails.branch}</span>
-                        </div>
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">
@@ -579,15 +656,21 @@ const Dashboard: React.FC = () => {
                   </div>
                 )}
               </div>
-              
               <button
                 onClick={handleAddFund}
-                // disabled={!fundAmount}
-                className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
+                disabled={!fundAmount || !uploadedScreenshot || submitting}
+                className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center ${
+                  fundAmount && uploadedScreenshot && !submitting
+                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-75'
+                }`}
               >
-                Submit Payment
+                {submitting ? (
+                  <span>Submitting{dots}</span>
+                ) : (
+                  'Submit Payment'
+                )}
               </button>
-              
               <button
                 onClick={toggleFundHistory}
                 className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
@@ -597,11 +680,9 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-  
-        {/* Metrics Cards for mobile (after user profile) */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
           {metrics.map((metric, index) => (
-            <div 
+            <div
               key={index}
               className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
               style={{
@@ -640,13 +721,11 @@ const Dashboard: React.FC = () => {
           ))}
         </div>
       </div>
-  
-      {/* Desktop layout (original order): Metrics first, User Profile second */}
+
       <div className="hidden md:block">
-        {/* Metrics Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           {metrics.map((metric, index) => (
-            <div 
+            <div
               key={index}
               className="bg-gray-800 overflow-hidden rounded-lg shadow transition-all duration-500 transform hover:scale-105"
               style={{
@@ -684,10 +763,7 @@ const Dashboard: React.FC = () => {
             </div>
           ))}
         </div>
-      
-        {/* User Profile and Add Fund - Desktop Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-          {/* User Profile */}
           <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white transition-shadow duration-300 hover:shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
@@ -697,7 +773,6 @@ const Dashboard: React.FC = () => {
                 Active
               </div>
             </div>
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Name</div>
@@ -728,7 +803,6 @@ const Dashboard: React.FC = () => {
                 <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
               </div>
             </div>
-            
             <div className="mt-6">
               <div className="text-sm text-gray-400 mb-2">Referral Link</div>
               <div className="flex flex-wrap gap-3">
@@ -739,7 +813,7 @@ const Dashboard: React.FC = () => {
                   className="bg-gray-900 text-teal-400 px-4 py-2 rounded-lg flex-grow shadow-inner text-sm"
                 />
                 <button
-                  onClick={() =>{ 
+                  onClick={() => {
                     navigator.clipboard.writeText(userProfile.referralLink);
                     toast.success('Link copied!');
                   }}
@@ -750,15 +824,19 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          {/* Add Fund Card */}
           <div className="bg-gray-800 rounded-xl shadow-lg p-6 text-white">
             <h2 className="text-xl font-bold tracking-wide text-teal-400 mb-6">
               Add Funds
             </h2>
             <div className="space-y-6">
-              {/* Payment Method Selection */}
               <div className="bg-gray-900 rounded-lg p-4">
+                <input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={fundAmount || ''}
+                  onChange={(e) => setFundAmount(parseFloat(e.target.value) || undefined)}
+                  className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                />
                 <div className="flex mb-4">
                   <button
                     onClick={() => {
@@ -789,8 +867,6 @@ const Dashboard: React.FC = () => {
                     <span className="text-xs sm:text-sm">Bank Payment</span>
                   </button>
                 </div>
-                
-                {/* Payment Methods Content */}
                 {paymentMethod === 'scan' && (
                   <div className="mt-4">
                     <div className="text-center p-4">
@@ -808,7 +884,6 @@ const Dashboard: React.FC = () => {
                     {renderScreenshotUpload()}
                   </div>
                 )}
-                
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
@@ -830,10 +905,6 @@ const Dashboard: React.FC = () => {
                           <span className="text-gray-400">IFSC Code:</span>
                           <span className="text-white">{bankDetails.ifscCode}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Branch:</span>
-                          <span className="text-white">{bankDetails.branch}</span>
-                        </div>
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">
@@ -843,16 +914,21 @@ const Dashboard: React.FC = () => {
                   </div>
                 )}
               </div>
-              
               <button
                 onClick={handleAddFund}
-                className={`w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300'
-                    
+                disabled={!fundAmount || !uploadedScreenshot || submitting}
+                className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center ${
+                  fundAmount && uploadedScreenshot && !submitting
+                    ? 'bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-600 hover:to-teal-500 text-gray-900'
+                    : 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-75'
                 }`}
               >
-                Submit Payment
+                {submitting ? (
+                  <span>Submitting{dots}</span>
+                ) : (
+                  'Submit Payment'
+                )}
               </button>
-              
               <button
                 onClick={toggleFundHistory}
                 className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300"
@@ -863,12 +939,10 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Fund History Expansion Panel */}
+
       {showAddFundHistory && (
-        <div className="bg-gray-800 rounded-xl shadow-lg ">
-          <div className="flex justify-end p-4 ">
-            
+        <div className="bg-gray-800 rounded-xl shadow-lg">
+          <div className="flex justify-end p-4">
             <button
               onClick={toggleFundHistory}
               className="text-gray-400 hover:text-teal-400"
@@ -876,7 +950,6 @@ const Dashboard: React.FC = () => {
               <X size={20} />
             </button>
           </div>
-          
           {fundHistoryLoading ? (
             <div className="flex justify-center py-10">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-400"></div>
@@ -886,8 +959,6 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       )}
-      
-
     </div>
   );
 };
