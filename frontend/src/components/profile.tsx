@@ -320,7 +320,10 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ userData, onCance
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      payment_detail: {
+        ...formData.payment_detail,
+        [name]: value
+      }
     });
   };
 

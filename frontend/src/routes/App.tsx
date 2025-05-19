@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Route, Routes, useNavigate, useParams, Navigate } from 'react-router-dom'
 import './App.css'
 import Registration from '../pages/register'
 import Login from '../pages/login'
@@ -13,6 +13,17 @@ import Disclaimer from '../pages/Disclaimer'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
 import CookiePolicy from '../pages/CookiePolicy'
 
+// Protected Route component
+const ProtectedRoute: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+  const isAuthenticated = localStorage.getItem('accessToken') !== null;
+  
+  if (!isAuthenticated) {
+    // Redirect to login if not authenticated
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
 
 // Redirect function inside App file
 function RedirectToRegister() {
@@ -33,7 +44,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState({
     name: '',
     email: '',
-    profileImage: '/api/placeholder/32/32', // Retain mock profileImage as API doesn't provide it
+    profileImage: '/api/placeholder/32/32', 
   });
 
   // Fetch user details from API
@@ -45,7 +56,7 @@ function App() {
           console.error('No access token found in localStorage');
           return;
         }
-
+        
         const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/edit/information/', {
           method: 'GET',
           headers: {
@@ -53,15 +64,15 @@ function App() {
             'Content-Type': 'application/json',
           },
         });
-
+        
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
+        
         const data = await response.json();
-        console.log('User Details:', data); // Log the full response for debugging
-
-        // Update currentUser with only name and email from the API response
+        console.log('User Details:', data); 
+        
+       
         setCurrentUser({
           name: data.name || '',
           email: data.email || '',
@@ -74,7 +85,7 @@ function App() {
 
     fetchUserDetails();
   }, []);
-  
+
   return (
     <>
       <Toaster position="top-right" />
@@ -87,12 +98,18 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
         <Route path='/forgotpassword' element={<ForgotPassword/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-        {/* Wrap your home page with HomeLayout and pass user data */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile/>
+          </ProtectedRoute>
+        }/>
+        {/* Protected home route */}
         <Route
           path="/home"
           element={
-            <HomeLayout currentUser={currentUser}/>
+            <ProtectedRoute>
+              <HomeLayout currentUser={currentUser}/>
+            </ProtectedRoute>
           }
         />
         <Route path="/ref/auth/:username" element={<RedirectToRegister />} />
