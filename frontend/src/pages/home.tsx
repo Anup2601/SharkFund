@@ -9,6 +9,7 @@ import Support from '../components/support';
 import Monthly from '../components/Monthly';
 import InvestmentLevel from '../components/InvestmentLevel';
 import Footer from '../components/Footer';
+import WithdrawSection from '../components/WithdrawSection';
 
 interface HomeLayoutProps {
   currentUser: {
@@ -48,7 +49,12 @@ const HomeLayout: React.FC<HomeLayoutProps> = ({ currentUser }) => {
       case "deposit":
         return <FundHistory type="deposit"/>;
       case "withdraw":
-        return <FundHistory type="withdraw"/>;
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <WithdrawSection />
+            <FundHistory type="withdraw" />
+          </div>
+  );
       case "myincome":
         return <Monthly/>
       case "mylevel":
