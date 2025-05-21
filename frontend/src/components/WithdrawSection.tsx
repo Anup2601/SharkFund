@@ -74,6 +74,7 @@ const WithdrawSection = () => {
           amount: amountToWithdraw
         })
       });
+      console.log("Withdrawal response:", response);
       
       if (!response.ok) {
         throw new Error(`Withdrawal request failed: ${response.status}`);

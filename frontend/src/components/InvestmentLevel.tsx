@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import One from "../assets/1.2.png"
-import Two from "../assets/2.0.png"
-import Three from "../assets/3.0.png"
+import Start_Investor from "../assets/1.0.png"
+import Beginner from "../assets/1.2.png"
+import Advanced_Investor from "../assets/2.0.png"
+import Eliter_Investor from "../assets/3.0.png"
 
 const InvestmentLevel: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState<{
@@ -76,31 +77,31 @@ const InvestmentLevel: React.FC = () => {
     // Remove any non-numeric characters and convert to number
     const payoutValue = parseFloat(payout.replace(/[^0-9.]/g, ''));
     
-    if (payoutValue >= 35000) {
+    if (payoutValue >= 3000) {
       return { 
         level: 3, 
-        image: Three, 
+        image: Eliter_Investor, 
         label: "Level 3 - Elite Investor",
         color: "text-purple-400"
       };
-    } else if (payoutValue >= 10000) {
+    } else if (payoutValue >= 2000) {
       return { 
         level: 2, 
-        image: Two, 
+        image: Advanced_Investor, 
         label: "Level 2 - Advanced Investor",
         color: "text-blue-400"
       };
     } else if (payoutValue >= 1000) {
       return { 
         level: 1, 
-        image: One, 
+        image: Start_Investor, 
         label: "Level 1 - Starter Investor",
         color: "text-green-400"
       };
     } else {
       return { 
         level: 0, 
-        image: One, 
+        image: Beginner, 
         label: "Beginner",
         color: "text-gray-400"
       };
@@ -183,8 +184,8 @@ const InvestmentLevel: React.FC = () => {
                 <div className="mt-6 text-center">
                   <p className="text-gray-300 mb-2">
                     {currentLevel.level === 0 && "You need ₹1,000+ monthly payout to reach Level 1"}
-                    {currentLevel.level === 1 && "You need ₹10,000+ monthly payout to reach Level 2"}
-                    {currentLevel.level === 2 && "You need ₹35,000+ monthly payout to reach Level 3"}
+                    {currentLevel.level === 1 && "You need ₹2,000+ monthly payout to reach Level 2"}
+                    {currentLevel.level === 2 && "You need ₹3,000+ monthly payout to reach Level 3"}
                   </p>
                   <button className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors">
                     Upgrade Your Investment
