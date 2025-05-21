@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import F from "../assets/IMG-20250520-WA0009.jpg";
 
 interface MonthlyIncomeItem {
   month: string;
@@ -34,7 +35,6 @@ const MonthlyIncomeHistory: React.FC = () => {
         },
       });
 
-      // Ensure the response data is an array
       if (!Array.isArray(response.data)) {
         throw new Error("Unexpected response format: Data should be an array.");
       }
@@ -77,7 +77,7 @@ const MonthlyIncomeHistory: React.FC = () => {
         </div>
       ) : (
         <>
-          {error && (
+          {/* {error && (
             <div className="text-center text-yellow-400 mb-4">
               <p>{error}</p>
               <button
@@ -87,13 +87,30 @@ const MonthlyIncomeHistory: React.FC = () => {
                 Retry Fetch
               </button>
             </div>
-          )}
+          )} */}
 
-          {!error && incomeHistory.length === 0 && (
-            <div className="text-center text-gray-400 py-4">
-              No monthly income data available.
-            </div>
-          )}
+          { (incomeHistory.length === 0 || error) && (
+            <div className="text-center py-4">
+              <img
+                src={F}
+                alt="No income history"
+                className="mx-auto rounded-lg shadow-lg max-w-full"
+              />
+               {error ? (
+                <div className="text-yellow-400 mt-4">
+                  <p>{error}</p>
+                  <button
+                    onClick={retryFetch}
+                    className="mt-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors"
+                  >
+                    Retry Fetch
+                  </button>
+               </div>
+                  ) : (
+                    <p className="text-gray-400 mt-4">No monthly income data available.</p>
+                  )}
+                </div>
+              )}
 
           {!error && incomeHistory.length > 0 && (
             <div className="overflow-x-auto">

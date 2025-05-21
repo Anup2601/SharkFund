@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
         });
       }, 500);
     } else {
-      setDots('.'); // Reset dots when not submitting
+      setDots('.'); 
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -370,18 +370,12 @@ useEffect(() => {
           clearTimeout(timeoutId);
 
           const responseText = await response.text();
-          // console.log(`[AddFund] Response from ${url}:`);
-          // console.log(`- Status: ${response.status} ${response.statusText}`);
-          // console.log(`- Headers:`, Object.fromEntries(response.headers.entries()));
-          // console.log(`- Body: ${responseText}`);
-
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${responseText}`);
           }
 
           const result = JSON.parse(responseText);
-          // console.log('[AddFund] Parsed response:', result);
-          toast.success(result.message || 'Payment screenshot uploaded successfully');
+          toast.success(result.message || 'Payment will be updated soon on the dashboard');
           setUploadedScreenshot(null);
           setFundAmount(undefined);
           setPaymentMethod('scan');
@@ -550,13 +544,13 @@ useEffect(() => {
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
                 User Profile
               </h2>
-              <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
+              {/* <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
                 Active
-              </div>
+              </div> */}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
-                <div className="text-gray-400 text-sm">Name</div>
+                <div className="text-gray-400 text-sm">Username</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
@@ -658,23 +652,23 @@ useEffect(() => {
                           className="w-48 h-48 mr-1 inline-block blur-md"
                         />
                          {/* Centered countdown overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-    <p className="text-black text-sm mb-1 font-medium bg-white bg-opacity-70 px-2 rounded">Coming Soon:</p>
-    <div className="flex space-x-1">
-      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-        <span className="text-xs sm:text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
-        <p className="text-xs">Hrs</p>
-      </div>
-      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-        <span className="text-xs sm:text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
-        <p className="text-xs">Min</p>
-      </div>
-      <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-        <span className="text-xs sm:text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
-        <p className="text-xs">Sec</p>
-      </div>
-    </div>
-  </div>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <p className="text-black text-sm mb-1 font-medium bg-white bg-opacity-70 px-2 rounded">Coming Soon:</p>
+                          <div className="flex space-x-1">
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+                              <span className="text-xs sm:text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Hrs</p>
+                            </div>
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+                              <span className="text-xs sm:text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Min</p>
+                            </div>
+                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
+                              <span className="text-xs sm:text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+                              <p className="text-xs">Sec</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <p className="text-sm text-gray-400 mb-3 ">
                         Scan the QR code and upload payment screenshot
@@ -826,13 +820,13 @@ useEffect(() => {
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
                 User Profile
               </h2>
-              <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
+              {/* <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
                 Active
-              </div>
+              </div> */}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
-                <div className="text-gray-400 text-sm">Name</div>
+                <div className="text-gray-400 text-sm">Username</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
