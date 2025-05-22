@@ -99,12 +99,14 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
           'Content-Type': 'application/json',
         },
       });
-
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch deposit history: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("Deposit History: ",data);
+
       setFundHistory(data);
     } catch (err) {
       console.error('Error fetching deposit history:', err);

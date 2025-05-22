@@ -38,6 +38,7 @@ const Dashboard: React.FC = () => {
   ]);
 
   const bankDetails = {
+    BankUPI: "000011ta@axl",
     accountHolder: "SharkFund Pvt Ltd",
     accountNumber: "50100760185466",
     bankName: "HDFC Bank",
@@ -154,7 +155,7 @@ useEffect(() => {
         updateProfileWithApiData(data);
       } else {
         console.error('[FetchProfile] Failed to fetch profile data. Status:', response.status);
-        toast.error('Failed to load profile data. Please try again.');
+        toast.error('Login Session is Expired! Please Login Again.');
       }
     } catch (error) {
       console.error('[FetchProfile] Error:', error);
@@ -683,6 +684,10 @@ useEffect(() => {
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
+                          <span className="text-gray-400">Banking UPI:</span>
+                          <span className="text-white">{bankDetails.BankUPI}</span>
+                        </div>
+                        <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -958,6 +963,10 @@ useEffect(() => {
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Banking UPI:</span>
+                          <span className="text-white">{bankDetails.BankUPI}</span>
+                        </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
