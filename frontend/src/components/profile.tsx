@@ -419,7 +419,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps>  = ({ userData, onCanc
     try {
       const updateData = {
           name: formData.name,
-          email: formData.email,
           mobile_number: formData.mobile_number,
           country: formData.country,
           profileImage: formData.profileImage,
@@ -466,6 +465,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps>  = ({ userData, onCanc
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="bg-[#393E46] rounded-xl shadow-lg overflow-hidden animate-fade-in">

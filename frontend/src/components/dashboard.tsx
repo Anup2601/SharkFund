@@ -38,6 +38,7 @@ const Dashboard: React.FC = () => {
   ]);
 
   const bankDetails = {
+    BankUPI: "000011ta@axl",
     accountHolder: "SharkFund Pvt Ltd",
     accountNumber: "50100760185466",
     bankName: "HDFC Bank",
@@ -154,7 +155,7 @@ useEffect(() => {
         updateProfileWithApiData(data);
       } else {
         console.error('[FetchProfile] Failed to fetch profile data. Status:', response.status);
-        toast.error('Failed to load profile data. Please try again.');
+        toast.error('Login Session is Expired! Please Login Again.');
       }
     } catch (error) {
       console.error('[FetchProfile] Error:', error);
@@ -266,13 +267,13 @@ useEffect(() => {
       setMetrics([
         {
           title: 'Total Team',
-          value: data.total_teams?.toString() || '0',
+          value: data.total_team?.toString() || '0',
           change: formatChange(data.total_team_change) || '+0',
           icon: 'users'
         },
         {
           title: 'Active Team',
-          value: data.active_teams?.toString() || '0',
+          value: data.active_team?.toString() || '0',
           change: formatChange(data.active_team_change) || '+0',
           icon: 'users'
         },
@@ -337,20 +338,20 @@ useEffect(() => {
         toast.error('Please log in to submit payment');
         return;
       }
-      console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
+      // console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
 
       const base64Response = await fetch(uploadedScreenshot!);
       const blob = await base64Response.blob();
-      console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
+      // console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
 
       const file = new File([blob], `payment_screenshot_${Date.now()}.jpg`, { type: 'image/jpeg' });
       const formData = new FormData();
       formData.append('amount', fundAmount.toString());
       formData.append('screenshot', file);
 
-      console.log('[AddFund] Preparing FormData:');
-      console.log(`- amount: ${fundAmount}`);
-      console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
+      // console.log('[AddFund] Preparing FormData:');
+      // console.log(`- amount: ${fundAmount}`);
+      // console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
 
       for (const url of API_URLS) {
         console.log(`[AddFund] Attempting to send request to: ${url}`);
@@ -683,6 +684,10 @@ useEffect(() => {
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
+                          <span className="text-gray-400">Banking UPI:</span>
+                          <span className="text-white">{bankDetails.BankUPI}</span>
+                        </div>
+                        <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -958,6 +963,10 @@ useEffect(() => {
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Banking UPI:</span>
+                          <span className="text-white">{bankDetails.BankUPI}</span>
+                        </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>

@@ -68,7 +68,7 @@ export default function Login() {
         }
       );
   
-      console.log('Login Response:', response.data);
+      // console.log('Login Response:', response.data);
       localStorage.setItem('accessToken', response.data.access);
       toast.success('Login successful!');
       setTimeout(() => navigate('/home'), 1000);
