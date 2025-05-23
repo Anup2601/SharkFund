@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import  React,{ useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
@@ -17,22 +17,43 @@ interface ErrorResponse {
   [key: string]: any;
 }
 
+interface FormData {
+  email: string;
+  newpassword: string;
+  confirmpassword: string;
+}
+
+interface CursorPosition {
+  x: number;
+  y: number;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      errors?: {
+        [key: string]: string[] | string;
+      };
+    };
+  };
+}
+
 export default function ForgotPassword() {
-  const [floatY, setFloatY] = useState(0);
-  const [rotation, setRotation] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
+  const [floatY, setFloatY] = useState<number>(0);
+  const [rotation, setRotation] = useState<number>(0);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [otp, setOtp] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
-  const [formData, setFormData] = useState({
+  const [cursorPosition, setCursorPosition] = useState<CursorPosition>({ x: 0, y: 0 });
+  const [otp, setOtp] = useState<string>('');
+  const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
+  const [isOtpVerified, setIsOtpVerified] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     newpassword: '',
     confirmpassword: ''
   });
 
-  const BASE_URL = 'https://sharkfund.priyeshpandey.in';
+  const BASE_URL: string = 'https://sharkfund.priyeshpandey.in';
 
   // Animation for floating elements
   useEffect(() => {
@@ -51,7 +72,7 @@ export default function ForgotPassword() {
   }, []);
 
   // Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData(prev => ({ 
       ...prev, 
@@ -60,9 +81,15 @@ export default function ForgotPassword() {
   };
 
   // Send OTP to backend
-  const handleSendOtp = async () => {
-    if (!formData.email.trim()) return toast.error("Email is required");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
+  const handleSendOtp = async (): Promise<string> => {
+    if (!formData.email.trim()) {
+      toast.error("Email is required");
+      return Promise.reject("Email is required");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error("Invalid Email format");
+      return Promise.reject("Invalid Email format");
+    }
 
     try {
       const response = await axios.post(`${BASE_URL}/api/v1/forget-password/`, {
@@ -70,17 +97,22 @@ export default function ForgotPassword() {
       });
       setIsOtpSent(true);
       toast.success(response.data.message || "OTP sent to your email!");
+      return Promise.resolve(response.data.message || "OTP sent to your email!");
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      const errors = axiosError.response?.data?.errors || {};
-      const errorMessage = errors.email?.[0] || errors[0] || "Failed to send OTP";
+      const apiError = error as ApiError;
+      const errors = apiError.response?.data?.errors || {};
+      const errorMessage = (errors.email as string[])?.[0] || (errors as any)[0] || "Failed to send OTP";
       toast.error(errorMessage);
+      return Promise.reject(errorMessage);
     }
   };
 
   // Verify OTP with backend
-  const handleVerifyOtp = async () => {
-    if (!otp.trim()) return toast.error("OTP is required");
+  const handleVerifyOtp = async (): Promise<string> => {
+    if (!otp.trim()) {
+      toast.error("OTP is required");
+      return Promise.reject("OTP is required");
+    }
 
     try {
       const response = await axios.post(`${BASE_URL}/api/v1/verify-otp/`, {
@@ -89,23 +121,25 @@ export default function ForgotPassword() {
       });
       setIsOtpVerified(true);
       toast.success(response.data.message || "OTP verified!");
+      return Promise.resolve(response.data.message || "OTP verified!");
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      const errors = axiosError.response?.data?.errors || {};
-      const errorMessage = errors.otp?.[0] || errors.email?.[0] || "Invalid OTP";
+      const apiError = error as ApiError;
+      const errors = apiError.response?.data?.errors || {};
+      const errorMessage = (errors.otp as string[])?.[0] || (errors.email as string[])?.[0] || "Invalid OTP";
       toast.error(errorMessage);
+      return Promise.reject(errorMessage);
     }
   };
 
   // Handle form submission to reset password
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<string> => {
     e.preventDefault();
 
-    if (!formData.newpassword) return toast.error("Password is required");
-    if (formData.newpassword.length < 8) return toast.error("Password must be at least 8 characters");
-    if (!formData.confirmpassword) return toast.error("Confirm Password is required");
-    if (formData.confirmpassword.length < 8) return toast.error("Confirm Password must be at least 8 characters");
-    if (formData.newpassword !== formData.confirmpassword) return toast.error("Passwords do not match");
+    if (!formData.newpassword) return Promise.reject("Password is required");
+    if (formData.newpassword.length < 8) return Promise.reject("Password must be at least 8 characters");
+    if (!formData.confirmpassword) return Promise.reject("Confirm Password is required");
+    if (formData.confirmpassword.length < 8) return Promise.reject("Confirm Password must be at least 8 characters");
+    if (formData.newpassword !== formData.confirmpassword) return Promise.reject("Passwords do not match");
 
     try {
       const response = await axios.post(`${BASE_URL}/api/v1/reset-password/`, {
@@ -115,22 +149,24 @@ export default function ForgotPassword() {
       });
       toast.success(response.data.message || "Password changed successfully!");
       setTimeout(() => navigate('/login'), 1500);
+      return Promise.resolve(response.data.message || "Password changed successfully!");
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      const errors = axiosError.response?.data?.errors || {};
+      const apiError = error as ApiError;
+      const errors = apiError.response?.data?.errors || {};
       const errorMessage = 
-        errors.create_password?.[0] ||
-        errors.confirm_password?.[0] ||
-        errors.email?.[0] ||
-        errors.general?.[0] ||
-        errors[0] ||
+        (errors.create_password as string[])?.[0] ||
+        (errors.confirm_password as string[])?.[0] ||
+        (errors.email as string[])?.[0] ||
+        (errors.general as string[])?.[0] ||
+        (errors as any)[0] ||
         "Failed to reset password";
       toast.error(errorMessage);
+      return Promise.reject(errorMessage);
     }
   };
 
   // Handle cursor movement for button animation
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
     setCursorPosition({ x: e.clientX, y: e.clientY });
   };
 
@@ -209,7 +245,7 @@ export default function ForgotPassword() {
                   id="otp"
                   name="otp"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtp(e.target.value)}
                   className="w-full bg-gray-700 rounded p-3 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
                   placeholder="Enter the OTP"
                 />
