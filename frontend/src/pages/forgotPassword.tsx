@@ -2,7 +2,20 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+
+// Define the error response structure for Axios
+interface ErrorResponse {
+  errors?: {
+    email?: string[];
+    otp?: string[];
+    create_password?: string[];
+    confirm_password?: string[];
+    general?: string[];
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
 
 export default function ForgotPassword() {
   const [floatY, setFloatY] = useState(0);
@@ -21,7 +34,6 @@ export default function ForgotPassword() {
 
   const BASE_URL = 'https://sharkfund.priyeshpandey.in';
 
-
   // Animation for floating elements
   useEffect(() => {
     const floatInterval = setInterval(() => {
@@ -39,7 +51,7 @@ export default function ForgotPassword() {
   }, []);
 
   // Handle form input changes
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ 
       ...prev, 
@@ -59,7 +71,8 @@ export default function ForgotPassword() {
       setIsOtpSent(true);
       toast.success(response.data.message || "OTP sent to your email!");
     } catch (error) {
-      const errors = error.response?.data?.errors || {};
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errors = axiosError.response?.data?.errors || {};
       const errorMessage = errors.email?.[0] || errors[0] || "Failed to send OTP";
       toast.error(errorMessage);
     }
@@ -77,14 +90,15 @@ export default function ForgotPassword() {
       setIsOtpVerified(true);
       toast.success(response.data.message || "OTP verified!");
     } catch (error) {
-      const errors = error.response?.data?.errors || {};
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errors = axiosError.response?.data?.errors || {};
       const errorMessage = errors.otp?.[0] || errors.email?.[0] || "Invalid OTP";
       toast.error(errorMessage);
     }
   };
 
   // Handle form submission to reset password
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.newpassword) return toast.error("Password is required");
@@ -102,7 +116,8 @@ export default function ForgotPassword() {
       toast.success(response.data.message || "Password changed successfully!");
       setTimeout(() => navigate('/login'), 1500);
     } catch (error) {
-      const errors = error.response?.data?.errors || {};
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errors = axiosError.response?.data?.errors || {};
       const errorMessage = 
         errors.create_password?.[0] ||
         errors.confirm_password?.[0] ||
@@ -115,7 +130,7 @@ export default function ForgotPassword() {
   };
 
   // Handle cursor movement for button animation
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     setCursorPosition({ x: e.clientX, y: e.clientY });
   };
 

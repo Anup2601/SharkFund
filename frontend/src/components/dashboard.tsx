@@ -15,11 +15,11 @@ const Dashboard: React.FC = () => {
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
-  const [timeLeft, setTimeLeft] = useState({
-  hours: 48,
-  minutes: 0,
-  seconds: 0
-  });
+  // const [timeLeft, setTimeLeft] = useState({
+  // hours: 48,
+  // minutes: 0,
+  // seconds: 0
+  // });
 
   const [userProfile, setUserProfile] = useState({
     name: "",
@@ -38,9 +38,9 @@ const Dashboard: React.FC = () => {
     { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
   ]);
 
-  const bankDetails = {
-    PayBYLInk :"https://cfpe.me/sharkfund"
-  };
+  // const bankDetails = {
+  //   PayBYLInk :"https://cfpe.me/sharkfund"
+  // };
 
   const [fundHistory, setFundHistory] = useState<Array<{
     id: string;
@@ -86,30 +86,30 @@ const Dashboard: React.FC = () => {
   }, []);
 
   // Countdown timer logic
-useEffect(() => {
+// useEffect(() => {
   // Calculate end time (48 hours from now)
-  const endTime = new Date();
-  endTime.setHours(endTime.getHours() + 48);
+  // const endTime = new Date();
+  // endTime.setHours(endTime.getHours() + 48);
   
-  const interval = setInterval(() => {
-    const now = new Date();
-    const difference = endTime.getTime() - now.getTime();
+  // const interval = setInterval(() => {
+  //   const now = new Date();
+  //   const difference = endTime.getTime() - now.getTime();
     
-    if (difference <= 0) {
-      clearInterval(interval);
-      setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-      return;
-    }
+  //   if (difference <= 0) {
+  //     clearInterval(interval);
+  //     setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+  //     return;
+  //   }
     
-    const hours = Math.floor(difference / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  //   const hours = Math.floor(difference / (1000 * 60 * 60));
+  //   const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  //   const seconds = Math.floor((difference % (1000 * 60)) / 1000);
     
-    setTimeLeft({ hours, minutes, seconds });
-  }, 1000);
+  //   setTimeLeft({ hours, minutes, seconds });
+  // }, 1000);
   
-  return () => clearInterval(interval);
-}, []);
+  // return () => clearInterval(interval);
+// }, []);
 
   useEffect(() => {
     const fetchData = async () => {
