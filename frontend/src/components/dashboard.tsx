@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
-import Scanner from '../assets/scanner.jpg';
+import Scanner from '../assets/scanner2.0.png';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   
@@ -10,7 +11,7 @@ const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
   const [fundAmount, setFundAmount] = useState<number | undefined>();
-  const [paymentMethod, setPaymentMethod] = useState('bank');
+  const [paymentMethod, setPaymentMethod] = useState('scan');
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
@@ -38,10 +39,7 @@ const Dashboard: React.FC = () => {
   ]);
 
   const bankDetails = {
-    accountHolder: "SharkFund Pvt Ltd",
-    accountNumber: "50100760185466",
-    bankName: "HDFC Bank",
-    ifscCode: "HDFC0003592",
+    PayBYLInk :"https://cfpe.me/sharkfund"
   };
 
   const [fundHistory, setFundHistory] = useState<Array<{
@@ -649,26 +647,10 @@ useEffect(() => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block blur-md"
+                          className="w-48 h-48 mr-1 inline-block "
                         />
-                         {/* Centered countdown overlay */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <p className="text-black text-sm mb-1 font-medium bg-white bg-opacity-70 px-2 rounded">Coming Soon:</p>
-                          <div className="flex space-x-1">
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-                              <span className="text-xs sm:text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Hrs</p>
-                            </div>
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-                              <span className="text-xs sm:text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Min</p>
-                            </div>
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-8 sm:w-10">
-                              <span className="text-xs sm:text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Sec</p>
-                            </div>
-                          </div>
-                        </div>
+                         
+                       
                       </div>
                       <p className="text-sm text-gray-400 mb-3 ">
                         Scan the QR code and upload payment screenshot
@@ -682,7 +664,7 @@ useEffect(() => {
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -693,10 +675,12 @@ useEffect(() => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">Bank Name:</span>
                           <span className="text-white">{bankDetails.bankName}</span>
-                        </div>
+                        </div> */}
+                        
                         <div className="flex justify-between">
-                          <span className="text-gray-400">IFSC Code:</span>
-                          <span className="text-white">{bankDetails.ifscCode}</span>
+                          <Link to="https://cfpe.me/sharkfund"><span className="text-gray-400">IFSC Code:</span></Link>
+                          <span className="text-gray-400">Pay Here</span>
+                          {/* <span className="text-white">{bankDetails.PayBYLInk}</span> */}
                         </div>
                       </div>
                     </div>
@@ -925,26 +909,10 @@ useEffect(() => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block blur-md"
+                          className="w-48 h-48 mr-1 inline-block "
                         />
-                         {/* Countdown overlay on image */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center  bg-opacity-50 rounded-lg">
-                          <p className="text-black text-sm mb-1">Comming Soon:</p>
-                          <div className="flex space-x-1">
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
-                              <span className="text-sm font-bold">{timeLeft.hours.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Hrs</p>
-                            </div>
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
-                              <span className="text-sm font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Min</p>
-                            </div>
-                            <div className="bg-teal-400 text-black p-1 rounded text-center w-10">
-                              <span className="text-sm font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                              <p className="text-xs">Sec</p>
-                            </div>
-                          </div>
-                        </div>
+                         
+                        
                       </div>
                       <p className="text-sm text-gray-400 mb-3">
                         Scan the QR code and upload payment screenshot
@@ -958,7 +926,7 @@ useEffect(() => {
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -969,10 +937,11 @@ useEffect(() => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">Bank Name:</span>
                           <span className="text-white">{bankDetails.bankName}</span>
-                        </div>
+                        </div> */}
                         <div className="flex justify-between">
-                          <span className="text-gray-400">IFSC Code:</span>
-                          <span className="text-white">{bankDetails.ifscCode}</span>
+                          <Link to="https://cfpe.me/sharkfund"><span className="text-gray-400">Pay Here</span></Link>
+                          {/* <span className="text-gray-400">IFSC Code:</span> */}
+                          {/* <span className="text-white">{bankDetails.PayBYLInk}</span> */}
                         </div>
                       </div>
                     </div>
