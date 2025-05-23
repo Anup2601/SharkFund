@@ -15,11 +15,11 @@ const Dashboard: React.FC = () => {
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
-  const [timeLeft, setTimeLeft] = useState({
-  hours: 48,
-  minutes: 0,
-  seconds: 0
-  });
+  // const [timeLeft, setTimeLeft] = useState({
+  // hours: 48,
+  // minutes: 0,
+  // seconds: 0
+  // });
 
   const [userProfile, setUserProfile] = useState({
     name: "",
@@ -38,9 +38,9 @@ const Dashboard: React.FC = () => {
     { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
   ]);
 
-  const bankDetails = {
-    PayBYLInk :"https://cfpe.me/sharkfund"
-  };
+  // const bankDetails = {
+  //   PayBYLInk :"https://cfpe.me/sharkfund"
+  // };
 
   const [fundHistory, setFundHistory] = useState<Array<{
     id: string;
@@ -85,31 +85,31 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Countdown timer logic
-useEffect(() => {
-  // Calculate end time (48 hours from now)
-  const endTime = new Date();
-  endTime.setHours(endTime.getHours() + 48);
+//   // Countdown timer logic
+// useEffect(() => {
+//   // Calculate end time (48 hours from now)
+//   const endTime = new Date();
+//   endTime.setHours(endTime.getHours() + 48);
   
-  const interval = setInterval(() => {
-    const now = new Date();
-    const difference = endTime.getTime() - now.getTime();
+//   const interval = setInterval(() => {
+//     const now = new Date();
+//     const difference = endTime.getTime() - now.getTime();
     
-    if (difference <= 0) {
-      clearInterval(interval);
-      setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-      return;
-    }
+//     if (difference <= 0) {
+//       clearInterval(interval);
+//       setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+//       return;
+//     }
     
-    const hours = Math.floor(difference / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+//     const hours = Math.floor(difference / (1000 * 60 * 60));
+//     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+//     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
     
-    setTimeLeft({ hours, minutes, seconds });
-  }, 1000);
+//     setTimeLeft({ hours, minutes, seconds });
+//   }, 1000);
   
-  return () => clearInterval(interval);
-}, []);
+//   return () => clearInterval(interval);
+// }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -453,7 +453,7 @@ useEffect(() => {
     switch (iconName) {
       case 'users':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
         );
@@ -637,7 +637,7 @@ useEffect(() => {
                     }`}
                   >
                     <Building size={16} className="mr-1" />
-                    <span className="text-xs sm:text-sm">Bank Payment</span>
+                    <span className="text-xs sm:text-sm">UPI Payment</span>
                   </button>
                 </div>
                 {paymentMethod === 'scan' && (
@@ -662,25 +662,15 @@ useEffect(() => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      <h3 className="text-white-400 text-md font-medium mb-3"> Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
                       <div className="space-y-2 text-sm">
-                        {/* <div className="flex justify-between">
-                          <span className="text-gray-400">Account Holder:</span>
-                          <span className="text-white">{bankDetails.accountHolder}</span>
-                        </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Account Number:</span>
-                          <span className="text-white">{bankDetails.accountNumber}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Bank Name:</span>
-                          <span className="text-white">{bankDetails.bankName}</span>
-                        </div> */}
-                        
-                        <div className="flex justify-between">
-                          <Link to="https://cfpe.me/sharkfund"><span className="text-gray-400">IFSC Code:</span></Link>
-                          <span className="text-gray-400">Pay Here</span>
-                          {/* <span className="text-white">{bankDetails.PayBYLInk}</span> */}
+                          <Link to="https://cfpe.me/sharkfund"> 
+                            <button
+                            className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+                          >
+                            Pay Now
+                          </button></Link>
                         </div>
                       </div>
                     </div>
@@ -924,24 +914,19 @@ useEffect(() => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      <h3 className="text-white-400 text-md font-medium mb-3"> Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
                       <div className="space-y-2 text-sm">
-                        {/* <div className="flex justify-between">
-                          <span className="text-gray-400">Account Holder:</span>
-                          <span className="text-white">{bankDetails.accountHolder}</span>
-                        </div>
+                        
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Account Number:</span>
-                          <span className="text-white">{bankDetails.accountNumber}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Bank Name:</span>
-                          <span className="text-white">{bankDetails.bankName}</span>
-                        </div> */}
-                        <div className="flex justify-between">
-                          <Link to="https://cfpe.me/sharkfund"><span className="text-gray-400">Pay Here</span></Link>
-                          {/* <span className="text-gray-400">IFSC Code:</span> */}
-                          {/* <span className="text-white">{bankDetails.PayBYLInk}</span> */}
+                          <Link to="https://cfpe.me/sharkfund">
+                             <button
+                              
+                              className="bg-gradient-to-r from-teal-500 to-teal-500 hover:from-teal-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+                            >
+                              Pay Now
+                            </button>
+                          </Link>
+                         
                         </div>
                       </div>
                     </div>
