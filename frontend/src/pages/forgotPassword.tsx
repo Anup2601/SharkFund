@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Eye, EyeOff, Lock, Mail, } from 'lucide-react';
-
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import axios from 'axios';
 
 export default function ForgotPassword() {
   const [floatY, setFloatY] = useState(0);
   const [rotation, setRotation] = useState(0);
-  const [showPassword, setShowPassword]=useState(false);
-  const navigate= useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -16,27 +16,11 @@ export default function ForgotPassword() {
   const [formData, setFormData] = useState({
     email: '',
     newpassword: '',
-    confirmpassword: ""
+    confirmpassword: ''
   });
 
-  // Simulated OTP send
-  const handleSendOtp = () => {
-    if (!formData.email.trim()) return toast.error("Email is required");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
+  const BASE_URL = 'https://sharkfund.priyeshpandey.in';
 
-    setIsOtpSent(true);
-    toast.success("OTP sent to your email!");
-  };
-
-  // Simulated OTP verify
-  const handleVerifyOtp = () => {
-    if (otp === "123456") { 
-      setIsOtpVerified(true);
-      toast.success("OTP verified!");
-    } else {
-      toast.error("Invalid OTP");
-    }
-  };
 
   // Animation for floating elements
   useEffect(() => {
@@ -55,34 +39,83 @@ export default function ForgotPassword() {
   }, []);
 
   // Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData(prev => ({ 
       ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
+      [name]: value 
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  // Send OTP to backend
+  const handleSendOtp = async () => {
+    if (!formData.email.trim()) return toast.error("Email is required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return toast.error("Invalid Email format");
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/v1/forget-password/`, {
+        email: formData.email
+      });
+      setIsOtpSent(true);
+      toast.success(response.data.message || "OTP sent to your email!");
+    } catch (error) {
+      const errors = error.response?.data?.errors || {};
+      const errorMessage = errors.email?.[0] || errors[0] || "Failed to send OTP";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Verify OTP with backend
+  const handleVerifyOtp = async () => {
+    if (!otp.trim()) return toast.error("OTP is required");
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/v1/verify-otp/`, {
+        email: formData.email,
+        otp
+      });
+      setIsOtpVerified(true);
+      toast.success(response.data.message || "OTP verified!");
+    } catch (error) {
+      const errors = error.response?.data?.errors || {};
+      const errorMessage = errors.otp?.[0] || errors.email?.[0] || "Invalid OTP";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Handle form submission to reset password
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!formData.newpassword) return toast.error("Password is required");
+    if (!formData.newpassword) return toast.error("Password is required");
+    if (formData.newpassword.length < 8) return toast.error("Password must be at least 8 characters");
+    if (!formData.confirmpassword) return toast.error("Confirm Password is required");
+    if (formData.confirmpassword.length < 8) return toast.error("Confirm Password must be at least 8 characters");
+    if (formData.newpassword !== formData.confirmpassword) return toast.error("Passwords do not match");
 
-    if(formData.newpassword.length < 6) return toast.error("Password must be at least 6 characters");
-
-    if(!formData.confirmpassword) return toast.error("Password is required");
-
-    if(formData.confirmpassword.length < 6) return toast.error("Password must be at least 6 characters");
-
-    if(formData.newpassword!=formData.confirmpassword)return toast.error("Password not match")
-
-    toast.success('New password created successfully!');
-    setTimeout(() => navigate('/login'), 1500);
+    try {
+      const response = await axios.post(`${BASE_URL}/api/v1/reset-password/`, {
+        email: formData.email,
+        create_password: formData.newpassword,
+        confirm_password: formData.confirmpassword
+      });
+      toast.success(response.data.message || "Password changed successfully!");
+      setTimeout(() => navigate('/login'), 1500);
+    } catch (error) {
+      const errors = error.response?.data?.errors || {};
+      const errorMessage = 
+        errors.create_password?.[0] ||
+        errors.confirm_password?.[0] ||
+        errors.email?.[0] ||
+        errors.general?.[0] ||
+        errors[0] ||
+        "Failed to reset password";
+      toast.error(errorMessage);
+    }
   };
 
   // Handle cursor movement for button animation
-  const handleMouseMove = (e: { clientX: any; clientY: any; }) => {
+  const handleMouseMove = (e) => {
     setCursorPosition({ x: e.clientX, y: e.clientY });
   };
 
@@ -125,8 +158,8 @@ export default function ForgotPassword() {
             <div>
               <label className="block text-teal-300 mb-2" htmlFor="email">Email Address</label>
               <div className='relative'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Mail className='size-5 text-white '/>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <Mail className='size-5 text-white'/>
                 </div>
                 <input
                   className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
@@ -175,67 +208,65 @@ export default function ForgotPassword() {
               </div>
             )}
 
-            {isOtpVerified &&(
+            {isOtpVerified && (
               <>
                 <div>
-              <label className="block text-teal-300 mb-2" htmlFor="newpassword"> New Password </label>
-              <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-white '/>
+                  <label className="block text-teal-300 mb-2" htmlFor="newpassword">New Password</label>
+                  <div className='relative'>
+                    <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                      <Lock className='size-5 text-white'/>
+                    </div>
+                    <input
+                      className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                      type={showPassword ? "text" : "password"}
+                      id="newpassword"
+                      name="newpassword"
+                      placeholder='Enter Your New Password'
+                      value={formData.newpassword}
+                      onChange={handleChange}
+                    />
+                    <button 
+                      type='button'
+                      className='absolute inset-y-0 right-0 pr-3 flex items-center'
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className='size-5 text-white'/>
+                      ) : (
+                        <Eye className='size-5 text-white'/>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type={showPassword?"text":"password"}
-                id="newpassword"
-                name="newpassword"
-                placeholder='Enter Your New password'
-                value={formData.newpassword}
-                onChange={handleChange}
-                
-              />
-              <button 
-                  type='button'
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center '
-                  onClick={()=> setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className='size-5 text-white '/>
-                  ) : (
-                    <Eye className='size-5 text-white '/>
-                  )}
-                </button>
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-teal-300 mb-2" htmlFor="confirmpassword"> Confirm Password </label>
-              <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none '>
-                  <Lock className='size-5 text-white '/>
+                <div>
+                  <label className="block text-teal-300 mb-2" htmlFor="confirmpassword">Confirm Password</label>
+                  <div className='relative'>
+                    <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                      <Lock className='size-5 text-white'/>
+                    </div>
+                    <input
+                      className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
+                      type={showPassword ? "text" : "password"}
+                      id="confirmpassword"
+                      name="confirmpassword"
+                      placeholder='Enter Your Confirm Password'
+                      value={formData.confirmpassword}
+                      onChange={handleChange}
+                    />
+                    <button 
+                      type='button'
+                      className='absolute inset-y-0 right-0 pr-3 flex items-center'
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className='size-5 text-white'/>
+                      ) : (
+                        <Eye className='size-5 text-white'/>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              <input
-                className="w-full bg-gray-700 rounded p-3 pl-10 text-white border border-gray-600 focus:border-teal-400 focus:outline-none"
-                type={showPassword?"text":"password"}
-                id="confirmpassword"
-                name="confirmpassword"
-                placeholder='Enter Your Confirm password'
-                value={formData.confirmpassword}
-                onChange={handleChange}
-                
-              />
-              <button 
-                  type='button'
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center '
-                  onClick={()=> setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className='size-5 text-white '/>
-                  ) : (
-                    <Eye className='size-5 text-white '/>
-                  )}
-                </button>
-              </div>
-            </div>
               </>
             )}
             
@@ -258,10 +289,10 @@ export default function ForgotPassword() {
             )}
           </form>
         </div>
-        {/* Animated Illustration Section - For desktop, we'll put this on the left */}
+
+        {/* Animated Illustration Section */}
         <div className="w-full md:w-1/2 bg-gray-900 flex items-center justify-center relative rounded-t-lg md:rounded-l-lg md:rounded-tr-none order-1 md:order-1">
           <div className="w-full h-full flex items-center justify-center">
-            {/* Digital Network Animation */}
             <div className="relative w-full max-w-md aspect-square">
               {/* Orbiting Rings */}
               <div className="absolute inset-0 flex items-center justify-center">

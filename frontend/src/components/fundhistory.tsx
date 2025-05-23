@@ -55,7 +55,7 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
     } else if (type === 'deposit') {
       fetchDepositHistory();
     } else if (type === 'add') {
-      console.log("Using sample data for type: add");
+      // console.log("Using sample data for type: add");
       setFundHistory(sampleFundHistory);
     }
   }, [type]);
@@ -100,12 +100,14 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
           'Content-Type': 'application/json',
         },
       });
-
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch deposit history: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("Deposit History: ",data);
+
       setFundHistory(data);
     } catch (err) {
       console.error('Error fetching deposit history:', err);
