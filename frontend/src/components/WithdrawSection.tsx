@@ -48,7 +48,7 @@ const WithdrawSection = () => {
     // Convert to number for comparison
     const amountToWithdraw = parseFloat(withdrawAmount);
     
-    // Basic validation
+    // Basic frontend validation
     if (!amountToWithdraw || amountToWithdraw <= 0) {
       setError("Please enter a valid withdrawal amount");
       return;
@@ -63,7 +63,6 @@ const WithdrawSection = () => {
       setSubmitting(true);
       setError(null);
       
-      // This would be where you'd make the actual withdrawal API call
       const response = await fetch('https://sharkfund.priyeshpandey.in/api/v1/withdrawal/request/', {
         method: 'POST',
         headers: {
@@ -74,14 +73,26 @@ const WithdrawSection = () => {
           amount: amountToWithdraw
         })
       });
-      console.log("Withdrawal response:", response);
       
+      const responseData = await response.json(); // Parse response JSON
+
       if (!response.ok) {
+        // Handle backend validation errors
+        if (responseData.non_field_errors) {
+          // Display the first non_field_error from the backend
+          setError(responseData.non_field_errors[0]);
+        } else if (responseData.detail) {
+          // Handle other possible error formats (e.g., authentication issues)
+          setError(responseData.detail);
+        } else {
+          // Fallback for unexpected error formats
+          setError('Failed to process withdrawal request. Please try again.');
+        }
         throw new Error(`Withdrawal request failed: ${response.status}`);
       }
       
       // Success case
-      setSuccessMessage(`Withdrawal request for ₹${amountToWithdraw} submitted successfully!`);
+      setSuccessMessage(`Withdrawal request for ₹${amountToWithdraw} submitted successfully! Transaction ID: ${responseData.transaction_id}`);
       setWithdrawAmount("");
       
       // Refresh profile data to get updated wallet balance
@@ -89,7 +100,10 @@ const WithdrawSection = () => {
       
     } catch (err) {
       console.error('Error submitting withdrawal request:', err);
-      setError('Failed to process withdrawal request. Please try again.');
+      if (!error) {
+        // Fallback error if no specific error was set
+        setError('Failed to process withdrawal request. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -135,7 +149,7 @@ const WithdrawSection = () => {
 
             {error && (
               <div className="mb-4 p-3 bg-red-900/50 border border-red-700 text-red-300 rounded-lg">
-                {error}
+                <strong>Notice:</strong> {error}
               </div>
             )}
 
