@@ -65,7 +65,7 @@ function App() {
         }
         
         const data = await response.json();
-        console.log('User Details:', data);
+        // console.log('User Details:', data);
         
         setCurrentUser({
           name: data.name || '',

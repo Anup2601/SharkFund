@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
 
   const [userProfile, setUserProfile] = useState({
     name: "",
-    totalIncome: "₹0",
+    totalIncome: `₹0`,
     walletBalance: "₹0",
     totalWithdrawal: "₹0",
     totalDeposit: "₹0",
@@ -28,10 +28,10 @@ const Dashboard: React.FC = () => {
     referralLink: ""
   });
   const [metrics, setMetrics] = useState([
-    { title: 'Total Team', value: '1', change: '+1', icon: 'users' },
-    { title: 'Active Team', value: '3', change: '+2', icon: 'users' },
-    { title: 'Total Referrals', value: '2', change: '+1', icon: 'user-plus' },
-    { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
+    { title: 'Total Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Active Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Total Referrals', value: '0', change: '+0', icon: 'user-plus' },
+    { title: 'Active Referrals', value: '0', change: '+0', icon: 'user-check' },
   ]);
 
   const [fundHistory, setFundHistory] = useState<Array<{
@@ -533,6 +533,18 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Total Withdrawal</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Referral Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Monthly Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Withdrawable Money</div>
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">

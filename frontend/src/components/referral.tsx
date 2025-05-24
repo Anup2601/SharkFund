@@ -8,7 +8,6 @@ interface Referral {
   mobile: string;
   status: 'Active' | 'Not Active';
   joinDate: string;
-  // activeDate: string;
 }
 
 interface ReferralProps {
@@ -36,6 +35,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             'Content-Type': 'application/json',
           },
         });
+        console.log('API Response:', response.data);
 
         // Map the API response to the Referral interface
         const mappedReferrals: Referral[] = response.data.map((item: any) => ({
@@ -48,7 +48,6 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             month: 'long',
             day: 'numeric',
           }),
-          // activeDate: '', 
           status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
         }));
 
