@@ -36,20 +36,20 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             'Content-Type': 'application/json',
           },
         });
+        console.log('referral: ', response.data);
 
         // Map the API response to the Referral interface
         const mappedReferrals: Referral[] = response.data.map((item: any) => ({
-          id: item.username, 
+          id: item.username,
           login: item.username,
           name: item.name,
-          mobile: item.mobile_number,
+          mobile: item.mobile_number || '',
           joinDate: new Date(item.join_date).toLocaleDateString('en-IN', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           }),
-          // activeDate: '', 
-          status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
+          status: item.status as 'Active' | 'Not Active',
         }));
 
         setReferrals(mappedReferrals);
@@ -65,7 +65,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
     };
 
     fetchReferrals();
-  }, []); 
+  }, []);
 
   if (loading) {
     return <div className="text-white">Loading referrals...</div>;
@@ -85,7 +85,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
         <table className="w-full">
           <thead>
             <tr className="text-left text-gray-400 border-b border-gray-700">
-              <th className="pb-3 px-2">S.No.</th> 
+              <th className="pb-3 px-2">S.No.</th>
               <th className="pb-3 px-2">Login Id</th>
               <th className="pb-3 px-2">Name</th>
               <th className="pb-3 px-2">Mobile No.</th>
@@ -101,7 +101,6 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
                 <td className="py-4 px-2">{item.name}</td>
                 <td className="py-4 px-2">{item.mobile}</td>
                 <td className="py-4 px-2">{item.joinDate}</td>
-                {/* <td className="py-4 px-2">{item.activeDate}</td> */}
                 <td className="py-4 px-2">
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
