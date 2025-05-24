@@ -72,7 +72,7 @@ export const Profile: React.FC = () => {
       const profileData = await profileRes.json();
       const referralData = await referralRes.json();
 
-      console.log(referralData);
+      // console.log(referralData);
 
       const userReferral = referralData.find((user: any) => user.username === profileData.username);
       const status = userReferral?.status === 'Inactive' ? 'Not Active' : 'Active';

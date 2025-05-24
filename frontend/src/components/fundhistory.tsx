@@ -77,7 +77,7 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
       }
 
       const data = await response.json();
-      console.log("Fetched withdrawal history:", data);
+      // console.log("Fetched withdrawal history:", data);
       setFundHistory(data);
     } catch (err) {
       console.error('Error fetching withdrawal history:', err);
@@ -106,7 +106,7 @@ const FundHistory: React.FC<FundHistoryProps> = ({ initialFundHistory, type }) =
       }
 
       const data = await response.json();
-      console.log("Deposit History: ",data);
+      // console.log("Deposit History: ",data);
 
       setFundHistory(data);
     } catch (err) {

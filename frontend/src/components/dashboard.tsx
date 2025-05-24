@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchProfile] Response:', response.status, responseText);
+      // console.log('[FetchProfile] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         updateProfileWithApiData(data);
@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchStats] Response:', response.status, responseText);
+      // console.log('[FetchStats] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         updateMetricsWithApiData(data);
@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchFundHistory] Response:', response.status, responseText);
+      // console.log('[FetchFundHistory] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         const transformedData = (data.results || data || []).map((item: any) => ({
@@ -313,7 +313,7 @@ const Dashboard: React.FC = () => {
       formData.append('screenshot', file);
 
       for (const url of API_URLS) {
-        console.log(`[AddFund] Attempting to send request to: ${url}`);
+        // console.log(`[AddFund] Attempting to send request to: ${url}`);
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -350,7 +350,7 @@ const Dashboard: React.FC = () => {
           if (url === API_URLS[API_URLS.length - 1]) {
             throw error;
           }
-          console.log('[AddFund] Trying next URL...');
+          // console.log('[AddFund] Trying next URL...');
         }
       }
     } catch (error) {
@@ -368,7 +368,7 @@ const Dashboard: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      console.log(`[FileUpload] Selected file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
+      // console.log(`[FileUpload] Selected file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
       if (!file.type.includes('image/')) {
         console.error('[FileUpload] Invalid file type');
         toast.error('Please upload an image file');
@@ -382,7 +382,7 @@ const Dashboard: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target && event.target.result) {
-          console.log('[FileUpload] File read successfully as Data URL');
+          // console.log('[FileUpload] File read successfully as Data URL');
           setUploadedScreenshot(event.target.result as string);
           toast.success('Screenshot uploaded!');
         }
@@ -398,7 +398,7 @@ const Dashboard: React.FC = () => {
   };
 
   const resetScreenshot = () => {
-    console.log('[ResetScreenshot] Clearing uploaded screenshot');
+    // console.log('[ResetScreenshot] Clearing uploaded screenshot');
     setUploadedScreenshot(null);
   };
 

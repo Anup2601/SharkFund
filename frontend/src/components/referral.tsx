@@ -35,7 +35,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             'Content-Type': 'application/json',
           },
         });
-        console.log('API Response:', response.data);
+        // console.log('API Response:', response.data);
 
         // Map the API response to the Referral interface
         const mappedReferrals: Referral[] = response.data.map((item: any) => ({
