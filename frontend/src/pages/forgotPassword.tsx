@@ -2,20 +2,20 @@ import  React,{ useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 // Define the error response structure for Axios
-interface ErrorResponse {
-  errors?: {
-    email?: string[];
-    otp?: string[];
-    create_password?: string[];
-    confirm_password?: string[];
-    general?: string[];
-    [key: string]: any;
-  };
-  [key: string]: any;
-}
+// interface ErrorResponse {
+//   errors?: {
+//     email?: string[];
+//     otp?: string[];
+//     create_password?: string[];
+//     confirm_password?: string[];
+//     general?: string[];
+//     [key: string]: any;
+//   };
+//   [key: string]: any;
+// }
 
 interface FormData {
   email: string;

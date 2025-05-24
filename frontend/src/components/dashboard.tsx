@@ -6,8 +6,6 @@ import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
-  
-
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showAddFundHistory, setShowAddFundHistory] = useState(false);
   const [fundAmount, setFundAmount] = useState<number | undefined>();
@@ -15,20 +13,18 @@ const Dashboard: React.FC = () => {
   const [uploadedScreenshot, setUploadedScreenshot] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
-  // const [timeLeft, setTimeLeft] = useState({
-  // hours: 48,
-  // minutes: 0,
-  // seconds: 0
-  // });
 
   const [userProfile, setUserProfile] = useState({
     name: "",
-    totalIncome: `₹1`,
-    walletBalance: "₹3",
-    totalWithdrawal: "₹2",
+    totalIncome: "₹0",
+    walletBalance: "₹0",
+    totalWithdrawal: "₹0",
+    totalDeposit: "₹0",
+    referIncome: "₹0",
     country: "",
     joinDate: "",
     activeDate: "",
+    activeStatus: false,
     referralLink: ""
   });
   const [metrics, setMetrics] = useState([
@@ -37,10 +33,6 @@ const Dashboard: React.FC = () => {
     { title: 'Total Referrals', value: '2', change: '+1', icon: 'user-plus' },
     { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
   ]);
-
-  // const bankDetails = {
-  //   PayBYLInk :"https://cfpe.me/sharkfund"
-  // };
 
   const [fundHistory, setFundHistory] = useState<Array<{
     id: string;
@@ -71,7 +63,7 @@ const Dashboard: React.FC = () => {
         });
       }, 500);
     } else {
-      setDots('.'); 
+      setDots('.');
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -84,32 +76,6 @@ const Dashboard: React.FC = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
-
-//   // Countdown timer logic
-// useEffect(() => {
-//   // Calculate end time (48 hours from now)
-//   const endTime = new Date();
-//   endTime.setHours(endTime.getHours() + 48);
-  
-//   const interval = setInterval(() => {
-//     const now = new Date();
-//     const difference = endTime.getTime() - now.getTime();
-    
-//     if (difference <= 0) {
-//       clearInterval(interval);
-//       setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-//       return;
-//     }
-    
-//     const hours = Math.floor(difference / (1000 * 60 * 60));
-//     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-//     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-    
-//     setTimeLeft({ hours, minutes, seconds });
-//   }, 1000);
-  
-//   return () => clearInterval(interval);
-// }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -251,9 +217,12 @@ const Dashboard: React.FC = () => {
         totalIncome: formatCurrency(data.total_income) || "₹0",
         walletBalance: formatCurrency(data.wallet_balance) || "₹0",
         totalWithdrawal: formatCurrency(data.total_withdrawal) || "₹0",
+        totalDeposit: formatCurrency(data.total_deposit) || "₹0",
+        referIncome: formatCurrency(data.refer_income) || "₹0",
         country: data.country || "India",
         joinDate: data.join_date ? data.join_date.split("T")[0] : "",
         activeDate: data.activation_date ? data.activation_date.split("T")[0] : "",
+        activeStatus: data.active_status || false,
         referralLink: data.referralLink || `https://sharkfund.in/ref/auth/${data.username}`
       });
     }
@@ -335,20 +304,13 @@ const Dashboard: React.FC = () => {
         toast.error('Please log in to submit payment');
         return;
       }
-      // console.log('[AddFund] Access token found:', accessToken.slice(0, 20) + '...');
 
       const base64Response = await fetch(uploadedScreenshot!);
       const blob = await base64Response.blob();
-      // console.log('[AddFund] Converted screenshot to blob:', blob.type, blob.size);
-
       const file = new File([blob], `payment_screenshot_${Date.now()}.jpg`, { type: 'image/jpeg' });
       const formData = new FormData();
       formData.append('amount', fundAmount.toString());
       formData.append('screenshot', file);
-
-      // console.log('[AddFund] Preparing FormData:');
-      // console.log(`- amount: ${fundAmount}`);
-      // console.log(`- screenshot: ${file.name}, ${file.size} bytes`);
 
       for (const url of API_URLS) {
         console.log(`[AddFund] Attempting to send request to: ${url}`);
@@ -531,7 +493,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="p-6 bg-gray-900 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard (Version 1.2)</h1>
+        <h1 className="text-2xl font-bold text-white">Dashboard (Version 1.3)</h1>
         <p className="text-gray-400 mt-1">Welcome to your cloud management portal</p>
       </div>
 
@@ -542,14 +504,24 @@ const Dashboard: React.FC = () => {
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
                 User Profile
               </h2>
-              {/* <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
-                Active
-              </div> */}
+              <div className={`px-3 py-1 rounded-full text-sm ${
+                userProfile.activeStatus ? 'bg-teal-600 text-teal-100' : 'bg-gray-700 text-gray-400'
+              }`}>
+                {userProfile.activeStatus ? 'Active' : 'Inactive'}
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Username</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Deposit</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalDeposit}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Referral Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.referIncome}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Total Income</div>
@@ -573,7 +545,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
                 <div className="text-gray-400 text-sm">Active Date</div>
-                <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
+                <div className="text-white font-medium mt-1">{userProfile.activeDate || 'Not Activated'}</div>
               </div>
             </div>
             <div className="mt-6">
@@ -647,12 +619,10 @@ const Dashboard: React.FC = () => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block "
+                          className="w-48 h-48 mr-1 inline-block"
                         />
-                         
-                       
                       </div>
-                      <p className="text-sm text-gray-400 mb-3 ">
+                      <p className="text-sm text-gray-400 mb-3">
                         Scan the QR code and upload payment screenshot
                       </p>
                     </div>
@@ -662,15 +632,16 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-white-400 text-md font-medium mb-3"> Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
+                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <Link to="https://cfpe.me/sharkfund"> 
+                          <Link to="https://cfpe.me/sharkfund">
                             <button
-                            className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
-                          >
-                            Pay Now
-                          </button></Link>
+                              className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
+                            >
+                              Pay Now
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -794,14 +765,24 @@ const Dashboard: React.FC = () => {
               <h2 className="text-xl font-bold tracking-wide text-teal-400">
                 User Profile
               </h2>
-              {/* <div className="px-3 py-1 bg-gray-700 rounded-full text-teal-400 text-sm">
-                Active
-              </div> */}
+              <div className={`px-3 py-1 rounded-full text-sm ${
+                userProfile.activeStatus ? 'bg-teal-600 text-teal-100' : 'bg-gray-700 text-gray-400'
+              }`}>
+                {userProfile.activeStatus ? 'Active' : 'Inactive'}
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Username</div>
                 <div className="text-white font-medium mt-1">{userProfile.name}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Total Deposit</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalDeposit}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Referral Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.referIncome}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Total Income</div>
@@ -825,7 +806,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="bg-gray-900 p-4 rounded-lg sm:col-span-2">
                 <div className="text-gray-400 text-sm">Active Date</div>
-                <div className="text-white font-medium mt-1">{userProfile.activeDate}</div>
+                <div className="text-white font-medium mt-1">{userProfile.activeDate || 'Not Activated'}</div>
               </div>
             </div>
             <div className="mt-6">
@@ -899,10 +880,8 @@ const Dashboard: React.FC = () => {
                         <img
                           src={Scanner}
                           alt="QR Code"
-                          className="w-48 h-48 mr-1 inline-block "
+                          className="w-48 h-48 mr-1 inline-block"
                         />
-                         
-                        
                       </div>
                       <p className="text-sm text-gray-400 mb-3">
                         Scan the QR code and upload payment screenshot
@@ -914,19 +893,16 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-white-400 text-md font-medium mb-3"> Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
+                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
                       <div className="space-y-2 text-sm">
-                        
                         <div className="flex justify-between">
                           <Link to="https://cfpe.me/sharkfund">
-                             <button
-                              
+                            <button
                               className="bg-gradient-to-r from-teal-500 to-teal-500 hover:from-teal-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
                             >
                               Pay Now
                             </button>
                           </Link>
-                         
                         </div>
                       </div>
                     </div>
