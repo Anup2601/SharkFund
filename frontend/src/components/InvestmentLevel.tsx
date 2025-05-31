@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Start_Investor from "../assets/1.0.png"
-import Beginner from "../assets/1.2.png"
-import Advanced_Investor from "../assets/2.0.png"
-import Eliter_Investor from "../assets/3.0.png"
+import Start_Investor from "../assets/level-1.png"
+import Beginner from "../assets/level-0.png"
+import Advanced_Investor from "../assets/level-2.png"
+import Eliter_Investor from "../assets/level-3.png"
 
 const InvestmentLevel: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState<{
@@ -153,7 +153,7 @@ const InvestmentLevel: React.FC = () => {
               </h3>
               
               <p className="text-gray-300 mb-4">
-                Monthly Payout: <span className="font-semibold">{currentLevel.total_deposit}</span>
+                Investment Amount: <span className="font-semibold">{currentLevel.total_deposit}</span>
               </p>
               
               
