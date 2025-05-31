@@ -48,7 +48,7 @@ const Referral: React.FC<ReferralProps> = ({ }) => {
             month: 'long',
             day: 'numeric',
           }),
-          status: item.status === 'Inactive' ? 'Not Active' : 'Active', 
+          status: item.status === 'Active' ? 'Active' : 'Not Active'
         }));
 
         setReferrals(mappedReferrals);
