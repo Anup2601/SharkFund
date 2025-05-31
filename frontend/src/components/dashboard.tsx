@@ -3,7 +3,7 @@ import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
 import Scanner from '../assets/scanner2.0.png';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
