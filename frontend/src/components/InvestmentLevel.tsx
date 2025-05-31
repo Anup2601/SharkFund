@@ -11,7 +11,7 @@ const InvestmentLevel: React.FC = () => {
     image: string;
     label: string;
     color: string;
-    monthlyPayout: string;
+    total_deposit: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,29 +31,26 @@ const InvestmentLevel: React.FC = () => {
       }
 
       // Fetch the latest monthly earnings data
-      const response = await axios.get("https://sharkfund.priyeshpandey.in/api/v1/earnings/monthly/", {
+      const response = await axios.get('https://sharkfund.priyeshpandey.in/api/v1/profile/', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
 
-      // Check if response is an array and has data
-      if (!Array.isArray(response.data) || response.data.length === 0) {
-        throw new Error("No monthly earnings data available.");
-      }
-      // console.log(response.data);
-
-      // Get the latest month's data (assuming the API returns data sorted by date)
-      const latestMonthData = response.data[0];
+      
+      if (!response.data || typeof response.data !== 'object') {
+      throw new Error("Invalid data received from the server.");
+    }
+    const latestMonthData = response.data;
       
       // Determine the level based on the monthly payout
-      const levelData = determineLevel(latestMonthData.monthlyPayout);
+      const levelData = determineLevel(latestMonthData.total_deposit);
       
       // Set the current level with all relevant information
       setCurrentLevel({
         ...levelData,
-        monthlyPayout: latestMonthData.monthlyPayout
+        total_deposit: latestMonthData.total_deposit
       });
       
     } catch (err) {
@@ -74,8 +71,7 @@ const InvestmentLevel: React.FC = () => {
   };
 
   const determineLevel = (payout: string): { level: number; image: string; label: string; color: string } => {
-    // Remove any non-numeric characters and convert to number
-    const payoutValue = parseFloat(payout.replace(/[^0-9.]/g, ''));
+    const payoutValue = typeof payout === 'string' ? parseFloat(payout.replace(/[^0-9.]/g, '')) : payout;
     
     if (payoutValue >= 3000) {
       return { 
@@ -157,7 +153,7 @@ const InvestmentLevel: React.FC = () => {
               </h3>
               
               <p className="text-gray-300 mb-4">
-                Monthly Payout: <span className="font-semibold">{currentLevel.monthlyPayout}</span>
+                Monthly Payout: <span className="font-semibold">{currentLevel.total_deposit}</span>
               </p>
               
               

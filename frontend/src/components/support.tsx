@@ -62,7 +62,7 @@ export const Support: React.FC = () => {
     const file = e.target.files && e.target.files[0];
     if (file) {
       // In a real app, you'd handle the file upload
-      console.log("File selected:", file.name);
+      // console.log("File selected:", file.name);
     }
   };
 
@@ -70,7 +70,7 @@ export const Support: React.FC = () => {
   const handleTicketSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // In a real app, you'd submit to your API here
-    console.log("Ticket submitted:", ticketForm);
+    // console.log("Ticket submitted:", ticketForm);
     
     // Reset form after submission
     setTicketForm({

@@ -3,7 +3,7 @@ import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
 import Scanner from '../assets/scanner2.0.png';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -14,9 +14,17 @@ const Dashboard: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
 
+   const bankDetails = {
+    accountHolder: "SharkFund Pvt Ltd",
+    accountNumber: "50100760185466",
+    bankName: "HDFC Bank",
+    ifscCode: "HDFC0003592",
+    PayBYLInk :"https://cfpe.me/sharkfund"
+  };
+
   const [userProfile, setUserProfile] = useState({
     name: "",
-    totalIncome: "₹0",
+    totalIncome: `₹0`,
     walletBalance: "₹0",
     totalWithdrawal: "₹0",
     totalDeposit: "₹0",
@@ -28,10 +36,10 @@ const Dashboard: React.FC = () => {
     referralLink: ""
   });
   const [metrics, setMetrics] = useState([
-    { title: 'Total Team', value: '1', change: '+1', icon: 'users' },
-    { title: 'Active Team', value: '3', change: '+2', icon: 'users' },
-    { title: 'Total Referrals', value: '2', change: '+1', icon: 'user-plus' },
-    { title: 'Active Referrals', value: '1', change: '+2', icon: 'user-check' },
+    { title: 'Total Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Active Team', value: '0', change: '+0', icon: 'users' },
+    { title: 'Total Referrals', value: '0', change: '+0', icon: 'user-plus' },
+    { title: 'Active Referrals', value: '0', change: '+0', icon: 'user-check' },
   ]);
 
   const [fundHistory, setFundHistory] = useState<Array<{
@@ -112,7 +120,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchProfile] Response:', response.status, responseText);
+      // console.log('[FetchProfile] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         updateProfileWithApiData(data);
@@ -136,7 +144,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchStats] Response:', response.status, responseText);
+      // console.log('[FetchStats] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         updateMetricsWithApiData(data);
@@ -168,7 +176,7 @@ const Dashboard: React.FC = () => {
         },
       });
       const responseText = await response.text();
-      console.log('[FetchFundHistory] Response:', response.status, responseText);
+      // console.log('[FetchFundHistory] Response:', response.status, responseText);
       if (response.ok) {
         const data = JSON.parse(responseText);
         const transformedData = (data.results || data || []).map((item: any) => ({
@@ -313,7 +321,7 @@ const Dashboard: React.FC = () => {
       formData.append('screenshot', file);
 
       for (const url of API_URLS) {
-        console.log(`[AddFund] Attempting to send request to: ${url}`);
+        // console.log(`[AddFund] Attempting to send request to: ${url}`);
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -350,7 +358,7 @@ const Dashboard: React.FC = () => {
           if (url === API_URLS[API_URLS.length - 1]) {
             throw error;
           }
-          console.log('[AddFund] Trying next URL...');
+          // console.log('[AddFund] Trying next URL...');
         }
       }
     } catch (error) {
@@ -368,7 +376,7 @@ const Dashboard: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      console.log(`[FileUpload] Selected file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
+      // console.log(`[FileUpload] Selected file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
       if (!file.type.includes('image/')) {
         console.error('[FileUpload] Invalid file type');
         toast.error('Please upload an image file');
@@ -382,7 +390,7 @@ const Dashboard: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target && event.target.result) {
-          console.log('[FileUpload] File read successfully as Data URL');
+          // console.log('[FileUpload] File read successfully as Data URL');
           setUploadedScreenshot(event.target.result as string);
           toast.success('Screenshot uploaded!');
         }
@@ -398,7 +406,7 @@ const Dashboard: React.FC = () => {
   };
 
   const resetScreenshot = () => {
-    console.log('[ResetScreenshot] Clearing uploaded screenshot');
+    // console.log('[ResetScreenshot] Clearing uploaded screenshot');
     setUploadedScreenshot(null);
   };
 
@@ -536,6 +544,18 @@ const Dashboard: React.FC = () => {
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
               </div>
               <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Referral Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Monthly Income</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
+                <div className="text-gray-400 text-sm">Withdrawable Money</div>
+                <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
+              </div>
+              <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Country</div>
                 <div className="text-white font-medium mt-1">{userProfile.country}</div>
               </div>
@@ -609,7 +629,7 @@ const Dashboard: React.FC = () => {
                     }`}
                   >
                     <Building size={16} className="mr-1" />
-                    <span className="text-xs sm:text-sm">UPI Payment</span>
+                    <span className="text-xs sm:text-sm">Bank Payment</span>
                   </button>
                 </div>
                 {paymentMethod === 'scan' && (
@@ -632,17 +652,34 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
+                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      {/* <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3> */}
                       <div className="space-y-2 text-sm">
+                        {/* <div className="flex justify-between"> */}
+                          <div className="flex justify-between">
+                          <span className="text-gray-400">Account Holder:</span>
+                          <span className="text-white">{bankDetails.accountHolder}</span>
+                        </div>
                         <div className="flex justify-between">
-                          <Link to="https://cfpe.me/sharkfund">
+                          <span className="text-gray-400">Bank Name:</span>
+                          <span className="text-white">{bankDetails.bankName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Number:</span>
+                          <span className="text-white">{bankDetails.accountNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">IFSC Code:</span>
+                          <span className="text-white">{bankDetails.ifscCode}</span>
+                        </div>
+                         {/* <Link to="https://cfpe.me/sharkfund">
                             <button
                               className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
                             >
                               Pay Now
                             </button>
-                          </Link>
-                        </div>
+                          </Link> */}
+                        {/* </div> */}
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">
@@ -893,9 +930,27 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
+                      {/* <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3> */}
+                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
+                          <span className="text-gray-400">Account Holder:</span>
+                          <span className="text-white">{bankDetails.accountHolder}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Bank Name:</span>
+                          <span className="text-white">{bankDetails.bankName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Account Number:</span>
+                          <span className="text-white">{bankDetails.accountNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">IFSC Code:</span>
+                          <span className="text-white">{bankDetails.ifscCode}</span>
+                        </div>
+
+                        {/* <div className="flex justify-between">
                           <Link to="https://cfpe.me/sharkfund">
                             <button
                               className="bg-gradient-to-r from-teal-500 to-teal-500 hover:from-teal-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -903,7 +958,7 @@ const Dashboard: React.FC = () => {
                               Pay Now
                             </button>
                           </Link>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">
