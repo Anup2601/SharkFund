@@ -14,13 +14,13 @@ const Dashboard: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [dots, setDots] = useState('.');
 
-   const bankDetails = {
-    accountHolder: "SharkFund Pvt Ltd",
-    accountNumber: "50100760185466",
-    bankName: "HDFC Bank",
-    ifscCode: "HDFC0003592",
-    PayBYLInk :"https://cfpe.me/sharkfund"
-  };
+  //  const bankDetails = {
+  //   accountHolder: "SharkFund Pvt Ltd",
+  //   accountNumber: "50100760185466",
+  //   bankName: "HDFC Bank",
+  //   ifscCode: "HDFC0003592",
+  //   PayBYLInk :"https://cfpe.me/sharkfund"
+  // };
 
   const [userProfile, setUserProfile] = useState({
     name: "",
@@ -539,18 +539,18 @@ const Dashboard: React.FC = () => {
                 <div className="text-gray-400 text-sm">Wallet Balance</div>
                 <div className="text-white font-medium mt-1">{userProfile.walletBalance}</div>
               </div>
-              <div className="bg-gray-900 p-4 rounded-lg">
+              {/* <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Total Withdrawal</div>
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
-              </div>
-              <div className="bg-gray-900 p-4 rounded-lg">
+              </div> */}
+              {/* <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Referral Income</div>
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
-              </div>
-              <div className="bg-gray-900 p-4 rounded-lg">
+              </div> */}
+              {/* <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Monthly Income</div>
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
-              </div>
+              </div> */}
               <div className="bg-gray-900 p-4 rounded-lg">
                 <div className="text-gray-400 text-sm">Withdrawable Money</div>
                 <div className="text-white font-medium mt-1">{userProfile.totalWithdrawal}</div>
