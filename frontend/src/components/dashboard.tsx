@@ -3,7 +3,7 @@ import FundHistory from './fundhistory';
 import toast from 'react-hot-toast';
 import Scanner from '../assets/scanner2.0.png';
 import { QrCode, ImagePlus, X, Check, Building } from 'lucide-react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
@@ -652,11 +652,10 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                       <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
-                      {/* <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3> */}
+                       {/* <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3> */}
+                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
                       <div className="space-y-2 text-sm">
-                        {/* <div className="flex justify-between"> */}
-                          <div className="flex justify-between">
+                          {/* <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -671,15 +670,16 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">IFSC Code:</span>
                           <span className="text-white">{bankDetails.ifscCode}</span>
-                        </div>
-                         {/* <Link to="https://cfpe.me/sharkfund">
+                        </div> */}
+                        <div className="flex justify-between">
+                         <Link to="https://cfpe.me/sharkfund">
                             <button
                               className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
                             >
                               Pay Now
                             </button>
-                          </Link> */}
-                        {/* </div> */}
+                          </Link>
+                        </div>
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">
@@ -930,10 +930,10 @@ const Dashboard: React.FC = () => {
                 {paymentMethod === 'bank' && (
                   <div className="mt-4">
                     <div className="bg-gray-800 p-4 rounded-lg mb-4">
-                      {/* <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3> */}
-                      <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3>
+                      <h3 className="text-white-400 text-md font-medium mb-3">Contribute Instantly via UPI - Start Growing Your Money Today!</h3>
+                      {/* <h3 className="text-teal-400 text-md font-medium mb-3">Bank Details</h3> */}
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                           <span className="text-gray-400">Account Holder:</span>
                           <span className="text-white">{bankDetails.accountHolder}</span>
                         </div>
@@ -948,9 +948,9 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-between">
                           <span className="text-gray-400">IFSC Code:</span>
                           <span className="text-white">{bankDetails.ifscCode}</span>
-                        </div>
+                        </div> */}
 
-                        {/* <div className="flex justify-between">
+                        <div className="flex justify-between">
                           <Link to="https://cfpe.me/sharkfund">
                             <button
                               className="bg-gradient-to-r from-teal-500 to-teal-500 hover:from-teal-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -958,7 +958,7 @@ const Dashboard: React.FC = () => {
                               Pay Now
                             </button>
                           </Link>
-                        </div> */}
+                        </div>
                       </div>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 text-center">

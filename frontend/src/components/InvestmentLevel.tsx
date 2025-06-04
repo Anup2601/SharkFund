@@ -153,7 +153,7 @@ const InvestmentLevel: React.FC = () => {
               </h3>
               
               <p className="text-gray-300 mb-4">
-                Investment Amount: <span className="font-semibold">{currentLevel.total_deposit}</span>
+                Invested Amount: <span className="font-semibold">{currentLevel.total_deposit}</span>
               </p>
               
               
@@ -179,9 +179,9 @@ const InvestmentLevel: React.FC = () => {
               {currentLevel.level < 3 && (
                 <div className="mt-6 text-center">
                   <p className="text-gray-300 mb-2">
-                    {currentLevel.level === 0 && "You need ₹1,000+ monthly payout to reach Level 1"}
-                    {currentLevel.level === 1 && "You need ₹2,000+ monthly payout to reach Level 2"}
-                    {currentLevel.level === 2 && "You need ₹3,000+ monthly payout to reach Level 3"}
+                    {currentLevel.level === 0 && "You need ₹1,000+ Investment to reach Level 1"}
+                    {currentLevel.level === 1 && "You need ₹2,000+ Investment to reach Level 2"}
+                    {currentLevel.level === 2 && "You need ₹3,000+ Investment to reach Level 3"}
                   </p>
                   <button className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors">
                     Upgrade Your Investment
